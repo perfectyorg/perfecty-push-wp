@@ -4,6 +4,10 @@ $path = plugin_dir_url(__DIR__) . "js/";
 <script language="javascript">
   window.PerfectyPushOptions = {
     path: "<?php echo $path; ?>",
-    fabTitle: "Suscribirse",
+    fabControl: {
+      title: "¿Deseas recibir notificaciones?",
+      submit: "Continuar",
+      cancel: "Ahora no"
+    }
   }
 </script>

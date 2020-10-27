@@ -22,25 +22,50 @@
 		return permission;
 	}
 	
-	async function drawFabControl(title) {
-		$("body").append('<input type="button" id="perfecty-fab-control" value="' + title + '"></input>');
+	async function drawFabControl(options) {
+		let fabControl = '<div class="perfecty-fab-container"><div class="perfecty-fab-title">' + options.title + '</div><div>' + 
+		'<button id="perfecty-fab-cancel" type="button" class="secondary">' + options.cancel + '</button>' +
+		'<button id="perfecty-fab-subscribe" type="button" class="primary">' + options.submit + '</button> ' +
+		'</div></div>';
+		$("body").append(fabControl);
+	}
+
+	function showFabControl() {
+		$(".perfecty-fab-container").show();
+	}
+
+	function hideFabControl() {
+		$(".perfecty-fab-container").hide();
 	}
 	
 	async function perfectyStart(options) {
 		if (checkFeatures()) {
+			// Draw bell
+			drawFabControl(options.fabControl);
+
 			// Service worker
 			const swRegistration = await registerServiceWorker(options.path);
 	
 			// Notification permission
 			let permission = Notification.permission;
-			if (permission === 'default') {
-				permission = await askForPermission();
+			let askedForNotifications = localStorage.getItem("perfecty_asked_notifications") === "yes";
+			if (permission === 'default' && !askedForNotifications) {
+				showFabControl();
 			}
-	
-			// Draw bell
-			drawFabControl(options.fabTitle);
+
+			$("#perfecty-fab-subscribe").click(async function() {
+				localStorage.setItem("perfecty_asked_notifications", "yes");
+				hideFabControl();
+				permission = await askForPermission();
+			});
+
+			$("#perfecty-fab-cancel").click(async function(){
+				localStorage.setItem("perfecty_asked_notifications", "yes");
+				hideFabControl();
+			})
+
 		} else {
-			console.log('Browser doesn\'t support sw or web push');
+			console.log('Browser doesn\'t support notifications');
 		}
 	}
 
