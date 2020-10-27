@@ -60,21 +60,7 @@ class Perfecty_Push_Public {
 	 * @since    1.0.0
 	 */
 	public function enqueue_styles() {
-
-		/**
-		 * This function is provided for demonstration purposes only.
-		 *
-		 * An instance of this class should be passed to the run() function
-		 * defined in Perfecty_Push_Loader as all of the hooks are defined
-		 * in that particular class.
-		 *
-		 * The Perfecty_Push_Loader will then create the relationship
-		 * between the defined hooks and the functions defined in this
-		 * class.
-		 */
-
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/perfecty-push-public.css', array(), $this->version, 'all' );
-
 	}
 
 	/**
@@ -83,21 +69,15 @@ class Perfecty_Push_Public {
 	 * @since    1.0.0
 	 */
 	public function enqueue_scripts() {
-
-		/**
-		 * This function is provided for demonstration purposes only.
-		 *
-		 * An instance of this class should be passed to the run() function
-		 * defined in Perfecty_Push_Loader as all of the hooks are defined
-		 * in that particular class.
-		 *
-		 * The Perfecty_Push_Loader will then create the relationship
-		 * between the defined hooks and the functions defined in this
-		 * class.
-		 */
-
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/perfecty-push-public.js', array( 'jquery' ), $this->version, false );
-
+		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/perfecty-push-public.js', array('jquery'), $this->version, true );
 	}
 
+	/**
+	 * Prints the header content
+	 *
+	 * @since    1.0.0
+	 */
+	public function print_head() {
+		require_once plugin_dir_path( __FILE__) . 'partials/perfecty-push-public-head.php';
+	}
 }

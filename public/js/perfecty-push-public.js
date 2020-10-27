@@ -1,32 +1,53 @@
-(function( $ ) {
-	'use strict';
+(function ($) {
 
-	/**
-	 * All of the code for your public-facing JavaScript source
-	 * should reside in this file.
-	 *
-	 * Note: It has been assumed you will write jQuery code here, so the
-	 * $ function reference has been prepared for usage within the scope
-	 * of this function.
-	 *
-	 * This enables you to define handlers, for when the DOM is ready:
-	 *
-	 * $(function() {
-	 *
-	 * });
-	 *
-	 * When the window is loaded:
-	 *
-	 * $( window ).load(function() {
-	 *
-	 * });
-	 *
-	 * ...and/or other possibilities.
-	 *
-	 * Ideally, it is not considered best practise to attach more than a
-	 * single DOM-ready or window-load handler for a particular page.
-	 * Although scripts in the WordPress core, Plugins and Themes may be
-	 * practising this, we should strive to set a better example in our own work.
-	 */
+	function checkFeatures() {
+		return ('serviceWorker' in navigator) && ('PushManager' in window);
+	}
+	
+	async function registerServiceWorker(path) {
+		try {
+			const registration = await navigator.serviceWorker.register(path + 'service-worker.js.php', { scope: '/' });
+			console.log('Successful');
+			return registration;
+		} catch (err) {
+			console.log('Unable to register the service worker', err);
+		}
+	}
+	
+	async function askForPermission() {
+		const permission = await window.Notification.requestPermission();
+		if (permission !== 'granted') {
+			console.log('Notification permission not granted')
+		}
+		return permission;
+	}
+	
+	async function drawFabControl(title) {
+		$("body").append('<input type="button" id="perfecty-fab-control" value="' + title + '"></input>');
+	}
+	
+	async function perfectyStart(options) {
+		if (checkFeatures()) {
+			// Service worker
+			const swRegistration = await registerServiceWorker(options.path);
+	
+			// Notification permission
+			let permission = Notification.permission;
+			if (permission === 'default') {
+				permission = await askForPermission();
+			}
+	
+			// Draw bell
+			drawFabControl(options.fabTitle);
+		} else {
+			console.log('Browser doesn\'t support sw or web push');
+		}
+	}
 
-})( jQuery );
+	$(window).load(function() {
+		// window.PerfectyPushOptions is defined outside
+		const options = window.PerfectyPushOptions;
+		perfectyStart(options);
+	});
+
+})(jQuery);
