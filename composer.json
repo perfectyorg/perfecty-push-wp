@@ -1,0 +1,15 @@
+{
+    "name": "perfecty/perfecty-push-wp",
+    "description": "Wordpress plugin for Perfecty Push",
+    "type": "project",
+    "license": "GPL v2",
+    "authors": [
+        {
+            "name": "Rowinson Gallego",
+            "email": "rwn.gallego@gmail.com"
+        }
+    ],
+    "require": {
+        "minishlink/web-push": "5.2.5"
+    }
+}

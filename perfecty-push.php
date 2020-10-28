@@ -65,6 +65,15 @@ register_deactivation_hook( __FILE__, 'deactivate_perfecty_push' );
 require plugin_dir_path( __FILE__ ) . 'includes/class-perfecty-push.php';
 
 /**
+ * We load the composer dependencies. We only load the web-push-php library
+ * if the gmp extension is enabled. In theory, composer libs can be used
+ * in Wordpress plugins: https://github.com/awesomemotive/WP-Mail-SMTP
+ */
+if (extension_loaded('gmp')) {
+	require __DIR__ . '/vendor/autoload.php';
+}
+
+/**
  * Begins execution of the plugin.
  *
  * Since everything within the plugin is registered via hooks,
