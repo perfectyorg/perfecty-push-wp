@@ -12,7 +12,7 @@
 ?>
 <div class="wrap">
     <h1>About Perfecty Push</h1>
-    <p>Perfecty Push is an <a href="https://perfecty.co/push-server" target="_blank">Open Source project</a> that allows you to send thousands of push notifications
+    <p><a href="https://perfecty.co/push-server" target="_blank">Perfecty Push</a> is an Open Source project that allows you to send thousands of push notifications
     directly from a server you own.</p>
     <h2>Scalable and self-hosted Push Server</h2>
     <p>It scales well, you can start from you local installation or move to a dedicated <a href="https://perfecty.co/push-server" target="_blank">Perfecty Push</a> instance that you own.</p>

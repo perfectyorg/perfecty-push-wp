@@ -116,6 +116,14 @@ class Perfecty_Push_Admin {
 
     add_submenu_page(
       'perfecty-push',
+      'Dashboard',
+      'Dashboard',
+      'manage_options',
+      'perfecty-push',
+			array($this, 'print_dashboard_page'));
+
+    add_submenu_page(
+      'perfecty-push',
       'Settings',
       'Settings',
       'manage_options',

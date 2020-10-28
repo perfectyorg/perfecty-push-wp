@@ -1,5 +1,7 @@
 (function ($) {
 
+	'use strict';
+
 	function checkFeatures() {
 		return ('serviceWorker' in navigator) && ('PushManager' in window);
 	}
