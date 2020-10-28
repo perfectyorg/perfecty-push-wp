@@ -8,23 +8,20 @@ Stable tag: 4.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Sef-hosted, open source and powerful Web Push Notifications engine to send thousands of notifications from your own server for free!
+Sef-hosted, Open Source and powerful Push Notification server to send thousands of notifications from your own server for free!
 
 == Description ==
 
 Perfecty Push is an open source project that allows you to send thousands of push notifications
-directly from your own server. It also scales well, you can have a dedicated instance to serve the notifications
-or you can use a third party provider.
+directly from your own server. It also scales well, you can start from you local installation or move to a dedicated instance that you own.
 
 Advantages:
 
-- For free
-- Open source and self hosted
-- No third party dependencies when self hosted
-- Supports [Web Push Notifications](https://developers.google.com/web/fundamentals/push-notifications)
-  using [Push API](https://developer.mozilla.org/en-US/docs/Web/API/Push_API)
-- You retain the user authorization tokens, you own them
+- Open source and self-hosted
 - Send thousands of notifications concurrently
+- No third party dependencies when self-hosted
+- Offline browser notifications through [Push API](https://developer.mozilla.org/en-US/docs/Web/API/Push_API) (Safari is not supported yet)
+- You retain and own the user authorization tokens
 - Support offline browser notifications
 - Multiple installation options: self-hosted or dedicated instance
 

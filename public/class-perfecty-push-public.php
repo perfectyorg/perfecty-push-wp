@@ -49,6 +49,21 @@ class Perfecty_Push_Public {
 	 */
 	public function __construct( $plugin_name, $version ) {
 
+		$options = get_option('perfecty_push', []);
+		$vapid_public_key = isset($options['vapid_public_key']) ? $options['vapid_public_key'] : '';
+		$server_url = isset($options['server_url']) ? $options['server_url'] : '127.0.0.1:8777';
+
+		if (!defined('PERFECTY_PUSH_JS_DIR')) {
+			$path = plugin_dir_url(__FILE__) . "js";
+			define('PERFECTY_PUSH_JS_DIR', $path);
+		}
+		if (!defined('PERFECTY_PUSH_SERVER_URL')) {
+			define('PERFECTY_PUSH_SERVER_URL', $server_url);
+		}
+		if (!defined('PERFECTY_PUSH_VAPID_PUBLIC_KEY')) {
+			define('PERFECTY_PUSH_VAPID_PUBLIC_KEY', $vapid_public_key);
+		}
+
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
 
