@@ -6,7 +6,7 @@
 		return ('serviceWorker' in navigator) && ('PushManager' in window);
 	}
 	
-	function registerServiceWorker(path, serverUrl, vapidPublicKey64) {
+	function registerServiceWorker(path, siteUrl, vapidPublicKey64, nonce) {
 			navigator.serviceWorker.register(path + '/service-worker-loader.js.php', { scope: '/' }).then(() =>{
 				return navigator.serviceWorker.ready
 			}).then(async (registration) => {
@@ -22,11 +22,10 @@
 				});
 			}).then((subscription) => {
 				// we send the registration details to the server
-				path = serverUrl + "/register"
-				payload = {
+				path = siteUrl + "/wp-json/perfecty-push/v1/register?_wpnonce=" + nonce
+				const payload = {
 					subscription: subscription
 				}
-				console.log(payload)
 
 				fetch(path, {
 					method: 'post',
@@ -37,7 +36,7 @@
 				})
 				.then(resp => resp.json())
 				.then(data => {
-					if (data && data.result && data.result !== "true"){
+					if (data && data.result && data.result !== true){
 						return Promise.reject("Unable to send the registration details")
 					}
 				})
@@ -109,7 +108,7 @@
 				if (permission === 'granted'){
 					// We only register the service worker and the push manager
 					// when the user has granted permissions
-					registerServiceWorker(options.path, options.serverUrl, options.vapidPublicKey);
+					registerServiceWorker(options.path, options.siteUrl, options.vapidPublicKey, options.nonce);
 				} else {
 					console.log('Notification permission not granted')
 				}

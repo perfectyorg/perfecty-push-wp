@@ -71,7 +71,6 @@ require plugin_dir_path( __FILE__ ) . 'includes/class-perfecty-push.php';
  */
 if (extension_loaded('gmp')) {
 	require __DIR__ . '/vendor/autoload.php';
-	require __DIR__ . '/vendor/woocommerce/action-scheduler/action-scheduler.php';
 }
 
 /**

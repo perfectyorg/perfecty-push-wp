@@ -76,6 +76,7 @@ class Perfecty_Push {
 
 		$this->load_dependencies();
 		$this->set_locale();
+		$this->load_action_scheduler();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
 
@@ -121,6 +122,13 @@ class Perfecty_Push {
 		 * side of the site.
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-perfecty-push-public.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-perfecty-push-subscribers.php';
+
+    /**
+     * Contains the lib/ definitions
+     */
+    require_once plugin_dir_path( dirname( __FILE__ ) ) . 'lib/db.php';
+    require_once plugin_dir_path( dirname( __FILE__ ) ) . 'lib/push-server.php';
 
 		$this->loader = new Perfecty_Push_Loader();
 
@@ -143,6 +151,22 @@ class Perfecty_Push {
 
 	}
 
+	/**
+	 * Load the action scheduler subsystem. Requiring the dependency
+	 * will enable the admin UI and also run the migrations for the v3 version.
+	 * 
+	 * TODO: For the moment we are not running the v3 migration, if the user
+	 * is just trying this plugin out, we don't want to migrate v2 data.
+	 * Ideally we should not include it as a library but as a plugin dependency.
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 */
+	private function load_action_scheduler() {
+		$this->loader->add_filter( 'action_scheduler_migration_dependencies_met', null, '__return_false' );
+		require __DIR__ . '/../vendor/woocommerce/action-scheduler/action-scheduler.php';
+	}
+	
 	/**
 	 * Register all of the hooks related to the admin area functionality
 	 * of the plugin.
@@ -174,6 +198,7 @@ class Perfecty_Push {
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
 		$this->loader->add_action( 'wp_head', $plugin_public, 'print_head' );
+    $this->loader->add_action( 'rest_api_init', $plugin_public, 'register_rest_endpoints' );
 
 	}
 

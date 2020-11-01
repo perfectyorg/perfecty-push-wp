@@ -95,4 +95,18 @@ class Perfecty_Push_Public {
 	public function print_head() {
 		require_once plugin_dir_path( __FILE__) . 'partials/perfecty-push-public-head.php';
 	}
+
+  /**
+   * Register the REST endpoints
+   *
+   * @since 1.0.0
+   */
+  public function register_rest_endpoints() {
+		$subscribers = new Perfecty_Push_Subscribers();
+
+    register_rest_route('/perfecty-push/v1/', '/register/', array(
+      'methods' => 'POST',
+      'callback' => [$subscribers, 'register']
+    ));
+	}
 }
