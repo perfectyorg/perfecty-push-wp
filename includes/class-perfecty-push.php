@@ -74,12 +74,37 @@ class Perfecty_Push {
 		}
 		$this->plugin_name = 'perfecty-push';
 
+		$this->define_constants();
 		$this->load_dependencies();
 		$this->set_locale();
 		$this->load_action_scheduler();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
 
+	}
+
+	/**
+	 * Define the constants that will be needed later
+	 */
+	public function define_constants() {
+		$options = get_option('perfecty_push', []);
+    $vapid_public_key = isset($options['vapid_public_key']) ? $options['vapid_public_key'] : '';
+		$vapid_private_key = isset($options['vapid_private_key']) ? $options['vapid_private_key'] : '';
+		$server_url = isset($options['server_url']) ? $options['server_url'] : '127.0.0.1:8777';
+
+		if (!defined('PERFECTY_PUSH_JS_DIR')) {
+			$path = plugin_dir_url(__FILE__) . "js";
+			define('PERFECTY_PUSH_JS_DIR', $path);
+		}
+		if (!defined('PERFECTY_PUSH_SERVER_URL')) {
+			define('PERFECTY_PUSH_SERVER_URL', $server_url);
+		}
+		if (!defined('PERFECTY_PUSH_VAPID_PUBLIC_KEY')) {
+			define('PERFECTY_PUSH_VAPID_PUBLIC_KEY', $vapid_public_key);
+		}
+		if (!defined('PERFECTY_PUSH_VAPID_PRIVATE_KEY')) {
+			define('PERFECTY_PUSH_VAPID_PRIVATE_KEY', $vapid_private_key);
+		}
 	}
 
 	/**

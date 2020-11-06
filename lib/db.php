@@ -5,13 +5,16 @@
  */
 class Perfecty_Push_Lib_Db {
   
-  private static $allowed_fields = "";
+  private static $allowed_fields = "endpoint,key_auth,key_p256dh";
 
   private static function subscriptions_table() {
     global $wpdb;
     return $wpdb->prefix . 'perfecty_push_subscriptions';
   }
 
+  /**
+   * Creates the tables in the wordpress DB and register the DB version
+   */
   public static function db_create() {
     global $wpdb;
 
@@ -37,6 +40,14 @@ class Perfecty_Push_Lib_Db {
     add_option( 'perfecty_push_version', $perfecty_push_db_version);
   }
 
+  /**
+   * Store the subscription in the DB
+   * 
+   * @param $endpoint
+   * @param $key_auth
+   * @param $key_p256dh
+   * @param $remote_ip
+   */
   public function store_subscription($endpoint, $key_auth, $key_p256dh, $remote_ip) {
     global $wpdb;
 
@@ -46,5 +57,20 @@ class Perfecty_Push_Lib_Db {
       'key_p256dh' => $key_p256dh,
       'remote_ip' => $remote_ip
     ]);
+  }
+
+  /**
+   * Get the subscriptions
+   * 
+   * @return array The result with the subscriptions
+   */
+  public function get_subscriptions() {
+    global $wpdb;
+
+    $sql = $wpdb->prepare(
+      "SELECT {self::$allowed_fields} FROM {self::subscriptions_table()}",
+    );
+    $results = $wpdb->get_results($sql);
+    return $results;
   }
 }

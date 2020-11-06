@@ -124,6 +124,14 @@ class Perfecty_Push_Admin {
 
     add_submenu_page(
       'perfecty-push',
+      'Send notification',
+      'Send notification',
+      'manage_options',
+      'perfecty-push-send-notification',
+      array($this, 'print_send_notification_page'));
+
+    add_submenu_page(
+      'perfecty-push',
       'Settings',
       'Settings',
       'manage_options',
@@ -155,7 +163,7 @@ class Perfecty_Push_Admin {
 
     add_settings_section(
       'perfecty_push_fab_settings', // id
-      'Custom text', // title
+      'Change the appearance', // title
       array($this, 'print_fab_section'), // callback
       'perfecty-push-options' // page
     );
@@ -224,7 +232,90 @@ class Perfecty_Push_Admin {
    */
   public function print_options_page() {
     require_once plugin_dir_path(__FILE__) . 'partials/perfecty-push-admin-options.php';
-	}
+  }
+
+	/**
+   * Renders the send notification page
+   *
+   * @since 1.0.0
+   */
+  public function print_send_notification_page() {
+    $message = '';
+    $notice = '';
+
+    $default = array(
+      'title'                    => '',
+      'message'                  => '',
+    );
+
+    if ( isset($_REQUEST['nonce']) && wp_verify_nonce($_REQUEST['nonce'], 'perfecty_push_send_notification')) {
+
+      $item = shortcode_atts($default, $_REQUEST);
+
+      $validation_result = $this->validate_notification_message($item);
+      if ($validation_result === true) {
+        // filter
+        $item['title'] = sanitize_text_field($item['title']);
+        $item['message'] = sanitize_textarea_field($item['message']);
+
+        $payload = json_encode([
+          "title" => $item['title'],
+          "message" => $item['message']
+        ]);
+
+        // send notification
+        $result = Perfecty_Push_Lib_Push_Server::send_notification($payload);
+        if (is_array($result)) {
+          [$total, $succeded] = $result;
+          $message = "The message was sent to $succeded subscribers out of $total.";
+        } else {
+          $notice = "Could not send the message, error: $result";
+        }
+      } else {
+        $notice = $validation_result;
+      }
+    }
+    else {
+      $item = $default;
+    }
+
+    add_meta_box(
+      'perfecty_push_send_notification_meta_box',
+      'Notification details',
+      array($this, 'print_send_notification_metabox'),
+      'perfecty-push-send-notification',
+      'normal');
+
+    require_once plugin_dir_path(__FILE__) . 'partials/perfecty-push-admin-send-notification.php';
+  }
+
+  /**
+   * Validates the notification details
+   *
+   * @param $item Contains the entry
+   */
+  public function validate_notification_message($item) {
+    $messages = array();
+
+    if (empty($item['title'])) $messages[] = 'The title is required';
+
+    if (empty($item['message'])) $messages[] = 'The message is required';
+
+    if (empty($messages)) {
+      return true;
+    } else {
+      return implode('<br />', $messages);
+    }
+  }
+
+  /**
+   * Renders the send notification metabox
+   *
+   * @since 1.0.0
+   */
+  public function print_send_notification_metabox($item) {
+    require_once plugin_dir_path(__FILE__) . 'partials/send-notification-metabox.php';
+  }
 
 	/**
    * Renders the about page
