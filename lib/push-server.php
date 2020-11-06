@@ -34,11 +34,12 @@ class Perfecty_Push_Lib_Push_Server {
 
     $auth = [
       'VAPID' => [
+        'subject' => site_url(),
         'publicKey' => PERFECTY_PUSH_VAPID_PUBLIC_KEY,
-        'privatekey' => PERFECTY_PUSH_VAPID_PRIVATE_KEY
+        'privateKey' => PERFECTY_PUSH_VAPID_PRIVATE_KEY
       ]
     ];
-    $webPush = new WebPush();
+    $webPush = new WebPush($auth);
     $webPush->setReuseVAPIDHeaders(true);
 
     $subscriptions = Perfecty_Push_Lib_Db::get_subscriptions();
@@ -49,7 +50,7 @@ class Perfecty_Push_Lib_Push_Server {
         $item->key_auth
       );
 
-      $webPush->queuesubscription($push_subscription, $payload);
+      $webPush->sendNotification($push_subscription, $payload);
     }
 
     $total = count($subscriptions);

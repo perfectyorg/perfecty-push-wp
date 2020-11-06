@@ -260,14 +260,16 @@ class Perfecty_Push_Admin {
 
         $payload = json_encode([
           "title" => $item['title'],
-          "message" => $item['message']
+          "body" => $item['message']
         ]);
 
         // send notification
         $result = Perfecty_Push_Lib_Push_Server::send_notification($payload);
         if (is_array($result)) {
           [$total, $succeded] = $result;
-          $message = "The message was sent to $succeded subscribers out of $total.";
+          $failed = $total - $succeded;
+          $message = "The message was sent. Succeded: $succeded, Failed: $failed, Total: $total";
+          $item = $default;
         } else {
           $notice = "Could not send the message, error: $result";
         }

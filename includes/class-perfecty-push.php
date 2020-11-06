@@ -93,7 +93,7 @@ class Perfecty_Push {
 		$server_url = isset($options['server_url']) ? $options['server_url'] : '127.0.0.1:8777';
 
 		if (!defined('PERFECTY_PUSH_JS_DIR')) {
-			$path = plugin_dir_url(__FILE__) . "js";
+			$path = plugin_dir_url(__DIR__) . "public/js";
 			define('PERFECTY_PUSH_JS_DIR', $path);
 		}
 		if (!defined('PERFECTY_PUSH_SERVER_URL')) {

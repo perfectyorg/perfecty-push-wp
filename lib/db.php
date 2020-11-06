@@ -29,7 +29,7 @@ class Perfecty_Push_Lib_Db {
     $sql = "CREATE TABLE IF NOT EXISTS " . Perfecty_Push_Lib_Db::subscriptions_table() . " (
           id int(11) NOT NULL AUTO_INCREMENT,
           remote_ip VARCHAR(20) DEFAULT '',
-          endpoint VARCHAR(200) NOT NULL UNIQUE,
+          endpoint VARCHAR(500) NOT NULL UNIQUE,
           key_auth VARCHAR(100) NOT NULL UNIQUE,
           key_p256dh VARCHAR(100) NOT NULL UNIQUE,
           creation_time datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
@@ -48,15 +48,20 @@ class Perfecty_Push_Lib_Db {
    * @param $key_p256dh
    * @param $remote_ip
    */
-  public function store_subscription($endpoint, $key_auth, $key_p256dh, $remote_ip) {
+  public static function store_subscription($endpoint, $key_auth, $key_p256dh, $remote_ip) {
     global $wpdb;
 
-    return $wpdb->insert(Perfecty_Push_Lib_Db::subscriptions_table(), [
+    $result = $wpdb->insert(Perfecty_Push_Lib_Db::subscriptions_table(), [
       'endpoint' => $endpoint,
       'key_auth' => $key_auth,
       'key_p256dh' => $key_p256dh,
       'remote_ip' => $remote_ip
     ]);
+
+    if ($result === false) {
+        error_log('DB error [last_error:' . $wpdb->last_error . ', last_query: ' . $wpdb->last_query . ']');
+    }
+    return $result;
   }
 
   /**
@@ -64,12 +69,10 @@ class Perfecty_Push_Lib_Db {
    * 
    * @return array The result with the subscriptions
    */
-  public function get_subscriptions() {
+  public static function get_subscriptions() {
     global $wpdb;
 
-    $sql = $wpdb->prepare(
-      "SELECT {self::$allowed_fields} FROM {self::subscriptions_table()}",
-    );
+    $sql = "SELECT " . self::$allowed_fields . " FROM " . self::subscriptions_table();
     $results = $wpdb->get_results($sql);
     return $results;
   }
