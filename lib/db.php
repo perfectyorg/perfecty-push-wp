@@ -7,9 +7,21 @@ class Perfecty_Push_Lib_Db {
   
   private static $allowed_fields = "endpoint,key_auth,key_p256dh";
 
-  private static function subscriptions_table() {
+  public const NOTIFICATIONS_STATUS_SCHEDULED = "scheduled";
+  public const NOTIFICATIONS_STATUS_FAILED = "failed";
+  public const NOTIFICATIONS_STATUS_COMPLETED = "completed";
+
+  private static function with_prefix($table) {
     global $wpdb;
-    return $wpdb->prefix . 'perfecty_push_subscriptions';
+    return $wpdb->prefix . $table;
+  }
+
+  private static function subscriptions_table() {
+    return self::with_prefix('perfecty_push_subscriptions');
+  }
+
+  private static function notifications_table() {
+    return self::with_prefix('perfecty_push_notifications');
   }
 
   /**
@@ -32,6 +44,20 @@ class Perfecty_Push_Lib_Db {
           endpoint VARCHAR(500) NOT NULL UNIQUE,
           key_auth VARCHAR(100) NOT NULL UNIQUE,
           key_p256dh VARCHAR(100) NOT NULL UNIQUE,
+          creation_time datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
+          PRIMARY KEY  (id)
+        ) $charset;";
+    dbDelta( $sql );
+
+    $sql = "CREATE TABLE IF NOT EXISTS " . Perfecty_Push_Lib_Db::notifications_table() . " (
+          id int(11) NOT NULL AUTO_INCREMENT,
+          payload VARCHAR(500) NOT NULL UNIQUE,
+          total INT(11) DEFAULT 0 NOT NULL,
+          succeeded INT(11) DEFAULT 0 NOT NULL,
+          cursor INT(11) DEFAULT 0 NOT NULL,
+          batch_size INT(11) DEFAULT 0 NOT NULL,
+          status VARCHAR(15) DEFAULT 'scheduled' NOT NULL UNIQUE,
+          taken INT(1) DEFAULT 0 NOT NULL,
           creation_time datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
           PRIMARY KEY  (id)
         ) $charset;";
@@ -62,6 +88,32 @@ class Perfecty_Push_Lib_Db {
         error_log('DB error [last_error:' . $wpdb->last_error . ', last_query: ' . $wpdb->last_query . ']');
     }
     return $result;
+  }
+
+  /**
+   * Create a notification in the DB
+   * 
+   * @param $payload
+   * @param $status string one of the NOTIFICATIONS_STATUS_* values
+   * 
+   * @return $inserted_id or false if error
+   */
+  public static function create_notification($payload, $status = self::NOTIFICATIONS_STATUS_COMPLETED) {
+    global $wpdb;
+
+    $result = $wpdb->insert(Perfecty_Push_Lib_Db::notifications_table(), [
+      'payload' => $payload,
+      'status' => $status
+    ]);
+
+    if ($result === false) {
+        error_log('Could not create the notification in the DB');
+        error_log('DB error [last_error:' . $wpdb->last_error . ', last_query: ' . $wpdb->last_query . ']');
+        return $result;
+    }
+
+    $inserted_id = $wpdb->insert_id;
+    return $inserted_id;
   }
 
   /**
