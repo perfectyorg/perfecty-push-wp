@@ -207,6 +207,7 @@ class Perfecty_Push {
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'register_admin_menu' );
 		$this->loader->add_action( 'admin_init', $plugin_admin, 'register_options' );
+		$this->loader->add_action( 'perfecty_push_broadcast_notification_event', $plugin_admin, 'execute_broadcast_batch', 10, 1);
 	}
 
 	/**

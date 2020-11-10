@@ -216,6 +216,16 @@ class Perfecty_Push_Admin {
     );
   }
 
+  /**
+   * Execute the next broadcast batch
+   * This is a wordpress action called from wp-cron
+   * 
+   * @param $notification_id int Notification ID
+   */
+  public function execute_broadcast_batch($notification_id) {
+    Perfecty_Push_Lib_Push_Server::execute_broadcast_batch($notification_id);
+  }
+
 	/**
    * Renders the dashboard page
    *
@@ -264,11 +274,9 @@ class Perfecty_Push_Admin {
         ]);
 
         // send notification
-        $result = Perfecty_Push_Lib_Push_Server::send_notification($payload);
-        if (is_array($result)) {
-          [$total, $succeded] = $result;
-          $failed = $total - $succeded;
-          $message = "The message was sent. Succeded: $succeded, Failed: $failed, Total: $total";
+        $result = Perfecty_Push_Lib_Push_Server::schedule_broadcast_async($payload);
+        if ($result === true) {
+          $message = "The notification job has started";
           $item = $default;
         } else {
           $notice = "Could not send the message, error: $result";
