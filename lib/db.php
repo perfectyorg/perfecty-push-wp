@@ -5,7 +5,7 @@
  */
 class Perfecty_Push_Lib_Db {
   
-  private static $allowed_fields = "endpoint,key_auth,key_p256dh";
+  private static $allowed_subscriptions_fields = "endpoint,key_auth,key_p256dh";
   private static $allowed_notifications_fields = "id,payload,total,succeeded,last_cursor,batch_size,status,taken";
 
   public const NOTIFICATIONS_STATUS_SCHEDULED = "scheduled";
@@ -281,7 +281,7 @@ class Perfecty_Push_Lib_Db {
   public static function get_subscriptions($offset, $size) {
     global $wpdb;
 
-    $sql = $wpdb->prepare("SELECT " . self::$allowed_fields .
+    $sql = $wpdb->prepare("SELECT " . self::$allowed_subscriptions_fields .
       " FROM " . self::subscriptions_table() .
       " LIMIT %d OFFSET %d", $size, $offset);
     $results = $wpdb->get_results($sql);
