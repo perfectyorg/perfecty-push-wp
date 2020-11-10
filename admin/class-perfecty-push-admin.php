@@ -275,10 +275,8 @@ class Perfecty_Push_Admin {
 
         // send notification
         $result = Perfecty_Push_Lib_Push_Server::schedule_broadcast_async($payload);
-        if (is_array($result)) {
-          [$total, $succeded] = $result;
-          $failed = $total - $succeded;
-          $message = "The message was sent. Succeded: $succeded, Failed: $failed, Total: $total";
+        if ($result === true) {
+          $message = "The notification job has started";
           $item = $default;
         } else {
           $notice = "Could not send the message, error: $result";
