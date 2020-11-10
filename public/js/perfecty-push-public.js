@@ -1,5 +1,3 @@
-(function ($) {
-
 	'use strict';
 
 	function checkFeatures() {
@@ -57,19 +55,22 @@
 	}
 	
 	async function drawFabControl(options) {
-		let fabControl = '<div class="perfecty-fab-container"><div class="perfecty-fab-title">' + options.title + '</div><div>' + 
+		let fabControl = '<div class="perfecty-fab-container" id="perfecty-fab-container">' +
+		'<div class="perfecty-fab-title">' + options.title + '</div><div>' + 
 		'<button id="perfecty-fab-cancel" type="button" class="secondary">' + options.cancel + '</button>' +
 		'<button id="perfecty-fab-subscribe" type="button" class="primary">' + options.submit + '</button> ' +
 		'</div></div>';
-		$("body").append(fabControl);
+		document.body.insertAdjacentHTML('beforeend', fabControl);
 	}
 
 	function showFabControl() {
-		$(".perfecty-fab-container").show();
+		const fabContainer = document.getElementById('perfecty-fab-container');
+		fabContainer.style.display = "block";
 	}
 
 	function hideFabControl() {
-		$(".perfecty-fab-container").hide();
+		const fabContainer = document.getElementById('perfecty-fab-container');
+		fabContainer.style.display = "none";
 	}
 
 	// taken from https://github.com/mozilla/serviceworker-cookbook/blob/e912ace6e9566183e06a35ef28516af7bd1c53b2/tools.js
@@ -101,7 +102,7 @@
 				showFabControl();
 			}
 
-			$("#perfecty-fab-subscribe").click(async function() {
+			document.getElementById('perfecty-fab-subscribe').onclick = async () => {
 				localStorage.setItem("perfecty_asked_notifications", "yes");
 				hideFabControl();
 				permission = await askForPermission();
@@ -112,22 +113,20 @@
 				} else {
 					console.log('Notification permission not granted')
 				}
-			});
+			};
 
-			$("#perfecty-fab-cancel").click(async function(){
+			document.getElementById('perfecty-fab-cancel').onclick = async () => {
 				localStorage.setItem("perfecty_asked_notifications", "yes");
 				hideFabControl();
-			})
+			}
 
 		} else {
 			console.log('Browser doesn\'t support notifications');
 		}
 	}
 
-	$(window).load(function() {
+	window.onload = () => {
 		// defined outside in the html body
 		const options = window.PerfectyPushOptions;
 		perfectyStart(options);
-	});
-
-})(jQuery);
+	};
