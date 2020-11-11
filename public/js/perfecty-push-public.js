@@ -55,11 +55,16 @@
 	}
 	
 	async function drawFabControl(options) {
-		let fabControl = '<div class="perfecty-fab-container" id="perfecty-fab-container">' +
-		'<div class="perfecty-fab-title">' + options.title + '</div><div>' + 
-		'<button id="perfecty-fab-cancel" type="button" class="secondary">' + options.cancel + '</button>' +
-		'<button id="perfecty-fab-subscribe" type="button" class="primary">' + options.submit + '</button> ' +
-		'</div></div>';
+		let fabControl =
+		'<div class="perfecty-fab-container" id="perfecty-fab-container">' +
+		'  <div class="perfecty-fab-notify-box">' +
+		'    <div class="perfecty-fab-title">' + options.title + '</div>' +
+		'    <div>' + 
+		'      <button id="perfecty-fab-cancel" type="button" class="secondary">' + options.cancel + '</button>' +
+		'      <button id="perfecty-fab-subscribe" type="button" class="primary">' + options.submit + '</button> ' +
+		'    </div>' +
+		'  </div>' +
+		'</div>';
 		document.body.insertAdjacentHTML('beforeend', fabControl);
 	}
 
