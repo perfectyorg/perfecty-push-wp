@@ -54,28 +54,32 @@
 		return permission;
 	}
 	
-	async function drawFabControl(options) {
-		let fabControl =
-		'<div class="perfecty-fab-container" id="perfecty-fab-container">' +
-		'  <div class="perfecty-fab-notify-box">' +
-		'    <div class="perfecty-fab-title">' + options.title + '</div>' +
+	async function drawDialogControl(options) {
+		let dialogControl =
+		'<div class="perfecty-push-dialog-container" id="perfecty-push-dialog-container">' +
+		'  <div class="perfecty-push-dialog-notify-box">' +
+		'    <div class="perfecty-push-dialog-title">' + options.title + '</div>' +
 		'    <div>' + 
-		'      <button id="perfecty-fab-cancel" type="button" class="secondary">' + options.cancel + '</button>' +
-		'      <button id="perfecty-fab-subscribe" type="button" class="primary">' + options.submit + '</button> ' +
+		'      <button id="perfecty-push-dialog-cancel" type="button" class="secondary">' + options.cancel + '</button>' +
+		'      <button id="perfecty-push-dialog-subscribe" type="button" class="primary">' + options.submit + '</button> ' +
 		'    </div>' +
 		'  </div>' +
 		'</div>';
-		document.body.insertAdjacentHTML('beforeend', fabControl);
+		document.body.insertAdjacentHTML('beforeend', dialogControl);
 	}
 
-	function showFabControl() {
-		const fabContainer = document.getElementById('perfecty-fab-container');
-		fabContainer.style.display = "block";
+	async function drawDialogControl() {
+
 	}
 
-	function hideFabControl() {
-		const fabContainer = document.getElementById('perfecty-fab-container');
-		fabContainer.style.display = "none";
+	function showDialogControl() {
+		const dialogContainer = document.getElementById('perfecty-push-dialog-container');
+		dialogContainer.style.display = "block";
+	}
+
+	function hideDialogControl() {
+		const dialogContainer = document.getElementById('perfecty-push-dialog-container');
+		dialogContainer.style.display = "none";
 	}
 
 	// taken from https://github.com/mozilla/serviceworker-cookbook/blob/e912ace6e9566183e06a35ef28516af7bd1c53b2/tools.js
@@ -97,19 +101,19 @@
 	async function perfectyStart(options) {
 		if (checkFeatures()) {
 			// Draw bell
-			drawFabControl(options.fabControl);
+			drawDialogControl(options.dialogControl);
 
 	
 			// Notification permission
 			let permission = Notification.permission;
 			let askedForNotifications = localStorage.getItem("perfecty_asked_notifications") === "yes";
 			if (permission === 'default' && !askedForNotifications) {
-				showFabControl();
+				showDialogControl();
 			}
 
-			document.getElementById('perfecty-fab-subscribe').onclick = async () => {
+			document.getElementById('perfecty-push-dialog-subscribe').onclick = async () => {
 				localStorage.setItem("perfecty_asked_notifications", "yes");
-				hideFabControl();
+				hideDialogControl();
 				permission = await askForPermission();
 				if (permission === 'granted'){
 					// We only register the service worker and the push manager
@@ -120,9 +124,9 @@
 				}
 			};
 
-			document.getElementById('perfecty-fab-cancel').onclick = async () => {
+			document.getElementById('perfecty-push-dialog-cancel').onclick = async () => {
 				localStorage.setItem("perfecty_asked_notifications", "yes");
-				hideFabControl();
+				hideDialogControl();
 			}
 
 		} else {

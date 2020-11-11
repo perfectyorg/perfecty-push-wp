@@ -162,34 +162,34 @@ class Perfecty_Push_Admin {
     );
 
     add_settings_section(
-      'perfecty_push_fab_settings', // id
+      'perfecty_push_dialog_settings', // id
       'Change the appearance', // title
-      array($this, 'print_fab_section'), // callback
+      array($this, 'print_dialog_section'), // callback
       'perfecty-push-options' // page
     );
 
     add_settings_field(
-      'fab_title', // id
+      'dialog_title', // id
       'Title', // title
-      array($this, 'print_fab_title'), // callback
+      array($this, 'print_dialog_title'), // callback
       'perfecty-push-options', // page
-      'perfecty_push_fab_settings' // section
+      'perfecty_push_dialog_settings' // section
 		);
 
     add_settings_field(
-      'fab_submit', // id
+      'dialog_submit', // id
       'Continue Button', // title
-      array($this, 'print_fab_submit'), // callback
+      array($this, 'print_dialog_submit'), // callback
       'perfecty-push-options', // page
-      'perfecty_push_fab_settings' // section
+      'perfecty_push_dialog_settings' // section
 		);
 
     add_settings_field(
-      'fab_cancel', // id
+      'dialog_cancel', // id
       'Cancel Button', // title
-      array($this, 'print_fab_cancel'), // callback
+      array($this, 'print_dialog_cancel'), // callback
       'perfecty-push-options', // page
-      'perfecty_push_fab_settings' // section
+      'perfecty_push_dialog_settings' // section
 		);
 
     add_settings_section(
@@ -358,7 +358,7 @@ class Perfecty_Push_Admin {
    *
    * @since 1.0.0
    */
-  public function print_fab_section() {
+  public function print_dialog_section() {
     print 'Change the messages shown in the notification dialog.';
 	}
 
@@ -402,47 +402,47 @@ class Perfecty_Push_Admin {
 	}
 
   /**
-   * Print the fab_title option
+   * Print the dialog_title option
    *
    * @since 1.0.0
    */
-  public function print_fab_title() {
+  public function print_dialog_title() {
     $options = get_option('perfecty_push');
-    $value = isset($options['fab_title']) ? esc_attr($options['fab_title']) : '';
+    $value = isset($options['dialog_title']) ? esc_attr($options['dialog_title']) : '';
 
     printf(
-      '<input type="text" id="perfecty_push[fab_title]"' .
-      'name="perfecty_push[fab_title]" value="%s" />', $value
+      '<input type="text" id="perfecty_push[dialog_title]"' .
+      'name="perfecty_push[dialog_title]" value="%s" />', $value
     );
 	}
 
   /**
-   * Print the fab_submit option
+   * Print the dialog_submit option
    *
    * @since 1.0.0
    */
-  public function print_fab_submit() {
+  public function print_dialog_submit() {
     $options = get_option('perfecty_push');
-    $value = isset($options['fab_submit']) ? esc_attr($options['fab_submit']) : '';
+    $value = isset($options['dialog_submit']) ? esc_attr($options['dialog_submit']) : '';
 
     printf(
-      '<input type="text" id="perfecty_push[fab_submit]"' .
-      'name="perfecty_push[fab_submit]" value="%s" />', $value
+      '<input type="text" id="perfecty_push[dialog_submit]"' .
+      'name="perfecty_push[dialog_submit]" value="%s" />', $value
     );
 	}
 
   /**
-   * Print the fab_cancel option
+   * Print the dialog_cancel option
    *
    * @since 1.0.0
    */
-  public function print_fab_cancel() {
+  public function print_dialog_cancel() {
     $options = get_option('perfecty_push');
-    $value = isset($options['fab_cancel']) ? esc_attr($options['fab_cancel']) : '';
+    $value = isset($options['dialog_cancel']) ? esc_attr($options['dialog_cancel']) : '';
 
     printf(
-      '<input type="text" id="perfecty_push[fab_cancel]"' .
-      'name="perfecty_push[fab_cancel]" value="%s" />', $value
+      '<input type="text" id="perfecty_push[dialog_cancel]"' .
+      'name="perfecty_push[dialog_cancel]" value="%s" />', $value
     );
   }
 }

@@ -3,7 +3,7 @@
  * included in this file.
  */
 
-.perfecty-fab-container {
+.perfecty-push-dialog-container {
   position: fixed;
   top: 0;
   left: 0;
@@ -12,7 +12,7 @@
   z-index: 100000;
 }
 
-.perfecty-fab-notify-box {
+.perfecty-push-dialog-notify-box {
   display: block;
   width: 500px;
   background: white;
@@ -22,10 +22,10 @@
   margin: 0 auto;
 }
 
-.perfecty-fab-container button{
+.perfecty-push-dialog-container button{
   margin: 0px 15px;
 }
 
-.perfecty-fab-container .perfecty-fab-title {
+.perfecty-push-dialog-container .perfecty-push-dialog-title {
   margin: 20px 0px;
 }

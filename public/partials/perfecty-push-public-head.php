@@ -1,16 +1,16 @@
 <?php
-  $fab_title = isset($options['fab_title']) ? $options['fab_title'] : 'Do you want to receive notifications?';
-  $fab_submit = isset($options['fab_submit']) ? $options['fab_submit'] : 'Continue';
-  $fab_cancel = isset($options['fab_cancel']) ? $options['fab_cancel'] : 'Not now';
+  $dialog_title = isset($options['dialog_title']) ? $options['dialog_title'] : 'Do you want to receive notifications?';
+  $dialog_submit = isset($options['dialog_submit']) ? $options['dialog_submit'] : 'Continue';
+  $dialog_cancel = isset($options['dialog_cancel']) ? $options['dialog_cancel'] : 'Not now';
   $nonce = wp_create_nonce('wp_rest');
 ?>
 <script language="javascript">
   window.PerfectyPushOptions = {
     path: "<?php echo PERFECTY_PUSH_JS_DIR ?>",
-    fabControl: {
-      title: "<?php echo $fab_title ?>",
-      submit: "<?php echo $fab_submit ?>",
-      cancel: "<?php echo $fab_cancel ?>"
+    dialogControl: {
+      title: "<?php echo $dialog_title ?>",
+      submit: "<?php echo $dialog_submit ?>",
+      cancel: "<?php echo $dialog_cancel ?>"
     },
     siteUrl: "<?php echo get_home_url() ?>",
     serverUrl: "<?php echo PERFECTY_PUSH_SERVER_URL ?>",
