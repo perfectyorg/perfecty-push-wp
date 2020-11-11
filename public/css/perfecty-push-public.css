@@ -12,7 +12,7 @@
   z-index: 100000;
 }
 
-.perfecty-push-dialog-notify-box {
+.perfecty-push-dialog-box {
   display: block;
   width: 500px;
   background: white;
@@ -28,4 +28,8 @@
 
 .perfecty-push-dialog-container .perfecty-push-dialog-title {
   margin: 20px 0px;
+}
+
+.perfecty-push-settings-container #perfecty-push-settings-form {
+  display: none;
 }
