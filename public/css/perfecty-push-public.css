@@ -1,7 +1,4 @@
-/**
- * All of the CSS for your public-facing functionality should be
- * included in this file.
- */
+/* Dialog control */
 
 .perfecty-push-dialog-container {
   position: fixed;
@@ -30,6 +27,32 @@
   margin: 20px 0px;
 }
 
+/* Settings control */
+
+.perfecty-push-settings-container {
+  z-index: 100000;
+}
+
 .perfecty-push-settings-container #perfecty-push-settings-form {
-  display: none;
+display: none;
+border: 1px solid rgb(221, 221, 221);
+background-color: white;
+padding: 20px;
+border-radius: 10px;
+margin-bottom: 20px;
+}
+
+.perfecty-push-settings-container #perfecty-push-settings-form label{
+  display: inline;
+}
+
+.perfecty-push-settings-container {
+  position: fixed;
+  bottom: 10px;
+  left: 10px;
+}
+
+.perfecty-push-settings-container #perfecty-push-settings-open img {
+  border-radius: 15px;
+  box-shadow: 0px 0px 20px 15px #eee;
 }

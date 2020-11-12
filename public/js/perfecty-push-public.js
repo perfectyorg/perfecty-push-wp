@@ -82,15 +82,18 @@
 		const svg = 'data:image/svg+xml;base64,PHN2ZyBhcmlhLWhpZGRlbj0idHJ1ZSIgZm9jdXNhYmxlPSJmYWxzZSIgZGF0YS1wcmVmaXg9ImZhcyIgZGF0YS1pY29uPSJiZWxsIiBjbGFzcz0ic3ZnLWlubGluZS0tZmEgZmEtYmVsbCBmYS13LTE0IiByb2xlPSJpbWciIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iMCAwIDQ0OCA1MTIiPjxwYXRoIGZpbGw9ImN1cnJlbnRDb2xvciIgZD0iTTIyNCA1MTJjMzUuMzIgMCA2My45Ny0yOC42NSA2My45Ny02NEgxNjAuMDNjMCAzNS4zNSAyOC42NSA2NCA2My45NyA2NHptMjE1LjM5LTE0OS43MWMtMTkuMzItMjAuNzYtNTUuNDctNTEuOTktNTUuNDctMTU0LjI5IDAtNzcuNy01NC40OC0xMzkuOS0xMjcuOTQtMTU1LjE2VjMyYzAtMTcuNjctMTQuMzItMzItMzEuOTgtMzJzLTMxLjk4IDE0LjMzLTMxLjk4IDMydjIwLjg0QzExOC41NiA2OC4xIDY0LjA4IDEzMC4zIDY0LjA4IDIwOGMwIDEwMi4zLTM2LjE1IDEzMy41My01NS40NyAxNTQuMjktNiA2LjQ1LTguNjYgMTQuMTYtOC42MSAyMS43MS4xMSAxNi40IDEyLjk4IDMyIDMyLjEgMzJoMzgzLjhjMTkuMTIgMCAzMi0xNS42IDMyLjEtMzIgLjA1LTcuNTUtMi42MS0xNS4yNy04LjYxLTIxLjcxeiI+PC9wYXRoPjwvc3ZnPg==';
 		const settingsControl =
 		'<div class="perfecty-push-settings-container">' +
+		'  <div id="perfecty-push-settings-form">' +
+		' 	 <div>' + options.title + '</div>' +
+		'    <input type="checkbox" id="perfecty-push-settings-subscribed"></input>' +
+		'    <label for="perfecty-push-settings-subscribed">' + options.subscribed + '</label>' +
+		'  </div>' +
 		'	 <div id="perfecty-push-settings-open">' +
 		'    <img src="' + svg + '" alt="Settings" width="30"/>' +
 		'  </div>' +
-		'  <div id="perfecty-push-settings-form">' +
-		' 	 <div>' + options.title + '</div>' +
-		'    <input type="checkbox" id="perfecty-push-settings-subscribed">' + options.subscribed + '</input>' +
-		'  </div>' +
 		'</div>';
 		document.body.insertAdjacentHTML('beforeend', settingsControl);
+		const subscribedControl = document.getElementById('perfecty-push-settings-subscribed');
+		subscribedControl.checked =  window.Notification.permission == 'granted';
 	}
 
 	function showSettingsFormControl() {
