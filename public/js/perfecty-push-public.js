@@ -105,15 +105,15 @@
 
 	function toggleSettingsFormControl() {
 		const control = document.getElementById('perfecty-push-settings-form');
-		const isDisplayed = control.style.display == "block";
+		const isDisplayed = control.style.display == 'block';
 
-		control.style.display = isDisplayed ? "none" : "block";
-		if (isDisplayed) {
-			listenToOutideClick(control);
+		control.style.display = isDisplayed ? 'none' : 'block';
+		if (control.style.display == 'block') {
+			listenToOutsideClick(control);
 		}
 	}
 
-	function listenToOutideClick (formControl) {
+	function listenToOutsideClick (formControl) {
 		// from jquery: https://github.com/jquery/jquery/blob/master/src/css/hiddenVisibleSelectors.js
 		const isVisible = elem => !!elem && !!( elem.offsetWidth || elem.offsetHeight || elem.getClientRects().length );
 
@@ -178,7 +178,8 @@
 				hideDialogControl();
 			}
 
-			document.getElementById('perfecty-push-settings-open').onclick = async () => {
+			document.getElementById('perfecty-push-settings-open').onclick = async (e) => {
+				e.stopPropagation();
 				toggleSettingsFormControl();
 			}
 
