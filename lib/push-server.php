@@ -57,27 +57,25 @@ class Perfecty_Push_Lib_Push_Server {
    * @return bool Succeeded or failed
    */
   public static function execute_broadcast_batch($notification_id) {
-    // if it has been taken and was not released, that means a wrong state
     $notification = Perfecty_Push_Lib_Db::get_notification($notification_id);
     if (!$notification) {
       error_log("Notification $notification_id was not found");
       return false;
     }
 
+    // if it has been taken and was not released, that means a wrong state
     if ($notification->taken) {
       error_log('Halted, notification taken but not released. ' . print_r($notification, true));
       Perfecty_Push_Lib_Db::mark_notification_failed($notification_id);
       return false;
     }
 
-    // take the notification
     Perfecty_Push_Lib_Db::take_notification($notification_id);
 
-    // we process the next batch, starting from $last_cursor we take $batch_size elements
+    // we get the next batch, starting from $last_cursor we take $batch_size elements
     $subscriptions = Perfecty_Push_Lib_Db::get_subscriptions($notification->last_cursor, $notification->batch_size);
 
     if (count($subscriptions) == 0) {
-      // we are done
       $result = Perfecty_Push_Lib_Db::complete_notification($notification_id);
       if (!$result) {
         error_log("Could not mark the notification as completed");
@@ -88,7 +86,6 @@ class Perfecty_Push_Lib_Push_Server {
 
     // we send one batch
     $result = self::send_notification($notification->payload, $subscriptions);
-
     if (is_array($result)) {
       [$total_batch, $succeeded] = $result;
       $notification->last_cursor += $total_batch;
@@ -110,7 +107,7 @@ class Perfecty_Push_Lib_Push_Server {
   }
 
   /**
-   * Send the notification to all the subscribers
+   * Send the notification to a set of subscribers
    * 
    * @param $payload array|string Payload to be sent, json encoded or array
    * @param $subscriptions array List of subscriptions
