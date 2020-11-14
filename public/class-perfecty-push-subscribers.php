@@ -1,5 +1,7 @@
 <?php
 
+use Ramsey\Uuid\Uuid;
+
 /**
  * The public-facing functionality of the plugin.
  *
@@ -46,13 +48,17 @@ class Perfecty_Push_Subscribers {
       // store the subscription in the DB
       $result = Perfecty_Push_Lib_Db::store_subscription($endpoint, $key_auth, $key_p256dh, $remote_ip);
 
-      if ($result !== false) {
+      if (is_array($result)) {
         // The subscription was correct
-        return (object) ['result' => true];
+        $response = [
+          'success' => true,
+          'uuid' => $result['uuid']
+        ];
+        return (object) $response;
       }
       else{
         // Could not subscribe
-        return new WP_Error("failed_subscription", "Could not subscribe the user", array('status' => 400));
+        return new WP_Error("failed_subscription", "Could not subscribe the user", array('status' => 500));
       }
     } else {
       log_error($validation);
@@ -82,6 +88,41 @@ class Perfecty_Push_Subscribers {
     if (!$remote_ip) return "Unknown Ip address";
 
     // At this point everything is valid
+    return true;
+  }
+
+  public function set_user_active($data) {
+    $is_active = $data['is_active'] ?? null;
+    $user_id = $data['user_id'] ?? null;
+
+    // Validate the nonce
+    check_ajax_referer('wp_rest', '_wpnonce');
+
+    $validation = $this->validate_set_user_active($is_active, $user_id);
+    if ($validation !== true) {
+      return new WP_Error("bad request", $validation, array('status' => 400));
+    }
+
+    $result = Perfecty_Push_Lib_Db::set_subscription_active($user_id, $is_active);
+
+    if ($result === false) {
+      return new WP_Error("failed_update", "Could not change the subscription", array('status' => 500));
+    } else {
+      $response = [
+        'success' => true,
+        'is_active' => $is_active
+      ];
+      return (object) $response;
+    }
+  }
+
+  private function validate_set_user_active($is_active, $user_id) {
+    if ($is_active === null || $user_id === null) return "Missing parameters";
+    if ($is_active != false && $is_active != true) {
+      return "is_active must be a boolean";
+    }
+    if (!Uuid::isValid($user_id)) return "Invalid player ID";
+
     return true;
   }
 }

@@ -92,6 +92,11 @@ class Perfecty_Push_Public {
     register_rest_route('/perfecty-push/v1/', '/register/', array(
       'methods' => 'POST',
       'callback' => [$subscribers, 'register']
+		));
+
+    register_rest_route('/perfecty-push/v1/', '/user/active/', array(
+      'methods' => 'PUT',
+      'callback' => [$subscribers, 'set_user_active']
     ));
 	}
 }

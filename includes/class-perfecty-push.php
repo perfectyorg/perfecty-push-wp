@@ -189,7 +189,7 @@ class Perfecty_Push {
 	 */
 	private function load_action_scheduler() {
 		$this->loader->add_filter( 'action_scheduler_migration_dependencies_met', null, '__return_false' );
-		require __DIR__ . '/../vendor/woocommerce/action-scheduler/action-scheduler.php';
+		# TODO: Implement according to: https://actionscheduler.org/usage/
 	}
 	
 	/**

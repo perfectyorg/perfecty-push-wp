@@ -1,5 +1,7 @@
 <?php
 
+use Ramsey\Uuid\Uuid;
+
 /***
  * DB library
  */
@@ -41,12 +43,16 @@ class Perfecty_Push_Lib_Db {
     # We execute the queries per table
     $sql = "CREATE TABLE IF NOT EXISTS " . Perfecty_Push_Lib_Db::subscriptions_table() . " (
           id int(11) NOT NULL AUTO_INCREMENT,
+          uuid CHAR(36) NOT NULL,
           remote_ip VARCHAR(20) DEFAULT '',
           endpoint VARCHAR(500) NOT NULL UNIQUE,
           key_auth VARCHAR(100) NOT NULL UNIQUE,
           key_p256dh VARCHAR(100) NOT NULL UNIQUE,
+          is_active TINYINT(1) DEFAULT 1 NOT NULL,
+          disabled TINYINT(1) DEFAULT 0 NOT NULL,
           creation_time datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
-          PRIMARY KEY  (id)
+          PRIMARY KEY  (id),
+          UNIQUE KEY `subscribers_uuid_uk` (`uuid`)
         ) $charset;";
     dbDelta( $sql );
 
@@ -78,7 +84,9 @@ class Perfecty_Push_Lib_Db {
   public static function store_subscription($endpoint, $key_auth, $key_p256dh, $remote_ip) {
     global $wpdb;
 
+    $uuid = Uuid::uuid4() -> toString();
     $result = $wpdb->insert(Perfecty_Push_Lib_Db::subscriptions_table(), [
+      'uuid' => $uuid,
       'endpoint' => $endpoint,
       'key_auth' => $key_auth,
       'key_p256dh' => $key_p256dh,
@@ -87,8 +95,10 @@ class Perfecty_Push_Lib_Db {
 
     if ($result === false) {
         error_log('DB error [last_error:' . $wpdb->last_error . ', last_query: ' . $wpdb->last_query . ']');
+        return false;
     }
-    return $result;
+
+    return ['uuid' => $uuid];
   }
 
   /**
@@ -167,6 +177,26 @@ class Perfecty_Push_Lib_Db {
    */
   public static function untake_notification($notification_id) {
     return self::take_untake_notification($notification_id, 0);
+  }
+
+  /**
+   * Changes the is_active property for the subcription
+   * 
+   * @param $subscription_id string UUID
+   * @param $is_active bool True or false
+   * 
+   * @return int|bool Number of rows updated or false
+   */
+  public static function set_subscription_active($subscription_id, $is_active) {
+    global $wpdb;
+
+    $result = $wpdb->update(
+      self::subscriptions_table(),
+      ["is_active" => $is_active],
+      ["uuid" => $subscription_id]
+    );
+
+    return $result;
   }
 
   /**

@@ -11,6 +11,6 @@
     ],
     "require": {
         "minishlink/web-push": "5.2.5",
-        "woocommerce/action-scheduler": "^3.1"
+        "ramsey/uuid": "^4.1"
     }
 }

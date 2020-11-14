@@ -34,8 +34,12 @@
 				})
 				.then(resp => resp.json())
 				.then(data => {
-					if (data && data.result && data.result !== true){
-						return Promise.reject("Unable to send the registration details")
+					if (data && data.success && data.success === true){
+						localStorage.setItem("perfecty_user_id", data.uuid);
+						setUIUserActive(true);
+					}
+					else {
+						return Promise.reject("Unable to save the registration details")
 					}
 				})
 				.catch(err => {
@@ -86,14 +90,22 @@
 		' 	 <div>' + options.title + '</div>' +
 		'    <input type="checkbox" id="perfecty-push-settings-subscribed"></input>' +
 		'    <label for="perfecty-push-settings-subscribed">' + options.subscribed + '</label>' +
+		'    <div id="perfecty-push-settings-notification"></div>' +
 		'  </div>' +
 		'	 <div id="perfecty-push-settings-open">' +
 		'    <img src="' + svg + '" alt="Settings" width="30"/>' +
 		'  </div>' +
 		'</div>';
 		document.body.insertAdjacentHTML('beforeend', settingsControl);
+
 		const subscribedControl = document.getElementById('perfecty-push-settings-subscribed');
-		subscribedControl.checked =  window.Notification.permission == 'granted';
+		subscribedControl.checked = localStorage.getItem("perfecty_is_user_active") === 'yes';
+	}
+
+	function setUIUserActive(isActive) {
+		const subscribedControl = document.getElementById('perfecty-push-settings-subscribed');
+		subscribedControl.checked = isActive;
+		localStorage.setItem('perfecty_is_user_active', isActive ? 'yes' : 'no');
 	}
 
 	function showSettingsFormControl() {
@@ -148,7 +160,36 @@
 		}
 		return outputArray;
 	}
-	
+
+	function showMessage(message) {
+		const divMessage = document.getElementById('perfecty-push-settings-notification');
+		divMessage.textContent = message;
+	}
+
+	function setUserActive(nonce, siteUrl, userId, isActive) {
+		const path = siteUrl + "/wp-json/perfecty-push/v1/user/active?_wpnonce=" + nonce
+		const payload = {
+			user_id: userId,
+			is_active: isActive
+		}
+
+		return fetch(path, {
+			method: 'put',
+			headers: {
+				'Content-type': 'application/json'
+			},
+			body: JSON.stringify(payload)
+		})
+		.then(resp => resp.json())
+		.then(data => {
+			if (data && data.success && data.success === true){
+				return true;
+			} else {
+				return false;
+			}
+		});
+	}
+
 	async function perfectyStart(options) {
 		if (checkFeatures()) {
 			// Draw dialog
@@ -190,9 +231,30 @@
 				const checked = event.target.checked;
 				if (checked == true && permission === 'default') {
 					showDialogControl();
-					// Subscribe
+				} else if (checked === true && permission === 'denied') {
+					showMessage("You need to allow notifications for this website");
+				} else if (checked === true && permission === 'granted') {
+					// Activate the subscription
+					const userId = localStorage.getItem("perfecty_user_id");
+					setUserActive(options.nonce, options.siteUrl, userId, true)
+					.then((success) => {
+						if (success === true) {
+							setUIUserActive(true);
+						} else {
+							showMessage("Could not change the preference, try again");
+						}
+					})
 				} else {
-					// Unsubscribe
+					// Deactivate the subscription
+					const userId = localStorage.getItem("perfecty_user_id");
+					setUserActive(options.nonce, options.siteUrl, userId, false)
+					.then((success) => {
+						if (success === true) {
+							setUIUserActive(false);
+						} else {
+							showMessage("Could not change the preference, try again");
+						}
+					});
 				}
 			}
 		} else {
