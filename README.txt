@@ -1,4 +1,4 @@
-=== Plugin Name ===
+=== Perfecty Push Notifications ===
 Contributors: rwngallego
 Donate link: https://github.com/rwngallego
 Tags: web push, push api, push notifications
@@ -8,54 +8,39 @@ Stable tag: 4.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Sef-hosted, Open Source and powerful Push Notification server to send thousands of notifications from your own server for free!
+Sef-hosted Push Notifications using your own server for free!
 
 == Description ==
 
-Perfecty Push is an open source project that allows you to send thousands of push notifications
-directly from your own server. It also scales well, you can start from you local installation or move to a dedicated instance that you own.
+Perfecty Push is an Open Source project that allows you to send push notifications
+directly from your own server. No hidden fees, no third-party dependencies and you
+own your data.
 
 Advantages:
 
-- Open source and self-hosted
-- Send thousands of notifications concurrently
-- No third party dependencies when self-hosted
+- Open Source and self-hosted
+- No third-party dependencies when self-hosted
 - Offline browser notifications through [Push API](https://developer.mozilla.org/en-US/docs/Web/API/Push_API) (Safari is not supported yet)
 - You retain and own the user authorization tokens
-- Support offline browser notifications
-- Multiple installation options: self-hosted or dedicated instance
+
+Requirements:
+- PHP 7.1+
+- The gmp extension.
+
+Note: In the roadmap we plan to support to PHP 7.2+, so the gmp extension will be optional
+as PHP 7.2+ is enough.
 
 == Installation ==
 
 ## Perfecty Push Server installation
 
-You have multiple choices, feel free to use the one that best suite you:
+1. Download the plugin
 
-### Self hosted in the same server
+2. Install it and activate it
 
-You need to install perfecty-push server in the same server as your wordpress site runs:
+3. Go to the `Perfecty Push > Dashboard` section and configure it
 
-1. Download the Push Server executable
-
-2. Make it executable
-
-3. Run it
-
-The plugin will automatically detect the push server.
-
-### Self hosted as a separate server
-
-You can have a dedicated instance of the Perfecty Push server and connect it using the plugin.
-
-1. Install the Push server in a separate machine
-
-2. Ensure you have internal connectivity
-
-3. Configure the plugin
-
-The main advantage of this setup is that your website and push server don't share the same
-computer resources. When your website receives high traffic you would prefer to
-have a consistent page load even when you send thousands of notifications at the same time.
+4. You're ready to start sending notifications!
 
 == Screenshots ==
 

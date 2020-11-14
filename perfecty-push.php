@@ -13,9 +13,9 @@
  * @package           Perfecty_Push
  *
  * @wordpress-plugin
- * Plugin Name:       Perfecty Web Push Notifications
+ * Plugin Name:       Perfecty Push Notifications
  * Plugin URI:        https://perfecty.co/push-server/wp/
- * Description:       Sef-hosted, Open Source and powerful <strong>Web Push Notifications</strong> engine to send <strong>thousands</strong> of notifications <strong>from your own server for free!</strong>
+ * Description:       Sef-hosted, Open Source and powerful <strong>Web Push Notifications</strong> plugin to send push notifications <strong>from your own server for free!</strong>
  * Version:           1.0.0
  * Author:            Rowinson Gallego
  * Author URI:        https://github.com/rwngallego

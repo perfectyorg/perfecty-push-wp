@@ -1,4 +1,4 @@
-/**
- * All of the CSS for your admin-specific functionality should be
- * included in this file.
- */
+.perfecty-items-list {
+  list-style: circle;
+  list-style-position: inside;
+}
