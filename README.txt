@@ -42,6 +42,22 @@ as PHP 7.2+ is enough.
 
 4. You're ready to start sending notifications!
 
+== Development ==
+
+In a fresh installation you need:
+
+```
+wp core install --url=localhost --title="Perfecty WP" --admin_user=admin --admin_password=admin --admin_email=info@perfecty.co --allow-root
+wp plugin update --all --allow-root
+```
+
+Run the unit tests:
+
+```
+./bin/install-wp-tests.sh $WORDPRESS_DB_NAME $WORDPRESS_DB_USER $WORDPRESS_DB_PASSWORD $WORDPRESS_DB_HOST latest true
+vendor/bin/phpunit
+```
+
 == Screenshots ==
 
 1. This screen shot description corresponds to screenshot-1.(png|jpg|jpeg|gif). Note that the screenshot is taken from
