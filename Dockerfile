@@ -1,7 +1,7 @@
 FROM wordpress:5.2.3-php7.2-apache
 
 RUN apt-get update
-RUN apt-get install -y vim subversion mariadb-client
+RUN apt-get install -y vim subversion mariadb-client wget
 RUN apt-get install -y libgmp-dev \
   && docker-php-ext-configure gmp \
 	&& docker-php-ext-install gmp
@@ -16,6 +16,6 @@ RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli
   && chmod +x wp-cli.phar \
   && mv wp-cli.phar /usr/local/bin/wp
 
-RUN curl -O https://phar.phpunit.de/phpunit-5.7.phar \
+RUN wget https://phar.phpunit.de/phpunit-5.7.phar \
   && chmod +x phpunit-5.7.phar \
   && mv phpunit-5.7.phar /usr/local/bin/phpunit

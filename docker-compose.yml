@@ -7,6 +7,8 @@ services:
     restart: always
     ports:
       - 80:80
+    networks:
+      - perfecty-net
     volumes:
       - .:/var/www/html/wp-content/plugins/perfecty-push-wp/
     environment:
@@ -22,9 +24,15 @@ services:
       - ./data:/var/lib/mysql
     ports:
       - 3306:3306
+    networks:
+      - perfecty-net
     restart: always
     environment:
       MYSQL_DATABASE: exampledb
       MYSQL_USER: exampleuser
       MYSQL_PASSWORD: examplepass
       MYSQL_RANDOM_ROOT_PASSWORD: '1'
+
+networks:
+  perfecty-net:
+    name: perfecty-net

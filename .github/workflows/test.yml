@@ -1,0 +1,55 @@
+on:
+  push:
+    branches:
+      - master
+
+name: CI
+
+jobs:
+  test:
+    name: Run the PHP unit tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Create the base image
+      env:
+        IMAGE_TAG: custom-wordpress:5.2.3-php7.2-apache
+      run: |
+        docker build -t $IMAGE_TAG .
+
+    - name: Start all the services
+      run: docker-compose up -d
+
+    - name: Wait 30s for the services to be up and running
+      run: sleep 30
+
+    - name: Initialize wordpress and update the plugins
+      run: ./bin/run.sh wordpress
+
+    - name: Install the composer dependencies
+      env:
+        CMD: |
+          cd /var/www/html/wp-content/plugins/perfecty-push-wp &&
+          composer install
+      run: |
+        docker-compose exec -T wordpress /bin/bash -l -c "$CMD"
+
+    - name: Configure the unit tests
+      env:
+        CMD: |
+          cd /var/www/html/wp-content/plugins/perfecty-push-wp &&
+          ./bin/install-wp-tests.sh $WORDPRESS_DB_NAME $WORDPRESS_DB_USER $WORDPRESS_DB_PASSWORD $WORDPRESS_DB_HOST latest true
+      run: |
+        docker-compose exec -T wordpress /bin/bash -l -c "$CMD"
+
+    - name: Run the unit tests
+      env:
+        CMD: |
+          cd /var/www/html/wp-content/plugins/perfecty-push-wp &&
+          phpunit
+      run: |
+        docker-compose exec -T wordpress /bin/bash -l -c "$CMD"
