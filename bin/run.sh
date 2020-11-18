@@ -4,7 +4,7 @@ if [ $# -lt 1 ]; then
   echo "Run utilities"
   echo "----------------------"
 	echo "  usage: $0 <command> [options]"
-  echo "    <command> can be any of: setup_all, wordpress, composer, phpunit, test"
+  echo "    <command> can be any of: console, setup_all, wordpress, composer, phpunit, test"
   echo " .  [options]: --verbose"
 	exit 1
 fi
@@ -32,6 +32,10 @@ setup_all() {
   phpunit
 }
 
+console() {
+  docker-compose exec wordpress /bin/bash
+}
+
 wordpress() {
   CMD='wp core install --url=localhost --title="Perfecty WP" --admin_user=admin --admin_password=admin --admin_email=info@perfecty.co --allow-root &&
        wp plugin update --all --allow-root'
@@ -56,11 +60,11 @@ test() {
 #----------------------------------------------
 
 case $COMMAND in
-  "setup_all" | "wordpress" | "composer" | "composer" | "phpunit" | "test")
+  "setup_all" | "wordpress" | "composer" | "composer" | "phpunit" | "test" | "console")
     if [[ $VERBOSE == '--verbose' ]]; then
       set -ex
     else
-      echo "Executing command..."
+      echo "Executing command $COMMAND..."
     fi
 
     eval $COMMAND

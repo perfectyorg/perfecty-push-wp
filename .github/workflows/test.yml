@@ -28,28 +28,13 @@ jobs:
       run: sleep 30
 
     - name: Initialize wordpress and update the plugins
-      run: ./bin/run.sh wordpress
+      run: make wordpress
 
     - name: Install the composer dependencies
-      env:
-        CMD: |
-          cd /var/www/html/wp-content/plugins/perfecty-push-wp &&
-          composer install
-      run: |
-        docker-compose exec -T wordpress /bin/bash -l -c "$CMD"
+      run: make composer
 
     - name: Configure the unit tests
-      env:
-        CMD: |
-          cd /var/www/html/wp-content/plugins/perfecty-push-wp &&
-          ./bin/install-wp-tests.sh $WORDPRESS_DB_NAME $WORDPRESS_DB_USER $WORDPRESS_DB_PASSWORD $WORDPRESS_DB_HOST latest true
-      run: |
-        docker-compose exec -T wordpress /bin/bash -l -c "$CMD"
+      run: make phpunit
 
     - name: Run the unit tests
-      env:
-        CMD: |
-          cd /var/www/html/wp-content/plugins/perfecty-push-wp &&
-          phpunit
-      run: |
-        docker-compose exec -T wordpress /bin/bash -l -c "$CMD"
+      run: make test

@@ -4,7 +4,7 @@
 
 Sef-hosted Push Notifications using your own server for free!
 
-# Installation
+## Installation
 
 Create the docker image:
 
@@ -12,16 +12,24 @@ Create the docker image:
 docker build -t custom-wordpress:5.2.3-php7.2-apache .
 ```
 
-In a fresh installation you need:
+Start all the services and setup the environment:
 
 ```
-wp core install --url=localhost --title="Perfecty WP" --admin_user=admin --admin_password=admin --admin_email=info@perfecty.co --allow-root
-wp plugin update --all --allow-root
+docker-compose up -d
+make setup_all
 ```
+
+## Available commands
+
+```
+#remote console:
+make console
+```
+
+## Testing
 
 Run the unit tests:
 
 ```
-./bin/install-wp-tests.sh $WORDPRESS_DB_NAME $WORDPRESS_DB_USER $WORDPRESS_DB_PASSWORD $WORDPRESS_DB_HOST latest true
-phpunit
+make test
 ```
