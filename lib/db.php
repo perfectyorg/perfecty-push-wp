@@ -44,7 +44,7 @@ class Perfecty_Push_Lib_Db {
     $sql = "CREATE TABLE IF NOT EXISTS " . Perfecty_Push_Lib_Db::subscriptions_table() . " (
           id int(11) NOT NULL AUTO_INCREMENT,
           uuid CHAR(36) NOT NULL,
-          remote_ip VARCHAR(20) DEFAULT '',
+          remote_ip VARCHAR(46) DEFAULT '',
           endpoint VARCHAR(500) NOT NULL UNIQUE,
           key_auth VARCHAR(100) NOT NULL UNIQUE,
           key_p256dh VARCHAR(100) NOT NULL UNIQUE,
