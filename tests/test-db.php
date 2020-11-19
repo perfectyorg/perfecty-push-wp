@@ -74,7 +74,49 @@ class DbTest extends WP_UnitTestCase {
 	 * Test that the store_subscription returns false on errors
 	 */
 	public function test_user_creation_error_returns_false() {
-		$res = Perfecty_Push_Lib_Db::store_subscription("my_endpoint_url", "my_key_auth", "my_p256dh_key", "this_is_a_really_long_string_more_than_46_characters");
+		$res = Perfecty_Push_Lib_Db::store_subscription("my_endpoint_url", "my_key_auth", "my_p256dh_key", "this_is_a_really_long_string_with_more_than_46_characters");
+		$this->assertEquals(false, $res);
+	}
+
+	/**
+	 * Test total subscriptions
+	 */
+	public function test_total_subscriptions() {
+		$initial = Perfecty_Push_Lib_Db::total_subscriptions();
+		Perfecty_Push_Lib_Db::store_subscription("my_endpoint_url", "my_key_auth", "my_p256dh_key", "127.0.0.1");
+		$current = Perfecty_Push_Lib_Db::total_subscriptions();
+		$this->assertEquals($current - $initial, 1);
+	}
+
+	/** 
+	 * Test create notification
+	 */
+	public function test_user_create_notification() {
+    global $wpdb;
+
+		Perfecty_Push_Lib_Db::create_notification("my_payload", Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_SCHEDULED, 35, 20);
+    $sql = "SELECT * FROM " . $wpdb->prefix . "perfecty_push_notifications";
+		$result = $wpdb->get_row($sql, ARRAY_A);
+
+		$expected = [
+			'id' => 1,
+			'payload' => 'my_payload',
+			'total' => 35,
+			'succeeded' => 0,
+			'last_cursor' => 0,
+			'batch_size' => 20,
+			'status' => 'scheduled',
+			'taken' => 0
+		];
+		$this->assertNotEmpty($result);
+		$this->assertArraySubset($expected, $result);
+	}
+
+	/**
+	 * Test that the create notification returns false on errors
+	 */
+	public function test_notification_creation_error_returns_false() {
+		$res = Perfecty_Push_Lib_Db::create_notification("my_payload", "this_is_a_very_long_status", 35, 20);
 		$this->assertEquals(false, $res);
 	}
 }
