@@ -48,17 +48,18 @@ class Perfecty_Push_Subscribers {
       // store the subscription in the DB
       $result = Perfecty_Push_Lib_Db::store_subscription($endpoint, $key_auth, $key_p256dh, $remote_ip);
 
-      if (is_array($result)) {
-        // The subscription was correct
-        $response = [
-          'success' => true,
-          'uuid' => $result['uuid']
-        ];
-        return (object) $response;
-      }
-      else{
+      if ($result == false) {
         // Could not subscribe
         return new WP_Error("failed_subscription", "Could not subscribe the user", array('status' => 500));
+      }
+      else {
+        // The subscription was correct
+        $subscription = Perfecty_Push_Lib_Db::get_subscription($result);
+        $response = [
+          'success' => true,
+          'uuid' => $subscription->uuid
+        ];
+        return (object) $response;
       }
     } else {
       log_error($validation);

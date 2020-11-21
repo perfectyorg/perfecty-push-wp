@@ -7,8 +7,8 @@ use Ramsey\Uuid\Uuid;
  */
 class Perfecty_Push_Lib_Db {
   
-  private static $allowed_subscriptions_fields = "endpoint,key_auth,key_p256dh";
-  private static $allowed_notifications_fields = "id,payload,total,succeeded,last_cursor,batch_size,status,taken";
+  private static $allowed_subscriptions_fields = "id,uuid,endpoint,key_auth,key_p256dh,remote_ip,is_active";
+  private static $allowed_notifications_fields = "id,payload,total,succeeded,last_cursor,batch_size,status,is_taken";
 
   public const NOTIFICATIONS_STATUS_SCHEDULED = "scheduled";
   public const NOTIFICATIONS_STATUS_FAILED = "failed";
@@ -64,7 +64,7 @@ class Perfecty_Push_Lib_Db {
           last_cursor INT(11) DEFAULT 0 NOT NULL,
           batch_size INT(11) DEFAULT 0 NOT NULL,
           status VARCHAR(15) DEFAULT 'scheduled' NOT NULL,
-          taken TINYINT(1) DEFAULT 0 NOT NULL,
+          is_taken TINYINT(1) DEFAULT 0 NOT NULL,
           creation_time datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
           PRIMARY KEY  (id)
         ) $charset;";
@@ -80,6 +80,8 @@ class Perfecty_Push_Lib_Db {
    * @param $key_auth
    * @param $key_p256dh
    * @param $remote_ip
+   * 
+   * @return $uuid The id for the created subscription or false
    */
   public static function store_subscription($endpoint, $key_auth, $key_p256dh, $remote_ip) {
     global $wpdb;
@@ -94,11 +96,12 @@ class Perfecty_Push_Lib_Db {
     ]);
 
     if ($result === false) {
-        error_log('DB error [last_error:' . $wpdb->last_error . ', last_query: ' . $wpdb->last_query . ']');
+        error_log("Could not create the subscription: $uuid");
         return false;
     }
 
-    return ['uuid' => $uuid];
+    $inserted_id = $wpdb->insert_id;
+    return $inserted_id;
   }
 
   /**
@@ -111,6 +114,59 @@ class Perfecty_Push_Lib_Db {
 
     $total = $wpdb->get_var( "SELECT COUNT(*) FROM " . self::subscriptions_table() );
     return $total != null ? $total : 0;
+  }
+
+  /**
+   * Changes the is_active property for the subcription
+   * 
+   * @param $subscription_id string UUID
+   * @param $is_active bool True or false
+   * 
+   * @return int|bool Number of rows updated or false
+   */
+  public static function set_subscription_active($subscription_id, $is_active) {
+    global $wpdb;
+
+    $result = $wpdb->update(
+      self::subscriptions_table(),
+      ["is_active" => $is_active],
+      ["id" => $subscription_id]
+    );
+
+    return $result;
+  }
+
+  /**
+   * Get the subscription by id
+   * 
+   * @param $subscription_id int Subscription id
+   * @return object|null Subscription or null
+   */
+  public static function get_subscription($subscription_id) {
+    global $wpdb;
+
+    $sql = $wpdb->prepare("SELECT " . self::$allowed_subscriptions_fields .
+      " FROM " . self::subscriptions_table() . " WHERE id=%d",
+      $subscription_id);
+    $result = $wpdb->get_row($sql);
+    return $result;
+  }
+
+  /**
+   * Get the subscriptions
+   * 
+   * @param $offset int Offset
+   * @param $size int Limit
+   * @return array The result with the subscriptions
+   */
+  public static function get_subscriptions($offset, $size) {
+    global $wpdb;
+
+    $sql = $wpdb->prepare("SELECT " . self::$allowed_subscriptions_fields .
+      " FROM " . self::subscriptions_table() .
+      " LIMIT %d OFFSET %d", $size, $offset);
+    $results = $wpdb->get_results($sql);
+    return $results;
   }
 
   /**
@@ -147,7 +203,7 @@ class Perfecty_Push_Lib_Db {
    * Get the notification by id
    * 
    * @param $notification_id int Notification id
-   * @return object|null Notification
+   * @return object|null Notification or null
    */
   public static function get_notification($notification_id) {
     global $wpdb;
@@ -180,46 +236,6 @@ class Perfecty_Push_Lib_Db {
   }
 
   /**
-   * Changes the is_active property for the subcription
-   * 
-   * @param $subscription_id string UUID
-   * @param $is_active bool True or false
-   * 
-   * @return int|bool Number of rows updated or false
-   */
-  public static function set_subscription_active($subscription_id, $is_active) {
-    global $wpdb;
-
-    $result = $wpdb->update(
-      self::subscriptions_table(),
-      ["is_active" => $is_active],
-      ["uuid" => $subscription_id]
-    );
-
-    return $result;
-  }
-
-  /**
-   * Take or untake the notification
-   * 
-   * @param $notification_id int Notification id
-   * @param $take int 0 for false, otherwise true
-   * @return int|bool Number of rows updated or false
-   */
-  public static function take_untake_notification($notification_id, $take) {
-    global $wpdb;
-
-    $result = $wpdb->update(
-      self::notifications_table(),
-      ["taken" => $take],
-      ["id" => $notification_id]
-    );
-
-    return $result;
-  }
-
-
-  /**
    * Update the notification
    * 
    * @param $notification object Notification object
@@ -231,9 +247,13 @@ class Perfecty_Push_Lib_Db {
     $result = $wpdb->update(
       self::notifications_table(),
       [
-        "last_cursor" => $notification->last_cursor,
+        "payload" => $notification->payload,
+        "total" => $notification->total,
         "succeeded" => $notification->succeeded,
-        "taken" => $notification->taken
+        "last_cursor" => $notification->last_cursor,
+        "batch_size" => $notification->batch_size,
+        "status" => $notification->status,
+        "is_taken" => $notification->is_taken
       ],
       ["id" => $notification->id]
     );
@@ -262,13 +282,57 @@ class Perfecty_Push_Lib_Db {
   }
 
   /**
+   * Complete the notification and untake it
+   * 
+   * @param $notification_id int Notification id
+   * @return int|bool Number of rows updated or false
+   */
+  public static function mark_notification_completed_untake($notification_id) {
+    global $wpdb;
+
+    $result = $wpdb->update(
+      self::notifications_table(),
+      [
+        "status" => self::NOTIFICATIONS_STATUS_COMPLETED,
+        "is_taken" => 0
+      ],
+      ["id" => $notification_id]
+    );
+
+    return $result;
+  }
+
+  /*****************************************************************/
+  /* Private */
+  /*****************************************************************/
+
+  /**
+   * Take or untake the notification
+   * 
+   * @param $notification_id int Notification id
+   * @param $take int 0 for false, otherwise true
+   * @return int|bool Number of rows updated or false
+   */
+  private static function take_untake_notification($notification_id, $take) {
+    global $wpdb;
+
+    $result = $wpdb->update(
+      self::notifications_table(),
+      ["is_taken" => $take],
+      ["id" => $notification_id]
+    );
+
+    return $result;
+  }
+
+  /**
    * Mark the notification as the specified status
    * 
    * @param $notification_id int Notification id
    * @param $status string one of the NOTIFICATION_STATUS_*
    * @return int|bool Number of rows updated or false
    */
-  public static function mark_notification($notification_id, $status) {
+  private static function mark_notification($notification_id, $status) {
     global $wpdb;
 
     $result = $wpdb->update(
@@ -278,43 +342,5 @@ class Perfecty_Push_Lib_Db {
     );
 
     return $result;
-  }
-
-  /**
-   * Complete the notification and untake it
-   * 
-   * @param $notification_id int Notification id
-   * @return int|bool Number of rows updated or false
-   */
-  public static function complete_notification($notification_id) {
-    global $wpdb;
-
-    $result = $wpdb->update(
-      self::notifications_table(),
-      [
-        "status" => self::NOTIFICATIONS_STATUS_COMPLETED,
-        "taken" => 0
-      ],
-      ["id" => $notification_id]
-    );
-
-    return $result;
-  }
-
-  /**
-   * Get the subscriptions
-   * 
-   * @param $offset int Offset
-   * @param $size int Limit
-   * @return array The result with the subscriptions
-   */
-  public static function get_subscriptions($offset, $size) {
-    global $wpdb;
-
-    $sql = $wpdb->prepare("SELECT " . self::$allowed_subscriptions_fields .
-      " FROM " . self::subscriptions_table() .
-      " LIMIT %d OFFSET %d", $size, $offset);
-    $results = $wpdb->get_results($sql);
-    return $results;
   }
 }

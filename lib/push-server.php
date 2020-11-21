@@ -64,7 +64,7 @@ class Perfecty_Push_Lib_Push_Server {
     }
 
     // if it has been taken and was not released, that means a wrong state
-    if ($notification->taken) {
+    if ($notification->is_taken) {
       error_log('Halted, notification taken but not released. ' . print_r($notification, true));
       Perfecty_Push_Lib_Db::mark_notification_failed($notification_id);
       return false;
@@ -76,7 +76,7 @@ class Perfecty_Push_Lib_Push_Server {
     $subscriptions = Perfecty_Push_Lib_Db::get_subscriptions($notification->last_cursor, $notification->batch_size);
 
     if (count($subscriptions) == 0) {
-      $result = Perfecty_Push_Lib_Db::complete_notification($notification_id);
+      $result = Perfecty_Push_Lib_Db::mark_notification_completed_untake($notification_id);
       if (!$result) {
         error_log("Could not mark the notification as completed");
         return false;
@@ -90,7 +90,7 @@ class Perfecty_Push_Lib_Push_Server {
       [$total_batch, $succeeded] = $result;
       $notification->last_cursor += $total_batch;
       $notification->succeeded += $succeeded;
-      $notification->taken = 0;
+      $notification->is_taken = 0;
       $result = Perfecty_Push_Lib_Db::update_notification($notification);
       if (!$result) {
         error_log("Could not update the notification after sending one batch");

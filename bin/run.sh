@@ -4,7 +4,7 @@ if [ $# -lt 1 ]; then
   echo "Run utilities"
   echo "----------------------"
 	echo "  usage: $0 <command> [options]"
-  echo "    <command> can be any of: console, setup_all, wordpress, composer, phpunit, test"
+  echo "    <command> can be any of: up, down, console, setup_all, wordpress, composer, phpunit, test"
   echo " .  [options]: --verbose"
 	exit 1
 fi
@@ -30,6 +30,14 @@ setup_all() {
   wordpress
   composer
   phpunit
+}
+
+up() {
+  docker-compose up -d
+}
+
+down() {
+  docker-compose down
 }
 
 console() {
@@ -60,7 +68,7 @@ test() {
 #----------------------------------------------
 
 case $COMMAND in
-  "setup_all" | "wordpress" | "composer" | "composer" | "phpunit" | "test" | "console")
+  "up" | "down" | "setup_all" | "wordpress" | "composer" | "composer" | "phpunit" | "test" | "console")
     if [[ $VERBOSE == '--verbose' ]]; then
       set -ex
     else
