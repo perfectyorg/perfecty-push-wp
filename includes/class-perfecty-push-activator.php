@@ -40,12 +40,10 @@ class Perfecty_Push_Activator {
 		$options = get_option('perfecty_push', []);
 		if (!$options || (empty($options['vapid_public_key']) && empty($options['vapid_private_key']))){
 			$vapidKeys = Perfecty_Push_Lib_Push_Server::create_vapid_keys();
-			$new_options = [
-				'vapid_public_key' => $vapidKeys['publicKey'],
-				'vapid_private_key' => $vapidKeys['privateKey']
-			];
+			$options['vapid_public_key'] = $vapidKeys['publicKey'];
+			$options['vapid_private_key'] = $vapidKeys['privateKey'];
 
-			if (!update_option('perfecty_push', $new_options)) {
+			if (!update_option('perfecty_push', $options)) {
 				error_log('Could not set the VAPID keys');
 			}
 		}

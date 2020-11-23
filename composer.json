@@ -12,5 +12,8 @@
     "require": {
         "minishlink/web-push": "5.2.5",
         "ramsey/uuid": "^4.1"
+    },
+    "require-dev": {
+        "mockery/mockery": "1.3"
     }
 }

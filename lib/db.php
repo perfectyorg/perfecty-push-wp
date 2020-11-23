@@ -190,8 +190,7 @@ class Perfecty_Push_Lib_Db {
     ]);
 
     if ($result === false) {
-        error_log('Could not create the notification in the DB');
-        error_log('DB error [last_error:' . $wpdb->last_error . ', last_query: ' . $wpdb->last_query . ']');
+        error_log("Could not create the notification: " . print_r($payload, true));
         return $result;
     }
 

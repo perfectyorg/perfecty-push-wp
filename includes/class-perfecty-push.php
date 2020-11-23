@@ -1,5 +1,7 @@
 <?php
 
+use Minishlink\WebPush\WebPush;
+
 /**
  * The file that defines the core plugin class
  *
@@ -77,10 +79,9 @@ class Perfecty_Push {
 		$this->define_constants();
 		$this->load_dependencies();
 		$this->set_locale();
-		$this->load_action_scheduler();
+		$this->load_push_server();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
-
 	}
 
 	/**
@@ -99,10 +100,10 @@ class Perfecty_Push {
 		if (!defined('PERFECTY_PUSH_SERVER_URL')) {
 			define('PERFECTY_PUSH_SERVER_URL', $server_url);
 		}
-		if (!defined('PERFECTY_PUSH_VAPID_PUBLIC_KEY')) {
+		if (!defined('PERFECTY_PUSH_VAPID_PUBLIC_KEY') && $vapid_public_key) {
 			define('PERFECTY_PUSH_VAPID_PUBLIC_KEY', $vapid_public_key);
 		}
-		if (!defined('PERFECTY_PUSH_VAPID_PRIVATE_KEY')) {
+		if (!defined('PERFECTY_PUSH_VAPID_PRIVATE_KEY') && $vapid_private_key) {
 			define('PERFECTY_PUSH_VAPID_PRIVATE_KEY', $vapid_private_key);
 		}
 	}
@@ -156,7 +157,6 @@ class Perfecty_Push {
     require_once plugin_dir_path( dirname( __FILE__ ) ) . 'lib/push-server.php';
 
 		$this->loader = new Perfecty_Push_Loader();
-
 	}
 
 	/**
@@ -177,19 +177,15 @@ class Perfecty_Push {
 	}
 
 	/**
-	 * Load the action scheduler subsystem. Requiring the dependency
-	 * will enable the admin UI and also run the migrations for the v3 version.
-	 * 
-	 * TODO: For the moment we are not running the v3 migration, if the user
-	 * is just trying this plugin out, we don't want to migrate v2 data.
-	 * Ideally we should not include it as a library but as a plugin dependency.
+	 * Load the required dependencies for the web push server.
 	 *
 	 * @since    1.0.0
 	 * @access   private
 	 */
-	private function load_action_scheduler() {
-		$this->loader->add_filter( 'action_scheduler_migration_dependencies_met', null, '__return_false' );
-		# TODO: Implement according to: https://actionscheduler.org/usage/
+	private function load_push_server() {
+		$webpush = new WebPush();
+		$vapid_generator = array('Minishlink\WebPush\VAPID', 'createVapidKeys');
+		Perfecty_Push_Lib_Push_Server::bootstrap($webpush, $vapid_generator);
 	}
 	
 	/**

@@ -1,23 +1,39 @@
 <?php
 
-use Minishlink\WebPush\WebPush;
 use Minishlink\WebPush\Subscription;
-use Minishlink\WebPush\VAPID;
 
 /***
- * Perfecty Push server
+ * Perfecty Push server.
+ * 
+ * Important: Before using any method you need to bootstrap the lib.
  */
 class Perfecty_Push_Lib_Push_Server {
   
   private const DEFAULT_BATCH_SIZE = 30;
+  private static $webpush;
+  private static $vapid_generator;
 
+  /**
+   * Bootstraps the Push Server.
+   * @param $webpush object Web push server
+   * @param $vapid_generator Callable Method that generates the vapid keys
+   */
+  public static function bootstrap($webpush, $vapid_generator) {
+    if (!is_callable($vapid_generator)){ 
+      error_log("$vapid_generator must be a callable function");
+    }
+
+    self::$webpush = $webpush;
+    self::$vapid_generator = $vapid_generator;
+  }
   /**
    * Creates the VAPI keys
    * 
    * @return array an array with the VAPID keys
    */
   public static function create_vapid_keys() {
-    return VAPID::createVapidKeys();
+    $vapid_keys = call_user_func(self::$vapid_generator);
+    return $vapid_keys;
   }
 
   /**
@@ -114,7 +130,8 @@ class Perfecty_Push_Lib_Push_Server {
    * @return [$total, $succeeded] | string Total/succeeded messages or Error message
    */
   public static function send_notification($payload, $subscriptions) {
-    if (!PERFECTY_PUSH_VAPID_PUBLIC_KEY or !PERFECTY_PUSH_VAPID_PRIVATE_KEY) {
+    if (!defined('PERFECTY_PUSH_VAPID_PUBLIC_KEY') || !defined('PERFECTY_PUSH_VAPID_PRIVATE_KEY')
+        || !PERFECTY_PUSH_VAPID_PUBLIC_KEY || !PERFECTY_PUSH_VAPID_PRIVATE_KEY) {
       error_log("No VAPID Keys were configured");
       return "No VAPID keys are configured";
     }
@@ -129,8 +146,7 @@ class Perfecty_Push_Lib_Push_Server {
         'privateKey' => PERFECTY_PUSH_VAPID_PRIVATE_KEY
       ]
     ];
-    $webPush = new WebPush($auth);
-    $webPush->setReuseVAPIDHeaders(true);
+    self::$webpush->setReuseVAPIDHeaders(true);
 
     foreach ($subscriptions as $item){
       $push_subscription = new Subscription(
@@ -139,12 +155,12 @@ class Perfecty_Push_Lib_Push_Server {
         $item->key_auth
       );
 
-      $webPush->sendNotification($push_subscription, $payload);
+      self::$webpush->sendNotification($push_subscription, $payload);
     }
 
     $total = count($subscriptions);
     $succeeded = 0;
-    foreach ($webPush->flush() as $result) {
+    foreach (self::$webpush->flush() as $result) {
       if ($result->isSuccess()) {
         $succeeded++;
       } else {
