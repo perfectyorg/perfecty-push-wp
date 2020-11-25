@@ -275,11 +275,13 @@ class Perfecty_Push_Admin {
 
         // send notification
         $result = Perfecty_Push_Lib_Push_Server::schedule_broadcast_async($payload);
-        if ($result === true) {
-          $message = "The notification job has started";
-          $item = $default;
+        if ($result === false) {
+          $notice = "Could not schedule the notification, check the logs";
         } else {
-          $notice = "Could not send the message, error: $result";
+          $message = "The notification job has started";
+
+          // we clear the form
+          $item = $default;
         }
       } else {
         $notice = $validation_result;

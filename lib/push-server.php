@@ -40,6 +40,7 @@ class Perfecty_Push_Lib_Push_Server {
    * Schedules an async notification to all the users
    * 
    * @param $payload array|string Payload to be sent, json encoded or array
+   * @return int $notification_id if success, false otherwise
    */
   public static function schedule_broadcast_async($payload) {
     if (!is_string($payload)) {
@@ -50,18 +51,20 @@ class Perfecty_Push_Lib_Push_Server {
     $use_action_scheduler = isset($options['use_action_scheduler']) ? esc_attr($options['use_action_scheduler']) : false;
     $batch_size = isset($options['batch_size']) ? esc_attr($options['batch_size']) : self::DEFAULT_BATCH_SIZE;
 
-    if (is_plugin_active('action-scheduler') || $use_action_scheduler === true) {
+    if (is_plugin_active('action-scheduler') || $use_action_scheduler) {
       // Execute using action scheduler: https://actionscheduler.org/usage/
-      return "Action scheduler not implemented";
+      error_log("Action scheduler not implemented");
+      return false;
     } else {
       // Fallback to wp-cron
       $total_subscriptions = Perfecty_Push_Lib_Db::total_subscriptions();
       $notification_id = Perfecty_Push_Lib_Db::create_notification($payload, Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_SCHEDULED, $total_subscriptions, $batch_size);
       if (!$notification_id) {
-        return "Could not schedule the notification.";
+        error_log("Could not schedule the notification.");
+        return false;
       }
-      wp_schedule_single_event(time(), 'perfecty_push_broadcast_notification_event', array($notification_id));
-      return true;
+      wp_schedule_single_event(time(), 'perfecty_push_broadcast_notification_event', [$notification_id]);
+      return $notification_id;
     }
   }
 
@@ -81,7 +84,7 @@ class Perfecty_Push_Lib_Push_Server {
 
     // if it has been taken and was not released, that means a wrong state
     if ($notification->is_taken) {
-      error_log('Halted, notification taken but not released. ' . print_r($notification, true));
+      error_log('Halted, notification taken but not released, notification_id: ' . $notification_id);
       Perfecty_Push_Lib_Db::mark_notification_failed($notification_id);
       return false;
     }
@@ -94,7 +97,7 @@ class Perfecty_Push_Lib_Push_Server {
     if (count($subscriptions) == 0) {
       $result = Perfecty_Push_Lib_Db::mark_notification_completed_untake($notification_id);
       if (!$result) {
-        error_log("Could not mark the notification as completed");
+        error_log("Could not mark the notification $notification_id as completed");
         return false;
       }
       return true;
@@ -113,7 +116,7 @@ class Perfecty_Push_Lib_Push_Server {
         return false;
       }
     } else {
-      error_log("Error executing one batch. $result. " . print_r($notification, true));
+      error_log("Error executing one batch, result: $result, notification_id: " . $notification_id);
       return false;
     }
 
