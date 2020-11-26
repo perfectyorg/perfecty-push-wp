@@ -122,6 +122,22 @@ class DbTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test get subscription by uuid
+	 */
+	public function test_get_subscription_by_uuid() {
+		$id = Perfecty_Push_Lib_Db::store_subscription("my_endpoint_url", "my_key_auth", "my_p256dh_key", "127.0.0.1");
+		$expected = [
+			'endpoint' => 'my_endpoint_url',
+			'key_auth' => 'my_key_auth',
+			'key_p256dh' => 'my_p256dh_key',
+			'remote_ip' => '127.0.0.1'
+		];
+		$subscription_db = Perfecty_Push_Lib_Db::get_subscription($id);
+
+		$subscription = Perfecty_Push_Lib_Db::get_subscription_by_uuid($subscription_db->uuid);
+		$this->assertArraySubset($expected, (array)$subscription);
+	}
+	/**
 	 * Test get subscriptions
 	 */
 	public function test_get_subscriptions() {

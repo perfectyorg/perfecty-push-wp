@@ -5,6 +5,9 @@
  * @package Perfecty_Push_Wp
  */
 
+class InvalidNonceException extends Exception {
+}
+
 $_tests_dir = getenv( 'WP_TESTS_DIR' );
 
 if ( ! $_tests_dir ) {

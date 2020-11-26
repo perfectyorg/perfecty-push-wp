@@ -119,7 +119,7 @@ class Perfecty_Push_Lib_Db {
   /**
    * Changes the is_active property for the subcription
    * 
-   * @param $subscription_id string UUID
+   * @param $subscription_id string id
    * @param $is_active bool True or false
    * 
    * @return int|bool Number of rows updated or false
@@ -148,6 +148,22 @@ class Perfecty_Push_Lib_Db {
     $sql = $wpdb->prepare("SELECT " . self::$allowed_subscriptions_fields .
       " FROM " . self::subscriptions_table() . " WHERE id=%d",
       $subscription_id);
+    $result = $wpdb->get_row($sql);
+    return $result;
+  }
+
+  /**
+   * Get the subscription by uuid
+   * 
+   * @param $uuid string Subscription uuid
+   * @return object|null Subscription or null
+   */
+  public static function get_subscription_by_uuid($uuid) {
+    global $wpdb;
+
+    $sql = $wpdb->prepare("SELECT " . self::$allowed_subscriptions_fields .
+      " FROM " . self::subscriptions_table() . " WHERE uuid=%d",
+      $uuid);
     $result = $wpdb->get_row($sql);
     return $result;
   }
