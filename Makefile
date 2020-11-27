@@ -9,7 +9,7 @@ default:
 	@echo "  wordpress: Setup wordpress and plugins"
 	@echo "  composer: Install all the composer dependencies"
 	@echo "  phpunit: Setup Wordpress as a testing environment for phpunit"
-	@echo "  setup_all: Runs wordpress, composer and phpunit"
+	@echo "  setup: Runs wordpress, composer and phpunit"
 
 up:
 	@./bin/run.sh up	
@@ -33,5 +33,5 @@ composer:
 phpunit:
 	@./bin/run.sh phpunit
 
-setup_all:
-	@./bin/run.sh setup_all
+setup:
+	@./bin/run.sh setup

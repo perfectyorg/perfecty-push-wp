@@ -85,12 +85,12 @@ class Perfecty_Push_Subscribers {
 
     $validation = $this->validate_set_user_active($is_active, $user_id);
     if ($validation !== true) {
-      return new WP_Error("bad request", $validation, array('status' => 400));
+      return new WP_Error("bad_request", $validation, array('status' => 400));
     }
 
     $subscription = Perfecty_Push_Lib_Db::get_subscription_by_uuid($user_id);
     if ($subscription == null) {
-      return new WP_Error("bad request", "user id not found", ['status' => 404]);
+      return new WP_Error("bad_request", "user id not found", ['status' => 404]);
     }
     $result = Perfecty_Push_Lib_Db::set_subscription_active($subscription->id, $is_active);
 
