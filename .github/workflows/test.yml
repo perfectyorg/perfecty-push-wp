@@ -3,38 +3,65 @@ on:
     branches:
       - master
 
-name: CI
+name: Automated tests
 
 jobs:
   test:
-    name: Run the PHP unit tests
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
+    runs-on: ${{ matrix.operating-system }}
+    strategy:
+      matrix:
+        operating-system: [ubuntu-18.04]
+        php-versions: ['7.2']
+
+    name: PHP ${{ matrix.php-versions }} Test on ${{ matrix.operating-system }}
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: false
+          MYSQL_ROOT_PASSWORD: password
+          MYSQL_DATABASE: wordpress
+        ports:
+          - 3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
     - name: Checkout
       uses: actions/checkout@v2
 
-    - name: Create the base image
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php-versions }}
+        tools: php-cs-fixer, phpunit:5.7.27, composer
       env:
-        IMAGE_TAG: custom-wordpress:5.2.3-php7.2-apache
-      run: |
-        docker build -t $IMAGE_TAG .
+        fail-fast: true
 
-    - name: Start all the services
-      run: docker-compose up -d
+    - name: Start mysql service
+      run: sudo /etc/init.d/mysql start
 
-    - name: Wait 30s for the services to be up and running
-      run: sleep 30
+    - name: Setup Wordpress over phpunit
+      run: bash bin/install-wp-tests.sh wordpress root password 127.0.0.1:${{ job.services.mysql.ports[3306] }} latest true
 
-    - name: Initialize wordpress and update the plugins
-      run: make wordpress
+    - name: Get composer cache directory
+      id: composer-cache
+      run: echo "::set-output name=dir::$(composer config cache-files-dir)"
 
-    - name: Install the composer dependencies
-      run: make composer
+    - name: Setup problem matchers for PHPUnit
+      run: echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
 
-    - name: Configure the unit tests
-      run: make phpunit
+    - name: Cache composer dependencies
+      uses: actions/cache@v2
+      with:
+        path: ${{ steps.composer-cache.outputs.dir }}
+        key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+        restore-keys: ${{ runner.os }}-composer-
 
-    - name: Run the unit tests
-      run: make test
+    - name: Install Composer dependencies
+      run: composer install --no-progress --prefer-dist --optimize-autoloader
+
+    # - name: Update comparator 
+    #   run: composer global require "phpunit/phpunit=5.7.0 && composer update sebastian/comparator
+
+    - name: Run the tests
+      run: phpunit --debug

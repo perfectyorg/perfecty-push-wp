@@ -77,7 +77,6 @@ class PushServerTest extends WP_UnitTestCase {
     $mocked_server = Mockery::mock('webpush');
     $mocked_server
     ->shouldReceive([
-      'setReuseVAPIDHeaders' => true,
       'sendNotification' => true,
       'flush' => [$mocked_server_result]
     ])
@@ -109,7 +108,6 @@ class PushServerTest extends WP_UnitTestCase {
     $mocked_server = Mockery::mock('webpush');
     $mocked_server
     ->shouldReceive([
-      'setReuseVAPIDHeaders' => true,
       'sendNotification' => true,
       'flush' => [$mocked_server_result]
     ])
@@ -168,7 +166,6 @@ class PushServerTest extends WP_UnitTestCase {
     $mocked_server = Mockery::mock('webpush');
     $mocked_server
     ->shouldReceive([
-      'setReuseVAPIDHeaders' => true,
       'flush' => [$mocked_server_result, $mocked_server_result]
     ])
     ->once()
@@ -239,10 +236,6 @@ class PushServerTest extends WP_UnitTestCase {
       'flush' => [$mocked_server_result] // second batch, 1 item
     ])
     ->once()
-    ->shouldReceive([
-      'setReuseVAPIDHeaders' => true, // two batches
-    ])
-    ->twice()
     ->shouldReceive([
       'sendNotification' => true, // total notifications: 3 items
     ])

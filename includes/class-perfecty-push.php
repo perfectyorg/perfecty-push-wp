@@ -183,7 +183,22 @@ class Perfecty_Push {
 	 * @access   private
 	 */
 	private function load_push_server() {
-		$webpush = new WebPush();
+		$auth = [];
+    if (defined('PERFECTY_PUSH_VAPID_PUBLIC_KEY') && defined('PERFECTY_PUSH_VAPID_PRIVATE_KEY')
+        && PERFECTY_PUSH_VAPID_PUBLIC_KEY && PERFECTY_PUSH_VAPID_PRIVATE_KEY) {
+			$auth = [
+				'VAPID' => [
+					'subject' => site_url(),
+					'publicKey' => PERFECTY_PUSH_VAPID_PUBLIC_KEY,
+					'privateKey' => PERFECTY_PUSH_VAPID_PRIVATE_KEY
+				]
+			];
+	  } else {
+		  error_log("No VAPID Keys were configured");
+		}
+
+		$webpush = new WebPush($auth);
+    $webpush->setReuseVAPIDHeaders(true);
 		$vapid_generator = array('Minishlink\WebPush\VAPID', 'createVapidKeys');
 		Perfecty_Push_Lib_Push_Server::bootstrap($webpush, $vapid_generator);
 	}

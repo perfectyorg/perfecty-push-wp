@@ -133,23 +133,9 @@ class Perfecty_Push_Lib_Push_Server {
    * @return [$total, $succeeded] | string Total/succeeded messages or Error message
    */
   public static function send_notification($payload, $subscriptions) {
-    if (!defined('PERFECTY_PUSH_VAPID_PUBLIC_KEY') || !defined('PERFECTY_PUSH_VAPID_PRIVATE_KEY')
-        || !PERFECTY_PUSH_VAPID_PUBLIC_KEY || !PERFECTY_PUSH_VAPID_PRIVATE_KEY) {
-      error_log("No VAPID Keys were configured");
-      return "No VAPID keys are configured";
-    }
     if (!is_string($payload)) {
       $payload = json_encode($payload);
     }
-
-    $auth = [
-      'VAPID' => [
-        'subject' => site_url(),
-        'publicKey' => PERFECTY_PUSH_VAPID_PUBLIC_KEY,
-        'privateKey' => PERFECTY_PUSH_VAPID_PRIVATE_KEY
-      ]
-    ];
-    self::$webpush->setReuseVAPIDHeaders(true);
 
     foreach ($subscriptions as $item){
       $push_subscription = new Subscription(
