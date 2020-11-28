@@ -1,5 +1,4 @@
 <?php
-
 /**
  * The plugin bootstrap file
  *
@@ -69,7 +68,7 @@ require plugin_dir_path( __FILE__ ) . 'includes/class-perfecty-push.php';
  * if the gmp extension is enabled. In theory, composer libs can be used
  * in Wordpress plugins: https://github.com/awesomemotive/WP-Mail-SMTP
  */
-if (extension_loaded('gmp')) {
+if ( extension_loaded ( 'gmp' ) ) {
 	require __DIR__ . '/vendor/autoload.php';
 }
 

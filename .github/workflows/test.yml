@@ -11,9 +11,15 @@ jobs:
     strategy:
       matrix:
         operating-system: [ubuntu-18.04]
-        php-versions: ['7.2']
+        php-versions: ['7.2', '7.3', '8.0']
+        php-cs: [false]
+        include:
+          - operating-system: ubuntu-18.04
+            php-versions: 7.2
+            php-cs: true
+            experimental: true
 
-    name: PHP ${{ matrix.php-versions }} Test on ${{ matrix.operating-system }}
+    name: PHP ${{ matrix.php-versions }} / ${{ matrix.operating-system }} / CS ${{ matrix.php-cs }}
     services:
       mysql:
         image: mysql:5.7
@@ -33,7 +39,7 @@ jobs:
       uses: shivammathur/setup-php@v2
       with:
         php-version: ${{ matrix.php-versions }}
-        tools: php-cs-fixer, phpunit:5.7.27, composer
+        tools: php-cs-fixer, composer
       env:
         fail-fast: true
 
@@ -60,8 +66,11 @@ jobs:
     - name: Install Composer dependencies
       run: composer install --no-progress --prefer-dist --optimize-autoloader
 
-    # - name: Update comparator 
-    #   run: composer global require "phpunit/phpunit=5.7.0 && composer update sebastian/comparator
-
     - name: Run the tests
-      run: phpunit --debug
+      run: vendor/bin/phpunit --debug
+
+    - name: Run the PHP CS
+      run: |
+        vendor/bin/phpcs --config-set installed_paths  vendor/wp-coding-standards/wpcs/
+        vendor/bin/phpcs -p . --standard=WordPress
+      if: ${{ matrix.php-cs }}
