@@ -44,14 +44,12 @@ class Perfecty_Push_Public {
 	 * Initialize the class and set its properties.
 	 *
 	 * @since    1.0.0
-	 * @param      string    $plugin_name       The name of the plugin.
-	 * @param      string    $version    The version of this plugin.
+	 * @param      string $plugin_name       The name of the plugin.
+	 * @param      string $version    The version of this plugin.
 	 */
 	public function __construct( $plugin_name, $version ) {
-
 		$this->plugin_name = $plugin_name;
-		$this->version = $version;
-
+		$this->version     = $version;
 	}
 
 	/**
@@ -69,7 +67,7 @@ class Perfecty_Push_Public {
 	 * @since    1.0.0
 	 */
 	public function enqueue_scripts() {
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/perfecty-push-public.js', array('jquery'), $this->version, true );
+		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/perfecty-push-public.js', array( 'jquery' ), $this->version, true );
 	}
 
 	/**
@@ -78,25 +76,33 @@ class Perfecty_Push_Public {
 	 * @since    1.0.0
 	 */
 	public function print_head() {
-		require_once plugin_dir_path( __FILE__) . 'partials/perfecty-push-public-head.php';
+		require_once plugin_dir_path( __FILE__ ) . 'partials/perfecty-push-public-head.php';
 	}
 
-  /**
-   * Register the REST endpoints
-   *
-   * @since 1.0.0
-   */
-  public function register_rest_endpoints() {
+	/**
+	 * Register the REST endpoints
+	 *
+	 * @since 1.0.0
+	 */
+	public function register_rest_endpoints() {
 		$subscribers = new Perfecty_Push_Subscribers();
 
-    register_rest_route('/perfecty-push/v1/', '/register/', array(
-      'methods' => 'POST',
-      'callback' => [$subscribers, 'register']
-		));
+		register_rest_route(
+			'/perfecty-push/v1/',
+			'/register/',
+			array(
+				'methods'  => 'POST',
+				'callback' => array( $subscribers, 'register' ),
+			)
+		);
 
-    register_rest_route('/perfecty-push/v1/', '/user/active/', array(
-      'methods' => 'PUT',
-      'callback' => [$subscribers, 'set_user_active']
-    ));
+		register_rest_route(
+			'/perfecty-push/v1/',
+			'/user/active/',
+			array(
+				'methods'  => 'PUT',
+				'callback' => array( $subscribers, 'set_user_active' ),
+			)
+		);
 	}
 }

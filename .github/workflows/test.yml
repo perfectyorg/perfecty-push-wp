@@ -10,16 +10,10 @@ jobs:
     runs-on: ${{ matrix.operating-system }}
     strategy:
       matrix:
-        operating-system: [ubuntu-18.04]
-        php-versions: ['7.2', '7.3', '8.0']
-        php-cs: [false]
-        include:
-          - operating-system: ubuntu-18.04
-            php-versions: 7.2
-            php-cs: true
-            experimental: true
+        operating-system: [ubuntu-latest]
+        php-versions: ['7.2', '7.3', '7.4']
 
-    name: PHP ${{ matrix.php-versions }} / ${{ matrix.operating-system }} / CS ${{ matrix.php-cs }}
+    name: PHP ${{ matrix.php-versions }} / ${{ matrix.operating-system }}
     services:
       mysql:
         image: mysql:5.7
@@ -68,9 +62,3 @@ jobs:
 
     - name: Run the tests
       run: vendor/bin/phpunit --debug
-
-    - name: Run the PHP CS
-      run: |
-        vendor/bin/phpcs --config-set installed_paths  vendor/wp-coding-standards/wpcs/
-        vendor/bin/phpcs -p . --standard=WordPress
-      if: ${{ matrix.php-cs }}

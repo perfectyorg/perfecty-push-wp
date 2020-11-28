@@ -16,6 +16,8 @@
     "require-dev": {
         "mockery/mockery": "1.3",
         "phpunit/phpunit": "5.7.27",
-        "wp-coding-standards/wpcs": "^2.3"
+        "wp-coding-standards/wpcs": "^2.3",
+        "dealerdirect/phpcodesniffer-composer-installer": "^0.7.0",
+        "phpcompatibility/phpcompatibility-wp": "*"
     }
 }

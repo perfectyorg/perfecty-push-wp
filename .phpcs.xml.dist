@@ -5,6 +5,7 @@
 	<!-- What to scan -->
 	<file>.</file>
 	<exclude-pattern>/vendor/</exclude-pattern>
+	<exclude-pattern>/tests/</exclude-pattern>
 	<exclude-pattern>/node_modules/</exclude-pattern>
 
 	<!-- How to scan -->
@@ -27,18 +28,18 @@
 	<!-- https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards/wiki/Customizable-sniff-properties -->
 	<config name="minimum_supported_wp_version" value="4.6"/>
 	<rule ref="WordPress">
-		<exclude name="WordPress-VIP-Go"/>
+		<!-- <exclude name="WordPress-VIP-Go"/> -->
 	</rule>
 	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
 		<properties>
 			<!-- Value: replace the function, class, and variable prefixes used. Separate multiple prefixes with a comma. -->
-			<property name="prefixes" type="array" value="my-plugin"/>
+			<property name="prefixes" type="array" value="perfecty_push"/>
 		</properties>
 	</rule>
 	<rule ref="WordPress.WP.I18n">
 		<properties>
 			<!-- Value: replace the text domain used. -->
-			<property name="text_domain" type="array" value="my-plugin"/>
+			<property name="text_domain" type="array" value="perfecty-push"/>
 		</properties>
 	</rule>
 	<rule ref="WordPress.WhiteSpace.ControlStructureSpacing">

@@ -88,23 +88,23 @@ class Perfecty_Push {
 	 * Define the constants that will be needed later
 	 */
 	public function define_constants() {
-		$options = get_option('perfecty_push', []);
-    $vapid_public_key = isset($options['vapid_public_key']) ? $options['vapid_public_key'] : '';
-		$vapid_private_key = isset($options['vapid_private_key']) ? $options['vapid_private_key'] : '';
-		$server_url = isset($options['server_url']) ? $options['server_url'] : '127.0.0.1:8777';
+		$options           = get_option( 'perfecty_push', array() );
+		$vapid_public_key  = isset( $options['vapid_public_key'] ) ? $options['vapid_public_key'] : '';
+		$vapid_private_key = isset( $options['vapid_private_key'] ) ? $options['vapid_private_key'] : '';
+		$server_url        = isset( $options['server_url'] ) ? $options['server_url'] : '127.0.0.1:8777';
 
-		if (!defined('PERFECTY_PUSH_JS_DIR')) {
-			$path = plugin_dir_url(__DIR__) . "public/js";
-			define('PERFECTY_PUSH_JS_DIR', $path);
+		if ( ! defined( 'PERFECTY_PUSH_JS_DIR' ) ) {
+			$path = plugin_dir_url( __DIR__ ) . 'public/js';
+			define( 'PERFECTY_PUSH_JS_DIR', $path );
 		}
-		if (!defined('PERFECTY_PUSH_SERVER_URL')) {
-			define('PERFECTY_PUSH_SERVER_URL', $server_url);
+		if ( ! defined( 'PERFECTY_PUSH_SERVER_URL' ) ) {
+			define( 'PERFECTY_PUSH_SERVER_URL', $server_url );
 		}
-		if (!defined('PERFECTY_PUSH_VAPID_PUBLIC_KEY') && $vapid_public_key) {
-			define('PERFECTY_PUSH_VAPID_PUBLIC_KEY', $vapid_public_key);
+		if ( ! defined( 'PERFECTY_PUSH_VAPID_PUBLIC_KEY' ) && $vapid_public_key ) {
+			define( 'PERFECTY_PUSH_VAPID_PUBLIC_KEY', $vapid_public_key );
 		}
-		if (!defined('PERFECTY_PUSH_VAPID_PRIVATE_KEY') && $vapid_private_key) {
-			define('PERFECTY_PUSH_VAPID_PRIVATE_KEY', $vapid_private_key);
+		if ( ! defined( 'PERFECTY_PUSH_VAPID_PRIVATE_KEY' ) && $vapid_private_key ) {
+			define( 'PERFECTY_PUSH_VAPID_PRIVATE_KEY', $vapid_private_key );
 		}
 	}
 
@@ -150,11 +150,11 @@ class Perfecty_Push {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-perfecty-push-public.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-perfecty-push-subscribers.php';
 
-    /**
-     * Contains the lib/ definitions
-     */
-    require_once plugin_dir_path( dirname( __FILE__ ) ) . 'lib/db.php';
-    require_once plugin_dir_path( dirname( __FILE__ ) ) . 'lib/push-server.php';
+		/**
+		 * Contains the lib/ definitions
+		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'lib/class-perfecty-push-lib-db.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'lib/class-perfecty-push-lib-push-server.php';
 
 		$this->loader = new Perfecty_Push_Loader();
 	}
@@ -169,11 +169,9 @@ class Perfecty_Push {
 	 * @access   private
 	 */
 	private function set_locale() {
-
 		$plugin_i18n = new Perfecty_Push_i18n();
 
 		$this->loader->add_action( 'plugins_loaded', $plugin_i18n, 'load_plugin_textdomain' );
-
 	}
 
 	/**
@@ -183,26 +181,26 @@ class Perfecty_Push {
 	 * @access   private
 	 */
 	private function load_push_server() {
-		$auth = [];
-    if (defined('PERFECTY_PUSH_VAPID_PUBLIC_KEY') && defined('PERFECTY_PUSH_VAPID_PRIVATE_KEY')
-        && PERFECTY_PUSH_VAPID_PUBLIC_KEY && PERFECTY_PUSH_VAPID_PRIVATE_KEY) {
-			$auth = [
-				'VAPID' => [
-					'subject' => site_url(),
-					'publicKey' => PERFECTY_PUSH_VAPID_PUBLIC_KEY,
-					'privateKey' => PERFECTY_PUSH_VAPID_PRIVATE_KEY
-				]
-			];
-	  } else {
-		  error_log("No VAPID Keys were configured");
+		$auth = array();
+		if ( defined( 'PERFECTY_PUSH_VAPID_PUBLIC_KEY' ) && defined( 'PERFECTY_PUSH_VAPID_PRIVATE_KEY' )
+		&& PERFECTY_PUSH_VAPID_PUBLIC_KEY && PERFECTY_PUSH_VAPID_PRIVATE_KEY ) {
+			$auth = array(
+				'VAPID' => array(
+					'subject'    => site_url(),
+					'publicKey'  => PERFECTY_PUSH_VAPID_PUBLIC_KEY,
+					'privateKey' => PERFECTY_PUSH_VAPID_PRIVATE_KEY,
+				),
+			);
+		} else {
+			error_log( 'No VAPID Keys were configured' );
 		}
 
-		$webpush = new WebPush($auth);
-    $webpush->setReuseVAPIDHeaders(true);
-		$vapid_generator = array('Minishlink\WebPush\VAPID', 'createVapidKeys');
-		Perfecty_Push_Lib_Push_Server::bootstrap($webpush, $vapid_generator);
+		$webpush = new WebPush( $auth );
+		$webpush->setReuseVAPIDHeaders( true );
+		$vapid_generator = array( 'Minishlink\WebPush\VAPID', 'createVapidKeys' );
+		Perfecty_Push_Lib_Push_Server::bootstrap( $webpush, $vapid_generator );
 	}
-	
+
 	/**
 	 * Register all of the hooks related to the admin area functionality
 	 * of the plugin.
@@ -211,14 +209,13 @@ class Perfecty_Push {
 	 * @access   private
 	 */
 	private function define_admin_hooks() {
-
 		$plugin_admin = new Perfecty_Push_Admin( $this->get_plugin_name(), $this->get_version() );
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'register_admin_menu' );
 		$this->loader->add_action( 'admin_init', $plugin_admin, 'register_options' );
-		$this->loader->add_action( 'perfecty_push_broadcast_notification_event', $plugin_admin, 'execute_broadcast_batch', 10, 1);
+		$this->loader->add_action( 'perfecty_push_broadcast_notification_event', $plugin_admin, 'execute_broadcast_batch', 10, 1 );
 	}
 
 	/**
@@ -229,14 +226,12 @@ class Perfecty_Push {
 	 * @access   private
 	 */
 	private function define_public_hooks() {
-
 		$plugin_public = new Perfecty_Push_Public( $this->get_plugin_name(), $this->get_version() );
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
 		$this->loader->add_action( 'wp_head', $plugin_public, 'print_head' );
-    $this->loader->add_action( 'rest_api_init', $plugin_public, 'register_rest_endpoints' );
-
+		$this->loader->add_action( 'rest_api_init', $plugin_public, 'register_rest_endpoints' );
 	}
 
 	/**

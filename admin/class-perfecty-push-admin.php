@@ -44,14 +44,12 @@ class Perfecty_Push_Admin {
 	 * Initialize the class and set its properties.
 	 *
 	 * @since    1.0.0
-	 * @param      string    $plugin_name       The name of this plugin.
-	 * @param      string    $version    The version of this plugin.
+	 * @param      string $plugin_name       The name of this plugin.
+	 * @param      string $version    The version of this plugin.
 	 */
 	public function __construct( $plugin_name, $version ) {
-
 		$this->plugin_name = $plugin_name;
-		$this->version = $version;
-
+		$this->version     = $version;
 	}
 
 	/**
@@ -74,7 +72,6 @@ class Perfecty_Push_Admin {
 		 */
 
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/perfecty-push-admin.css', array(), $this->version, 'all' );
-
 	}
 
 	/**
@@ -97,354 +94,365 @@ class Perfecty_Push_Admin {
 		 */
 
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/perfecty-push-admin.js', array( 'jquery' ), $this->version, false );
-
 	}
 
 	 /**
-   * Register the plugin page in the admin menu
-   *
-   * @since 1.0.0
-   */
-  public function register_admin_menu() {
-
-    add_menu_page(
-      'Perfecty Push',
-      'Perfecty Push',
-      'manage_options',
-      'perfecty-push',
-			array($this, 'print_dashboard_page'));
-
-    add_submenu_page(
-      'perfecty-push',
-      'Dashboard',
-      'Dashboard',
-      'manage_options',
-      'perfecty-push',
-			array($this, 'print_dashboard_page'));
-
-    add_submenu_page(
-      'perfecty-push',
-      'Send notification',
-      'Send notification',
-      'manage_options',
-      'perfecty-push-send-notification',
-      array($this, 'print_send_notification_page'));
-
-    add_submenu_page(
-      'perfecty-push',
-      'Settings',
-      'Settings',
-      'manage_options',
-      'perfecty-push-options',
-			array($this, 'print_options_page'));
-
-    add_submenu_page(
-      'perfecty-push',
-      'About',
-      'About',
-      'manage_options',
-      'perfecty-push-about',
-      array($this, 'print_about_page'));
-
-  }
-
-  /**
-   * Register the plugin options
-   *
-   * @since 1.0.0
-   */
-  public function register_options() {
-
-    register_setting(
-      'perfecty_group',
-      'perfecty_push',
-      array($this, 'sanitize')
-    );
-
-    add_settings_section(
-      'perfecty_push_dialog_settings', // id
-      'Change the appearance', // title
-      array($this, 'print_dialog_section'), // callback
-      'perfecty-push-options' // page
-    );
-
-    add_settings_field(
-      'dialog_title', // id
-      'Title', // title
-      array($this, 'print_dialog_title'), // callback
-      'perfecty-push-options', // page
-      'perfecty_push_dialog_settings' // section
+	  * Register the plugin page in the admin menu
+	  *
+	  * @since 1.0.0
+	  */
+	public function register_admin_menu() {
+		add_menu_page(
+			'Perfecty Push',
+			'Perfecty Push',
+			'manage_options',
+			'perfecty-push',
+			array( $this, 'print_dashboard_page' )
 		);
 
-    add_settings_field(
-      'dialog_submit', // id
-      'Continue Button', // title
-      array($this, 'print_dialog_submit'), // callback
-      'perfecty-push-options', // page
-      'perfecty_push_dialog_settings' // section
+		add_submenu_page(
+			'perfecty-push',
+			'Dashboard',
+			'Dashboard',
+			'manage_options',
+			'perfecty-push',
+			array( $this, 'print_dashboard_page' )
 		);
 
-    add_settings_field(
-      'dialog_cancel', // id
-      'Cancel Button', // title
-      array($this, 'print_dialog_cancel'), // callback
-      'perfecty-push-options', // page
-      'perfecty_push_dialog_settings' // section
+		add_submenu_page(
+			'perfecty-push',
+			'Send notification',
+			'Send notification',
+			'manage_options',
+			'perfecty-push-send-notification',
+			array( $this, 'print_send_notification_page' )
 		);
 
-    add_settings_section(
-      'perfecty_push_self_hosted_settings', // id
-      'Self-hosted server', // title
-      array($this, 'print_self_hosted_section'), // callback
-      'perfecty-push-options' // page
+		add_submenu_page(
+			'perfecty-push',
+			'Settings',
+			'Settings',
+			'manage_options',
+			'perfecty-push-options',
+			array( $this, 'print_options_page' )
 		);
 
-    add_settings_field(
-      'vapid_public_key', // id
-      'Vapid Public Key', // title
-      array($this, 'print_vapid_public_key'), // callback
-      'perfecty-push-options', // page
-      'perfecty_push_self_hosted_settings' // section
-    );
-    
-    add_settings_field(
-      'server_url', // id
-      'Server Url', // title
-      array($this, 'print_server_url'), // callback
-      'perfecty-push-options', // page
-      'perfecty_push_self_hosted_settings' // section
-    );
-  }
-
-  /**
-   * Execute the next broadcast batch
-   * This is a wordpress action called from wp-cron
-   * 
-   * @param $notification_id int Notification ID
-   */
-  public function execute_broadcast_batch($notification_id) {
-    Perfecty_Push_Lib_Push_Server::execute_broadcast_batch($notification_id);
-  }
-
-	/**
-   * Renders the dashboard page
-   *
-   * @since 1.0.0
-   */
-  public function print_dashboard_page() {
-    require_once plugin_dir_path(__FILE__) . 'partials/perfecty-push-admin-dashboard.php';
+		add_submenu_page(
+			'perfecty-push',
+			'About',
+			'About',
+			'manage_options',
+			'perfecty-push-about',
+			array( $this, 'print_about_page' )
+		);
 	}
 
 	/**
-   * Renders the options page
-   *
-   * @since 1.0.0
-   */
-  public function print_options_page() {
-    require_once plugin_dir_path(__FILE__) . 'partials/perfecty-push-admin-options.php';
-  }
+	 * Register the plugin options
+	 *
+	 * @since 1.0.0
+	 */
+	public function register_options() {
+		register_setting(
+			'perfecty_group',
+			'perfecty_push',
+			array( $this, 'sanitize' )
+		);
 
-	/**
-   * Renders the send notification page
-   *
-   * @since 1.0.0
-   */
-  public function print_send_notification_page() {
-    $message = '';
-    $notice = '';
+		add_settings_section(
+			'perfecty_push_dialog_settings', // id
+			'Change the appearance', // title
+			array( $this, 'print_dialog_section' ), // callback
+			'perfecty-push-options' // page
+		);
 
-    $default = array(
-      'title'                    => '',
-      'message'                  => '',
-    );
+		add_settings_field(
+			'dialog_title', // id
+			'Title', // title
+			array( $this, 'print_dialog_title' ), // callback
+			'perfecty-push-options', // page
+			'perfecty_push_dialog_settings' // section
+		);
 
-    if ( isset($_REQUEST['nonce']) && wp_verify_nonce($_REQUEST['nonce'], 'perfecty_push_send_notification')) {
+		add_settings_field(
+			'dialog_submit', // id
+			'Continue Button', // title
+			array( $this, 'print_dialog_submit' ), // callback
+			'perfecty-push-options', // page
+			'perfecty_push_dialog_settings' // section
+		);
 
-      $item = shortcode_atts($default, $_REQUEST);
+		add_settings_field(
+			'dialog_cancel', // id
+			'Cancel Button', // title
+			array( $this, 'print_dialog_cancel' ), // callback
+			'perfecty-push-options', // page
+			'perfecty_push_dialog_settings' // section
+		);
 
-      $validation_result = $this->validate_notification_message($item);
-      if ($validation_result === true) {
-        // filter
-        $item['title'] = sanitize_text_field($item['title']);
-        $item['message'] = sanitize_textarea_field($item['message']);
+		add_settings_section(
+			'perfecty_push_self_hosted_settings', // id
+			'Self-hosted server', // title
+			array( $this, 'print_self_hosted_section' ), // callback
+			'perfecty-push-options' // page
+		);
 
-        $payload = json_encode([
-          "title" => $item['title'],
-          "body" => $item['message']
-        ]);
+		add_settings_field(
+			'vapid_public_key', // id
+			'Vapid Public Key', // title
+			array( $this, 'print_vapid_public_key' ), // callback
+			'perfecty-push-options', // page
+			'perfecty_push_self_hosted_settings' // section
+		);
 
-        // send notification
-        $result = Perfecty_Push_Lib_Push_Server::schedule_broadcast_async($payload);
-        if ($result === false) {
-          $notice = "Could not schedule the notification, check the logs";
-        } else {
-          $message = "The notification job has started";
-
-          // we clear the form
-          $item = $default;
-        }
-      } else {
-        $notice = $validation_result;
-      }
-    }
-    else {
-      $item = $default;
-    }
-
-    add_meta_box(
-      'perfecty_push_send_notification_meta_box',
-      'Notification details',
-      array($this, 'print_send_notification_metabox'),
-      'perfecty-push-send-notification',
-      'normal');
-
-    require_once plugin_dir_path(__FILE__) . 'partials/perfecty-push-admin-send-notification.php';
-  }
-
-  /**
-   * Validates the notification details
-   *
-   * @param $item Contains the entry
-   */
-  public function validate_notification_message($item) {
-    $messages = array();
-
-    if (empty($item['title'])) $messages[] = 'The title is required';
-
-    if (empty($item['message'])) $messages[] = 'The message is required';
-
-    if (empty($messages)) {
-      return true;
-    } else {
-      return implode('<br />', $messages);
-    }
-  }
-
-  /**
-   * Renders the send notification metabox
-   *
-   * @since 1.0.0
-   */
-  public function print_send_notification_metabox($item) {
-    require_once plugin_dir_path(__FILE__) . 'partials/send-notification-metabox.php';
-  }
-
-	/**
-   * Renders the about page
-   *
-   * @since 1.0.0
-   */
-  public function print_about_page() {
-    require_once plugin_dir_path(__FILE__) . 'partials/perfecty-push-admin-about.php';
+		add_settings_field(
+			'server_url', // id
+			'Server Url', // title
+			array( $this, 'print_server_url' ), // callback
+			'perfecty-push-options', // page
+			'perfecty_push_self_hosted_settings' // section
+		);
 	}
 
-  /**
-   * Sanitize the settings
-   *
-   * @param $input Contains the settings
-   */
-  public function sanitize($input) {
-    $new_input = array();
-    if( isset( $input['vapid_public_key'] ) ){
-      $new_input['vapid_public_key'] = sanitize_text_field( $input['vapid_public_key'] );
-    }
-    if( isset( $input['server_url'] ) ){
-      $new_input['server_url'] = sanitize_text_field( $input['server_url'] );
+	/**
+	 * Execute the next broadcast batch
+	 * This is a WordPress action called from wp-cron
+	 *
+	 * @param $notification_id int Notification ID
+	 */
+	public function execute_broadcast_batch( $notification_id ) {
+		Perfecty_Push_Lib_Push_Server::execute_broadcast_batch( $notification_id );
+	}
+
+	/**
+	 * Renders the dashboard page
+	 *
+	 * @since 1.0.0
+	 */
+	public function print_dashboard_page() {
+		require_once plugin_dir_path( __FILE__ ) . 'partials/perfecty-push-admin-dashboard.php';
+	}
+
+	/**
+	 * Renders the options page
+	 *
+	 * @since 1.0.0
+	 */
+	public function print_options_page() {
+		require_once plugin_dir_path( __FILE__ ) . 'partials/perfecty-push-admin-options.php';
+	}
+
+	/**
+	 * Renders the send notification page
+	 *
+	 * @since 1.0.0
+	 */
+	public function print_send_notification_page() {
+		$message = '';
+		$notice  = '';
+
+		$default = array(
+			'title'   => '',
+			'message' => '',
+		);
+
+		if ( isset( $_REQUEST['nonce'] ) && wp_verify_nonce( $_REQUEST['nonce'], 'perfecty_push_send_notification' ) ) {
+			$item = shortcode_atts( $default, $_REQUEST );
+
+			$validation_result = $this->validate_notification_message( $item );
+			if ( $validation_result === true ) {
+				// filter
+				$item['title']   = sanitize_text_field( $item['title'] );
+				$item['message'] = sanitize_textarea_field( $item['message'] );
+
+				$payload = json_encode(
+					array(
+						'title' => $item['title'],
+						'body'  => $item['message'],
+					)
+				);
+
+				// send notification
+				$result = Perfecty_Push_Lib_Push_Server::schedule_broadcast_async( $payload );
+				if ( $result === false ) {
+					  $notice = 'Could not schedule the notification, check the logs';
+				} else {
+					$message = 'The notification job has started';
+
+					// we clear the form
+					$item = $default;
+				}
+			} else {
+				$notice = $validation_result;
+			}
+		} else {
+			$item = $default;
 		}
 
-    return $new_input;
+		add_meta_box(
+			'perfecty_push_send_notification_meta_box',
+			'Notification details',
+			array( $this, 'print_send_notification_metabox' ),
+			'perfecty-push-send-notification',
+			'normal'
+		);
+
+		require_once plugin_dir_path( __FILE__ ) . 'partials/perfecty-push-admin-send-notification.php';
 	}
 
-  /**
-   * Print the general section info
-   *
-   * @since 1.0.0
-   */
-  public function print_dialog_section() {
-    print 'Change the messages shown in the notification dialog.';
+	/**
+	 * Validates the notification details
+	 *
+	 * @param $item Contains the entry
+	 */
+	public function validate_notification_message( $item ) {
+		$messages = array();
+
+		if ( empty( $item['title'] ) ) {
+			$messages[] = 'The title is required';
+		}
+
+		if ( empty( $item['message'] ) ) {
+			$messages[] = 'The message is required';
+		}
+
+		if ( empty( $messages ) ) {
+			return true;
+		} else {
+			return implode( '<br />', $messages );
+		}
 	}
 
-  /**
-   * Print the self hosted section info
-   *
-   * @since 1.0.0
-   */
-  public function print_self_hosted_section() {
-    print 'Configure how to connect your website with your self-hosted Perfecty Push Server.';
-  }
-    
-  /**
-   * Print the Vapid public key
-   *
-   * @since 1.0.0
-   */
-  public function print_vapid_public_key() {
-    $options = get_option('perfecty_push');
-    $value = isset($options['vapid_public_key']) ? esc_attr($options['vapid_public_key']) : '';
-
-    printf(
-      '<input type="text" id="perfecty_push[vapid_public_key]"' .
-      'name="perfecty_push[vapid_public_key]" value="%s" />', $value
-    );
-  }
-
-  /**
-   * Print the server_url option
-   *
-   * @since 1.0.0
-   */
-  public function print_server_url() {
-    $options = get_option('perfecty_push');
-    $value = isset($options['server_url']) ? esc_attr($options['server_url']) : '';
-
-    printf(
-      '<input type="text" id="perfecty_push[server_url]"' .
-      'name="perfecty_push[server_url]" value="%s" placeholder="127.0.0.1:8777"/>', $value
-    );
+	/**
+	 * Renders the send notification metabox
+	 *
+	 * @since 1.0.0
+	 */
+	public function print_send_notification_metabox( $item ) {
+		require_once plugin_dir_path( __FILE__ ) . 'partials/send-notification-metabox.php';
 	}
 
-  /**
-   * Print the dialog_title option
-   *
-   * @since 1.0.0
-   */
-  public function print_dialog_title() {
-    $options = get_option('perfecty_push');
-    $value = isset($options['dialog_title']) ? esc_attr($options['dialog_title']) : '';
-
-    printf(
-      '<input type="text" id="perfecty_push[dialog_title]"' .
-      'name="perfecty_push[dialog_title]" value="%s" />', $value
-    );
+	/**
+	 * Renders the about page
+	 *
+	 * @since 1.0.0
+	 */
+	public function print_about_page() {
+		require_once plugin_dir_path( __FILE__ ) . 'partials/perfecty-push-admin-about.php';
 	}
 
-  /**
-   * Print the dialog_submit option
-   *
-   * @since 1.0.0
-   */
-  public function print_dialog_submit() {
-    $options = get_option('perfecty_push');
-    $value = isset($options['dialog_submit']) ? esc_attr($options['dialog_submit']) : '';
+	/**
+	 * Sanitize the settings
+	 *
+	 * @param $input Contains the settings
+	 */
+	public function sanitize( $input ) {
+		$new_input = array();
+		if ( isset( $input['vapid_public_key'] ) ) {
+			$new_input['vapid_public_key'] = sanitize_text_field( $input['vapid_public_key'] );
+		}
+		if ( isset( $input['server_url'] ) ) {
+			$new_input['server_url'] = sanitize_text_field( $input['server_url'] );
+		}
 
-    printf(
-      '<input type="text" id="perfecty_push[dialog_submit]"' .
-      'name="perfecty_push[dialog_submit]" value="%s" />', $value
-    );
+		return $new_input;
 	}
 
-  /**
-   * Print the dialog_cancel option
-   *
-   * @since 1.0.0
-   */
-  public function print_dialog_cancel() {
-    $options = get_option('perfecty_push');
-    $value = isset($options['dialog_cancel']) ? esc_attr($options['dialog_cancel']) : '';
+	/**
+	 * Print the general section info
+	 *
+	 * @since 1.0.0
+	 */
+	public function print_dialog_section() {
+		print 'Change the messages shown in the notification dialog.';
+	}
 
-    printf(
-      '<input type="text" id="perfecty_push[dialog_cancel]"' .
-      'name="perfecty_push[dialog_cancel]" value="%s" />', $value
-    );
-  }
+	/**
+	 * Print the self hosted section info
+	 *
+	 * @since 1.0.0
+	 */
+	public function print_self_hosted_section() {
+		print 'Configure how to connect your website with your self-hosted Perfecty Push Server.';
+	}
+
+	/**
+	 * Print the Vapid public key
+	 *
+	 * @since 1.0.0
+	 */
+	public function print_vapid_public_key() {
+		$options = get_option( 'perfecty_push' );
+		$value   = isset( $options['vapid_public_key'] ) ? esc_attr( $options['vapid_public_key'] ) : '';
+
+		printf(
+			'<input type="text" id="perfecty_push[vapid_public_key]"' .
+			'name="perfecty_push[vapid_public_key]" value="%s" />',
+			$value
+		);
+	}
+
+	/**
+	 * Print the server_url option
+	 *
+	 * @since 1.0.0
+	 */
+	public function print_server_url() {
+		$options = get_option( 'perfecty_push' );
+		$value   = isset( $options['server_url'] ) ? esc_attr( $options['server_url'] ) : '';
+
+		printf(
+			'<input type="text" id="perfecty_push[server_url]"' .
+			'name="perfecty_push[server_url]" value="%s" placeholder="127.0.0.1:8777"/>',
+			$value
+		);
+	}
+
+	/**
+	 * Print the dialog_title option
+	 *
+	 * @since 1.0.0
+	 */
+	public function print_dialog_title() {
+		$options = get_option( 'perfecty_push' );
+		$value   = isset( $options['dialog_title'] ) ? esc_attr( $options['dialog_title'] ) : '';
+
+		printf(
+			'<input type="text" id="perfecty_push[dialog_title]"' .
+			'name="perfecty_push[dialog_title]" value="%s" />',
+			$value
+		);
+	}
+
+	/**
+	 * Print the dialog_submit option
+	 *
+	 * @since 1.0.0
+	 */
+	public function print_dialog_submit() {
+		$options = get_option( 'perfecty_push' );
+		$value   = isset( $options['dialog_submit'] ) ? esc_attr( $options['dialog_submit'] ) : '';
+
+		printf(
+			'<input type="text" id="perfecty_push[dialog_submit]"' .
+			'name="perfecty_push[dialog_submit]" value="%s" />',
+			$value
+		);
+	}
+
+	/**
+	 * Print the dialog_cancel option
+	 *
+	 * @since 1.0.0
+	 */
+	public function print_dialog_cancel() {
+		$options = get_option( 'perfecty_push' );
+		$value   = isset( $options['dialog_cancel'] ) ? esc_attr( $options['dialog_cancel'] ) : '';
+
+		printf(
+			'<input type="text" id="perfecty_push[dialog_cancel]"' .
+			'name="perfecty_push[dialog_cancel]" value="%s" />',
+			$value
+		);
+	}
 }
