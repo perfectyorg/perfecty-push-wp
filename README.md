@@ -28,7 +28,7 @@ To see it in action in your local development enviroment, you need a set of
 services which Wordpress relies on. You start off by creating the docker image:
 
 ```
-docker build -t custom-wordpress:5.2.3-php7.2-apache .
+docker build -t custom-wordpress:5.2.3-php7.1-apache .
 ```
 
 Then start all the services and run the setup:
