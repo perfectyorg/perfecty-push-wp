@@ -3,7 +3,7 @@ on:
     branches:
       - master
 
-name: Unit tests
+name: tests
 
 jobs:
   test:
@@ -36,9 +36,6 @@ jobs:
         tools: php-cs-fixer, composer
       env:
         fail-fast: true
-
-    - name: Start mysql service
-      run: sudo /etc/init.d/mysql start
 
     - name: Setup Wordpress over phpunit
       run: bash bin/install-wp-tests.sh wordpress root password 127.0.0.1:${{ job.services.mysql.ports[3306] }} ${{ matrix.wordpress-version }} true

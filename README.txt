@@ -8,7 +8,7 @@ Stable tag: 4.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Sef-hosted Push Notifications using your own server for free!
+Self-hosted Push Notifications using your own server for free!
 
 == Description ==
 
