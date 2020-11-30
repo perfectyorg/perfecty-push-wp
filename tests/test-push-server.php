@@ -86,11 +86,11 @@ class PushServerTest extends WP_UnitTestCase {
 
 		Perfecty_Push_Lib_Push_Server::bootstrap( $mocked_server, $this->mocked_vapid_callback );
 
-		$id            = Perfecty_Push_Lib_Db::store_subscription( 'my_endpoint_url', 'my_key_auth', 'my_p256dh_key', '127.0.0.1' );
-		$subscriptions = array(
-			Perfecty_Push_Lib_Db::get_subscription( $id ),
+		$id            = Perfecty_Push_Lib_Db::store_user( 'my_endpoint_url', 'my_key_auth', 'my_p256dh_key', '127.0.0.1' );
+		$users = array(
+			Perfecty_Push_Lib_Db::get_user( $id ),
 		);
-		$result        = Perfecty_Push_Lib_Push_Server::send_notification( 'this_is_the_payload', $subscriptions );
+		$result        = Perfecty_Push_Lib_Push_Server::send_notification( 'this_is_the_payload', $users );
 
 		$this->assertSame( array( 1, 1 ), $result );
 	}
@@ -121,11 +121,11 @@ class PushServerTest extends WP_UnitTestCase {
 
 		Perfecty_Push_Lib_Push_Server::bootstrap( $mocked_server, $this->mocked_vapid_callback );
 
-		$id            = Perfecty_Push_Lib_Db::store_subscription( 'my_endpoint_url', 'my_key_auth', 'my_p256dh_key', '127.0.0.1' );
-		$subscriptions = array(
-			Perfecty_Push_Lib_Db::get_subscription( $id ),
+		$id            = Perfecty_Push_Lib_Db::store_user( 'my_endpoint_url', 'my_key_auth', 'my_p256dh_key', '127.0.0.1' );
+		$users = array(
+			Perfecty_Push_Lib_Db::get_user( $id ),
 		);
-		$result        = Perfecty_Push_Lib_Push_Server::send_notification( 'this_is_the_payload', $subscriptions );
+		$result        = Perfecty_Push_Lib_Push_Server::send_notification( 'this_is_the_payload', $users );
 
 		$this->assertSame( array( 1, 0 ), $result );
 	}
@@ -186,8 +186,8 @@ class PushServerTest extends WP_UnitTestCase {
 
 		// base data
 		Perfecty_Push_Lib_Push_Server::bootstrap( $mocked_server, $this->mocked_vapid_callback );
-		Perfecty_Push_Lib_Db::store_subscription( 'my_endpoint_url', 'my_key_auth', 'my_p256dh_key', '127.0.0.1' );
-		Perfecty_Push_Lib_Db::store_subscription( 'my_endpoint_url2', 'my_key_auth2', 'my_p256dh_key2', '127.0.0.1' );
+		Perfecty_Push_Lib_Db::store_user( 'my_endpoint_url', 'my_key_auth', 'my_p256dh_key', '127.0.0.1' );
+		Perfecty_Push_Lib_Db::store_user( 'my_endpoint_url2', 'my_key_auth2', 'my_p256dh_key2', '127.0.0.1' );
 		$notification_id = Perfecty_Push_Lib_Push_Server::schedule_broadcast_async( $payload );
 
 		// fire execution
@@ -259,9 +259,9 @@ class PushServerTest extends WP_UnitTestCase {
 		$options['batch_size'] = 2;
 		update_option( 'perfecty_push', $options );
 		Perfecty_Push_Lib_Push_Server::bootstrap( $mocked_server, $this->mocked_vapid_callback );
-		Perfecty_Push_Lib_Db::store_subscription( 'my_endpoint_url', 'my_key_auth', 'my_p256dh_key', '127.0.0.1' );
-		Perfecty_Push_Lib_Db::store_subscription( 'my_endpoint_url2', 'my_key_auth2', 'my_p256dh_key2', '127.0.0.1' );
-		Perfecty_Push_Lib_Db::store_subscription( 'my_endpoint_url3', 'my_key_auth3', 'my_p256dh_key3', '127.0.0.1' );
+		Perfecty_Push_Lib_Db::store_user( 'my_endpoint_url', 'my_key_auth', 'my_p256dh_key', '127.0.0.1' );
+		Perfecty_Push_Lib_Db::store_user( 'my_endpoint_url2', 'my_key_auth2', 'my_p256dh_key2', '127.0.0.1' );
+		Perfecty_Push_Lib_Db::store_user( 'my_endpoint_url3', 'my_key_auth3', 'my_p256dh_key3', '127.0.0.1' );
 		$notification_id = Perfecty_Push_Lib_Push_Server::schedule_broadcast_async( $payload );
 
 		// fire execution

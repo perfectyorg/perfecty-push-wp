@@ -7,7 +7,7 @@ use Ramsey\Uuid\Uuid;
  */
 class Perfecty_Push_Lib_Db {
 
-	private static $allowed_subscriptions_fields = 'id,uuid,endpoint,key_auth,key_p256dh,remote_ip,is_active';
+	private static $allowed_users_fields         = 'id,uuid,endpoint,key_auth,key_p256dh,remote_ip,is_active';
 	private static $allowed_notifications_fields = 'id,payload,total,succeeded,last_cursor,batch_size,status,is_taken';
 
 	public const NOTIFICATIONS_STATUS_SCHEDULED = 'scheduled';
@@ -19,8 +19,8 @@ class Perfecty_Push_Lib_Db {
 		return $wpdb->prefix . $table;
 	}
 
-	private static function subscriptions_table() {
-		return self::with_prefix( 'perfecty_push_subscriptions' );
+	private static function users_table() {
+		return self::with_prefix( 'perfecty_push_users' );
 	}
 
 	private static function notifications_table() {
@@ -41,7 +41,7 @@ class Perfecty_Push_Lib_Db {
 		$charset = $wpdb->get_charset_collate();
 
 		// We execute the queries per table
-		$sql = 'CREATE TABLE IF NOT EXISTS ' . self::subscriptions_table() . " (
+		$sql = 'CREATE TABLE IF NOT EXISTS ' . self::users_table() . " (
           id int(11) NOT NULL AUTO_INCREMENT,
           uuid CHAR(36) NOT NULL,
           remote_ip VARCHAR(46) DEFAULT '',
@@ -52,7 +52,7 @@ class Perfecty_Push_Lib_Db {
           disabled TINYINT(1) DEFAULT 0 NOT NULL,
           creation_time datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
           PRIMARY KEY  (id),
-          UNIQUE KEY `subscribers_uuid_uk` (`uuid`)
+          UNIQUE KEY `users_uuid_uk` (`uuid`)
         ) $charset;";
 		dbDelta( $sql );
 
@@ -74,21 +74,21 @@ class Perfecty_Push_Lib_Db {
 	}
 
 	/**
-	 * Store the subscription in the DB
+	 * Store the user in the DB
 	 *
 	 * @param $endpoint
 	 * @param $key_auth
 	 * @param $key_p256dh
 	 * @param $remote_ip
 	 *
-	 * @return $uuid The id for the created subscription or false
+	 * @return $uuid The id for the created user or false
 	 */
-	public static function store_subscription( $endpoint, $key_auth, $key_p256dh, $remote_ip ) {
+	public static function store_user( $endpoint, $key_auth, $key_p256dh, $remote_ip ) {
 		global $wpdb;
 
 		$uuid   = Uuid::uuid4()->toString();
 		$result = $wpdb->insert(
-			self::subscriptions_table(),
+			self::users_table(),
 			array(
 				'uuid'       => $uuid,
 				'endpoint'   => $endpoint,
@@ -99,7 +99,7 @@ class Perfecty_Push_Lib_Db {
 		);
 
 		if ( $result === false ) {
-			error_log( "Could not create the subscription: $uuid" );
+			error_log( "Could not create the user: $uuid" );
 			return false;
 		}
 
@@ -108,67 +108,67 @@ class Perfecty_Push_Lib_Db {
 	}
 
 	/**
-	 * Return the current total subscriptions
+	 * Return the current total users
 	 *
-	 * @return int Total subscriptions
+	 * @return int Total users
 	 */
-	public static function total_subscriptions() {
+	public static function total_users() {
 		global $wpdb;
 
-		$total = $wpdb->get_var( 'SELECT COUNT(*) FROM ' . self::subscriptions_table() );
+		$total = $wpdb->get_var( 'SELECT COUNT(*) FROM ' . self::users_table() );
 		return $total != null ? $total : 0;
 	}
 
 	/**
 	 * Changes the is_active property for the subcription
 	 *
-	 * @param $subscription_id string id
+	 * @param $user_id string id
 	 * @param $is_active bool True or false
 	 *
 	 * @return int|bool Number of rows updated or false
 	 */
-	public static function set_subscription_active( $subscription_id, $is_active ) {
+	public static function set_user_active( $user_id, $is_active ) {
 		global $wpdb;
 
 		$result = $wpdb->update(
-			self::subscriptions_table(),
+			self::users_table(),
 			array( 'is_active' => $is_active ),
-			array( 'id' => $subscription_id )
+			array( 'id' => $user_id )
 		);
 
 		return $result;
 	}
 
 	/**
-	 * Get the subscription by id
+	 * Get the user by id
 	 *
-	 * @param $subscription_id int Subscription id
-	 * @return object|null Subscription or null
+	 * @param $user_id int User id
+	 * @return object|null User or null
 	 */
-	public static function get_subscription( $subscription_id ) {
+	public static function get_user( $user_id ) {
 		global $wpdb;
 
 		$sql    = $wpdb->prepare(
-			'SELECT ' . self::$allowed_subscriptions_fields .
-			' FROM ' . self::subscriptions_table() . ' WHERE id=%d',
-			$subscription_id
+			'SELECT ' . self::$allowed_users_fields .
+			' FROM ' . self::users_table() . ' WHERE id=%d',
+			$user_id
 		);
 		$result = $wpdb->get_row( $sql );
 		return $result;
 	}
 
 	/**
-	 * Get the subscription by uuid
+	 * Get the user by uuid
 	 *
-	 * @param $uuid string Subscription uuid
-	 * @return object|null Subscription or null
+	 * @param $uuid string User uuid
+	 * @return object|null User or null
 	 */
-	public static function get_subscription_by_uuid( $uuid ) {
+	public static function get_user_by_uuid( $uuid ) {
 		global $wpdb;
 
 		$sql    = $wpdb->prepare(
-			'SELECT ' . self::$allowed_subscriptions_fields .
-			' FROM ' . self::subscriptions_table() . ' WHERE uuid=%s',
+			'SELECT ' . self::$allowed_users_fields .
+			' FROM ' . self::users_table() . ' WHERE uuid=%s',
 			$uuid
 		);
 		$result = $wpdb->get_row( $sql );
@@ -176,18 +176,18 @@ class Perfecty_Push_Lib_Db {
 	}
 
 	/**
-	 * Get the subscriptions
+	 * Get the users
 	 *
 	 * @param $offset int Offset
 	 * @param $size int Limit
-	 * @return array The result with the subscriptions
+	 * @return array The result with the users
 	 */
-	public static function get_subscriptions( $offset, $size ) {
+	public static function get_users( $offset, $size ) {
 		global $wpdb;
 
 		$sql     = $wpdb->prepare(
-			'SELECT ' . self::$allowed_subscriptions_fields .
-			' FROM ' . self::subscriptions_table() .
+			'SELECT ' . self::$allowed_users_fields .
+			' FROM ' . self::users_table() .
 			' LIMIT %d OFFSET %d',
 			$size,
 			$offset
@@ -201,7 +201,7 @@ class Perfecty_Push_Lib_Db {
 	 *
 	 * @param $payload
 	 * @param $status string one of the NOTIFICATIONS_STATUS_* values
-	 * @param $total int Total subscriptions
+	 * @param $total int Total users
 	 * @param $batch_size int Batch size
 	 *
 	 * @return $inserted_id or false if error

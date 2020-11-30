@@ -13,22 +13,22 @@ use Ramsey\Uuid\Uuid;
  */
 
 /**
- * Subscribers registration
+ * Users registration
  *
  * @package    Perfecty_Push
  * @subpackage Perfecty_Push/public
  * @author     Rowinson Gallego <rwn.gallego@gmail.com>
  */
-class Perfecty_Push_Subscribers {
+class Perfecty_Push_Users {
 	/**
-	 * Register the subscriber
+	 * Register the user
 	 *
 	 * @since 1.0.0
 	 */
 	public function register( $data ) {
 		// Request
-		$subscription = $data['subscription'] ?? null;
-		$remote_ip    = $_SERVER['REMOTE_ADDR'];
+		$user      = $data['user'] ?? null;
+		$remote_ip = $_SERVER['REMOTE_ADDR'];
 
 		// Validate the nonce
 		if ( check_ajax_referer( 'wp_rest', '_wpnonce', false ) == false ) {
@@ -36,7 +36,7 @@ class Perfecty_Push_Subscribers {
 		}
 
 		// Extract the data
-		$res        = $this->extract_data( $subscription );
+		$res        = $this->extract_data( $user );
 		$endpoint   = $res[0];
 		$key_auth   = $res[1];
 		$key_p256dh = $res[2];
@@ -50,18 +50,18 @@ class Perfecty_Push_Subscribers {
 			$key_p256dh = sanitize_text_field( $key_p256dh );
 			$remote_ip  = sanitize_text_field( $remote_ip );
 
-			// store the subscription in the DB
-			$result = Perfecty_Push_Lib_Db::store_subscription( $endpoint, $key_auth, $key_p256dh, $remote_ip );
+			// store the user in the DB
+			$result = Perfecty_Push_Lib_Db::store_user( $endpoint, $key_auth, $key_p256dh, $remote_ip );
 
 			if ( $result == false ) {
 				// Could not subscribe
-				return new WP_Error( 'failed_subscription', 'Could not subscribe the user', array( 'status' => 500 ) );
+				return new WP_Error( 'failed_user', 'Could not subscribe the user', array( 'status' => 500 ) );
 			} else {
-				// The subscription was correct
-				$subscription = Perfecty_Push_Lib_Db::get_subscription( $result );
-				$response     = array(
+				// The user was correct
+				$user     = Perfecty_Push_Lib_Db::get_user( $result );
+				$response = array(
 					'success' => true,
-					'uuid'    => $subscription->uuid,
+					'uuid'    => $user->uuid,
 				);
 				return (object) $response;
 			}
@@ -90,14 +90,14 @@ class Perfecty_Push_Subscribers {
 			return new WP_Error( 'bad_request', $validation, array( 'status' => 400 ) );
 		}
 
-		$subscription = Perfecty_Push_Lib_Db::get_subscription_by_uuid( $user_id );
-		if ( $subscription == null ) {
+		$user = Perfecty_Push_Lib_Db::get_user_by_uuid( $user_id );
+		if ( $user == null ) {
 			return new WP_Error( 'bad_request', 'user id not found', array( 'status' => 404 ) );
 		}
-		$result = Perfecty_Push_Lib_Db::set_subscription_active( $subscription->id, $is_active );
+		$result = Perfecty_Push_Lib_Db::set_user_active( $user->id, $is_active );
 
 		if ( $result === false ) {
-			return new WP_Error( 'failed_update', 'Could not change the subscription', array( 'status' => 500 ) );
+			return new WP_Error( 'failed_update', 'Could not change the user', array( 'status' => 500 ) );
 		} else {
 			$response = array(
 				'success'   => true,
@@ -107,14 +107,14 @@ class Perfecty_Push_Subscribers {
 		}
 	}
 
-	private function extract_data( $subscription ) {
-		$endpoint   = isset( $subscription['endpoint'] ) ? $subscription['endpoint'] : '';
+	private function extract_data( $user ) {
+		$endpoint   = isset( $user['endpoint'] ) ? $user['endpoint'] : '';
 		$key_auth   = '';
 		$key_p256dh = '';
 
-		if ( isset( $subscription['keys'] ) ) {
+		if ( isset( $user['keys'] ) ) {
 			// it follows the standard: https://www.w3.org/TR/2018/WD-push-api-20181026/
-			$keys       = $subscription['keys'];
+			$keys       = $user['keys'];
 			$key_auth   = isset( $keys['auth'] ) ? $keys['auth'] : '';
 			$key_p256dh = isset( $keys['p256dh'] ) ? $keys['p256dh'] : '';
 		}

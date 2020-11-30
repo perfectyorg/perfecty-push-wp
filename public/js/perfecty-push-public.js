@@ -8,21 +8,21 @@
 			navigator.serviceWorker.register(path + '/service-worker-loader.js.php', { scope: '/' }).then(() =>{
 				return navigator.serviceWorker.ready
 			}).then(async (registration) => {
-				// we get the push subscription
-				const subscription = await registration.pushManager.getSubscription();
-				if (subscription) {
-					return subscription;
+				// we get the push user
+				const user = await registration.pushManager.getSubscription();
+				if (user) {
+					return user;
 				}
 				const vapidPublicKey = urlBase64ToUint8Array(vapidPublicKey64);
 				return registration.pushManager.subscribe({
 					userVisibleOnly: true,
 					applicationServerKey: vapidPublicKey
 				});
-			}).then((subscription) => {
+			}).then((user) => {
 				// we send the registration details to the server
 				path = siteUrl + "/wp-json/perfecty-push/v1/register?_wpnonce=" + nonce
 				const payload = {
-					subscription: subscription
+					user: user
 				}
 
 				fetch(path, {
@@ -234,7 +234,7 @@
 				} else if (checked === true && permission === 'denied') {
 					showMessage("You need to allow notifications for this website");
 				} else if (checked === true && permission === 'granted') {
-					// Activate the subscription
+					// Activate the user
 					const userId = localStorage.getItem("perfecty_user_id");
 					setUserActive(options.nonce, options.siteUrl, userId, true)
 					.then((success) => {
@@ -245,7 +245,7 @@
 						}
 					})
 				} else {
-					// Deactivate the subscription
+					// Deactivate the user
 					const userId = localStorage.getItem("perfecty_user_id");
 					setUserActive(options.nonce, options.siteUrl, userId, false)
 					.then((success) => {

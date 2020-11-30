@@ -9,7 +9,7 @@ use Minishlink\WebPush\WebPush;
  */
 
 /**
- * Test the Perfecty_Push_Subscribers class
+ * Test the Perfecty_Push_Users class
  */
 
 class RestRegistrationTest extends WP_UnitTestCase {
@@ -31,9 +31,9 @@ class RestRegistrationTest extends WP_UnitTestCase {
 	 * Test the user registration
 	 */
 	public function test_registration() {
-		$subscribers = new Perfecty_Push_Subscribers();
+		$users = new Perfecty_Push_Users();
 		$data        = array(
-			'subscription' => array(
+			'user' => array(
 				'endpoint' => 'http://my_endpoint',
 				'keys'     => array(
 					'auth'   => 'my_auth_key',
@@ -42,8 +42,8 @@ class RestRegistrationTest extends WP_UnitTestCase {
 			),
 		);
 
-		$res           = $subscribers->register( $data );
-		$subscriptions = Perfecty_Push_Lib_Db::get_subscriptions( 0, 5 );
+		$res           = $users->register( $data );
+		$users = Perfecty_Push_Lib_Db::get_users( 0, 5 );
 
 		$expected = array(
 			'endpoint'   => 'http://my_endpoint',
@@ -52,24 +52,24 @@ class RestRegistrationTest extends WP_UnitTestCase {
 			'remote_ip'  => '127.0.0.1',
 		);
 
-		$this->assertSame( 1, count( $subscriptions ) );
+		$this->assertSame( 1, count( $users ) );
 		$this->assertSame(
 			(array) $res,
 			array(
 				'success' => true,
-				'uuid'    => $subscriptions[0]->uuid,
+				'uuid'    => $users[0]->uuid,
 			)
 		);
-		$this->assertArraySubset( $expected, (array) $subscriptions[0] );
+		$this->assertArraySubset( $expected, (array) $users[0] );
 	}
 
 	/**
 	 * Test registration invalid
 	 */
 	public function test_registration_invalid() {
-		$subscribers = new Perfecty_Push_Subscribers();
+		$users = new Perfecty_Push_Users();
 		$data        = array(
-			'subscription' => array(
+			'user' => array(
 				'endpoint' => 'http://my_endpoint',
 				'keys'     => array(
 					'auth'   => '',
@@ -78,7 +78,7 @@ class RestRegistrationTest extends WP_UnitTestCase {
 			),
 		);
 
-		$res = $subscribers->register( $data );
+		$res = $users->register( $data );
 
 		$expected = array(
 			'validation_error' => array(
@@ -95,16 +95,16 @@ class RestRegistrationTest extends WP_UnitTestCase {
 	 * Test registration missing important data
 	 */
 	public function test_registration_missing_data() {
-		$subscribers = new Perfecty_Push_Subscribers();
+		$users = new Perfecty_Push_Users();
 		$data        = array(
-			'subscription' => array(
+			'user' => array(
 				'keys' => array(
 					'p256dh' => 'my_p256dh_key',
 				),
 			),
 		);
 
-		$res = $subscribers->register( $data );
+		$res = $users->register( $data );
 
 		$expected = array(
 			'validation_error' => array(
@@ -121,9 +121,9 @@ class RestRegistrationTest extends WP_UnitTestCase {
 	 * Test registration DB error
 	 */
 	public function test_registration_db_error() {
-		$subscribers = new Perfecty_Push_Subscribers();
+		$users = new Perfecty_Push_Users();
 		$data        = array(
-			'subscription' => array(
+			'user' => array(
 				'endpoint' => 'http://my_endpoint',
 				'keys'     => array(
 					'auth'   => 'my_very_long_auth_key123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890',
@@ -132,17 +132,17 @@ class RestRegistrationTest extends WP_UnitTestCase {
 			),
 		);
 
-		$res = $subscribers->register( $data );
+		$res = $users->register( $data );
 
 		$expected = array(
-			'failed_subscription' => array(
+			'failed_user' => array(
 				0 => 'Could not subscribe the user',
 			),
 		);
 
 		$this->assertInstanceOf( WP_Error::class, $res );
 		$this->assertArraySubset( $expected, $res->errors );
-		$this->assertSame( 500, $res->error_data['failed_subscription']['status'] );
+		$this->assertSame( 500, $res->error_data['failed_user']['status'] );
 	}
 
 	/**
@@ -150,7 +150,7 @@ class RestRegistrationTest extends WP_UnitTestCase {
 	 */
 	public function test_registration_invalid_nonce() {
 		unset( $_REQUEST['_ajax_nonce'] );
-		$mock = Mockery::mock( Perfecty_Push_Subscribers::class )->makePartial();
+		$mock = Mockery::mock( Perfecty_Push_Users::class )->makePartial();
 		$mock
 		->shouldReceive( 'terminate' )
 		->andReturnUsing(

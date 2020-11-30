@@ -148,7 +148,7 @@ class Perfecty_Push {
 		 * side of the site.
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-perfecty-push-public.php';
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-perfecty-push-subscribers.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-perfecty-push-users.php';
 
 		/**
 		 * Contains the lib/ definitions

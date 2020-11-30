@@ -85,14 +85,14 @@ class Perfecty_Push_Public {
 	 * @since 1.0.0
 	 */
 	public function register_rest_endpoints() {
-		$subscribers = new Perfecty_Push_Subscribers();
+		$users = new Perfecty_Push_Users();
 
 		register_rest_route(
 			'/perfecty-push/v1/',
 			'/register/',
 			array(
 				'methods'  => 'POST',
-				'callback' => array( $subscribers, 'register' ),
+				'callback' => array( $users, 'register' ),
 			)
 		);
 
@@ -101,7 +101,7 @@ class Perfecty_Push_Public {
 			'/user/active/',
 			array(
 				'methods'  => 'PUT',
-				'callback' => array( $subscribers, 'set_user_active' ),
+				'callback' => array( $users, 'set_user_active' ),
 			)
 		);
 	}

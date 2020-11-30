@@ -58,8 +58,8 @@ class Perfecty_Push_Lib_Push_Server {
 			return false;
 		} else {
 			// Fallback to wp-cron
-			$total_subscriptions = Perfecty_Push_Lib_Db::total_subscriptions();
-			$notification_id     = Perfecty_Push_Lib_Db::create_notification( $payload, Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_SCHEDULED, $total_subscriptions, $batch_size );
+			$total_users     = Perfecty_Push_Lib_Db::total_users();
+			$notification_id = Perfecty_Push_Lib_Db::create_notification( $payload, Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_SCHEDULED, $total_users, $batch_size );
 			if ( ! $notification_id ) {
 				error_log( 'Could not schedule the notification.' );
 				return false;
@@ -93,9 +93,9 @@ class Perfecty_Push_Lib_Push_Server {
 		Perfecty_Push_Lib_Db::take_notification( $notification_id );
 
 		// we get the next batch, starting from $last_cursor we take $batch_size elements
-		$subscriptions = Perfecty_Push_Lib_Db::get_subscriptions( $notification->last_cursor, $notification->batch_size );
+		$users = Perfecty_Push_Lib_Db::get_users( $notification->last_cursor, $notification->batch_size );
 
-		if ( count( $subscriptions ) == 0 ) {
+		if ( count( $users ) == 0 ) {
 			$result = Perfecty_Push_Lib_Db::mark_notification_completed_untake( $notification_id );
 			if ( ! $result ) {
 				error_log( "Could not mark the notification $notification_id as completed" );
@@ -105,7 +105,7 @@ class Perfecty_Push_Lib_Push_Server {
 		}
 
 		// we send one batch
-		$result = self::send_notification( $notification->payload, $subscriptions );
+		$result = self::send_notification( $notification->payload, $users );
 		if ( is_array( $result ) ) {
 			$total_batch                = $result[0];
 			$succeeded                  = $result[1];
@@ -128,28 +128,28 @@ class Perfecty_Push_Lib_Push_Server {
 	}
 
 	/**
-	 * Send the notification to a set of subscribers
+	 * Send the notification to a set of users
 	 *
 	 * @param $payload array|string Payload to be sent, json encoded or array
-	 * @param $subscriptions array List of subscriptions
+	 * @param $users array List of users
 	 * @return [$total, $succeeded] | string Total/succeeded messages or Error message
 	 */
-	public static function send_notification( $payload, $subscriptions ) {
+	public static function send_notification( $payload, $users ) {
 		if ( ! is_string( $payload ) ) {
 			$payload = json_encode( $payload );
 		}
 
-		foreach ( $subscriptions as $item ) {
-			$push_subscription = new Subscription(
+		foreach ( $users as $item ) {
+			$push_user = new Subscription(
 				$item->endpoint,
 				$item->key_p256dh,
 				$item->key_auth
 			);
 
-			self::$webpush->sendNotification( $push_subscription, $payload );
+			self::$webpush->sendNotification( $push_user, $payload );
 		}
 
-		$total     = count( $subscriptions );
+		$total     = count( $users );
 		$succeeded = 0;
 		foreach ( self::$webpush->flush() as $result ) {
 			if ( $result->isSuccess() ) {
