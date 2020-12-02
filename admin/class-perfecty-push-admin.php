@@ -121,6 +121,15 @@ class Perfecty_Push_Admin {
 
 		add_submenu_page(
 			'perfecty-push',
+			'Notifications',
+			'Notifications',
+			'manage_options',
+			'perfecty-push-notifications',
+			array( $this, 'print_notifications_page' )
+		);
+
+		add_submenu_page(
+			'perfecty-push',
 			'Send notification',
 			'Send notification',
 			'manage_options',
@@ -240,6 +249,20 @@ class Perfecty_Push_Admin {
 	 */
 	public function print_options_page() {
 		require_once plugin_dir_path( __FILE__ ) . 'partials/perfecty-push-admin-options.php';
+	}
+
+	/**
+   * Renders the notifications page
+   *
+   * @since 1.0.0
+   */
+  public function print_notifications_page() {
+    global $wpdb;
+
+    $table = new Perfecty_Push_Admin_Notifications_Table();
+    $affected = $table->prepare_items();
+
+    require_once plugin_dir_path(__FILE__) . 'partials/perfecty-push-admin-notifications.php';
 	}
 
 	/**
