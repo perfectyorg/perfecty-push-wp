@@ -8,7 +8,7 @@ use Ramsey\Uuid\Uuid;
 class Perfecty_Push_Lib_Db {
 
 	private static $allowed_users_fields         = 'id,uuid,endpoint,key_auth,key_p256dh,remote_ip,is_active';
-	private static $allowed_notifications_fields = 'id,payload,total,succeeded,last_cursor,batch_size,status,is_taken';
+	private static $allowed_notifications_fields = 'id,payload,total,succeeded,last_cursor,batch_size,status,is_taken,creation_time';
 
 	public const NOTIFICATIONS_STATUS_SCHEDULED = 'scheduled';
 	public const NOTIFICATIONS_STATUS_FAILED    = 'failed';
@@ -247,6 +247,47 @@ class Perfecty_Push_Lib_Db {
 	}
 
 	/**
+	 * Get notifications
+	 *
+	 * @param $offset int Offset
+	 * @param $size int Limit
+	 * @param $order_by string Field to order by
+	 * @param $order_asc string 'asc' or 'desc'
+	 * @return array The result
+	 */
+	public static function get_notifications( $offset, $size, $order_by = 'creation_time', $order_asc = 'desc', $mode = OBJECT ) {
+		global $wpdb;
+
+		if ( strpos( self::$allowed_notifications_fields, $order_by ) === false ) {
+			throw new Exception( "The order by [$order_by] field is not alllowed" );
+		}
+		$order_asc = $order_asc === 'asc' ? 'asc' : 'desc';
+
+		$sql     = $wpdb->prepare(
+			'SELECT ' . self::$allowed_notifications_fields .
+			' FROM ' . self::notifications_table() .
+			' ORDER BY ' . $order_by . ' ' . $order_asc .
+			' LIMIT %d OFFSET %d',
+			$size,
+			$offset
+		);
+		$results = $wpdb->get_results( $sql, $mode );
+		return $results;
+	}
+
+	/**
+	 * Get total notifications
+	 *
+	 * @return int Total notifications
+	 */
+	public static function get_notifications_total() {
+		global $wpdb;
+
+		$total = $wpdb->get_var( 'SELECT COUNT(id) FROM ' . self::notifications_table() );
+		return intval( $total );
+	}
+
+	/**
 	 * Take the notification
 	 *
 	 * @param $notification_id int Notification id
@@ -331,6 +372,24 @@ class Perfecty_Push_Lib_Db {
 		);
 
 		return $result;
+	}
+
+	/**
+	 * Delete notifications by id
+	 *
+	 * @param $notification_ids array Notification ids
+	 * @return object|null Notification or null
+	 */
+	public static function delete_notifications( $notification_ids ) {
+		global $wpdb;
+
+		if ( ! is_array( $notification_ids ) ) {
+			error_log( 'Wrong parameter, notification ids must be an array' );
+			return false;
+		}
+		$ids = implode( ',', $notification_ids );
+
+		return $wpdb->query( 'DELETE FROM ' . self::notifications_table() . " WHERE id IN ($ids)" );
 	}
 
 	/*****************************************************************/

@@ -221,6 +221,22 @@ class DbTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test delete notifications
+	 */
+	public function test_delete_notification() {
+		$id1 = Perfecty_Push_Lib_Db::create_notification( 'my_payload', Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_SCHEDULED, 35, 20 );
+		$id2 = Perfecty_Push_Lib_Db::create_notification( 'my_payload_2', Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_SCHEDULED, 35, 20 );
+		$notifications_before = Perfecty_Push_Lib_Db::get_notifications(0, 30);
+
+		$total = Perfecty_Push_Lib_Db::delete_notifications([$id1, $id2]);
+		$notifications_after = Perfecty_Push_Lib_Db::get_notifications(0, 30);
+
+		$this->assertSame($total, 2);
+		$this->assertSame(count($notifications_before), 2);
+		$this->assertSame(count($notifications_after), 0);
+	}
+
+	/**
 	 * Test that the create notification returns false on errors
 	 */
 	public function test_notification_creation_error_returns_false() {
@@ -247,6 +263,59 @@ class DbTest extends WP_UnitTestCase {
 		$this->assertArraySubset( $expected, (array) $notification );
 	}
 
+	/**
+	 * Test that it gets a notifications
+	 */
+	public function test_get_notifications() {
+		$id1       = Perfecty_Push_Lib_Db::create_notification( 'my_payload1', Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_SCHEDULED, 35, 20 );
+		$id2       = Perfecty_Push_Lib_Db::create_notification( 'my_payload2', Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_COMPLETED, 43, 17 );
+		$id3       = Perfecty_Push_Lib_Db::create_notification( 'my_payload3', Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_FAILED, 55, 88 );
+		$expected1 = array(
+			'payload'     => 'my_payload1',
+			'total'       => 35,
+			'succeeded'   => 0,
+			'last_cursor' => 0,
+			'batch_size'  => 20,
+			'status'      => 'scheduled',
+			'is_taken'    => 0,
+		);
+
+		$expected2 = array(
+			'payload'     => 'my_payload2',
+			'total'       => 43,
+			'succeeded'   => 0,
+			'last_cursor' => 0,
+			'batch_size'  => 17,
+			'status'      => 'completed',
+			'is_taken'    => 0,
+		);
+
+		$expected3 = array(
+			'payload'     => 'my_payload3',
+			'total'       => 55,
+			'succeeded'   => 0,
+			'last_cursor' => 0,
+			'batch_size'  => 88,
+			'status'      => 'failed',
+			'is_taken'    => 0,
+		);
+		$notifications = Perfecty_Push_Lib_Db::get_notifications(0, 5, 'id', 'desc');
+		$this->assertSame( 3, count($notifications) );
+		$this->assertArraySubset( $expected1, (array) $notifications[2] );
+		$this->assertArraySubset( $expected2, (array) $notifications[1] );
+		$this->assertArraySubset( $expected3, (array) $notifications[0] );
+	}
+
+	/**
+	 * Test the total notifications
+	 */
+	public function test_total_notifications() {
+		$id1       = Perfecty_Push_Lib_Db::create_notification( 'my_payload1', Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_SCHEDULED, 35, 20 );
+		$id2       = Perfecty_Push_Lib_Db::create_notification( 'my_payload2', Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_SCHEDULED, 43, 17 );
+
+		$total = Perfecty_Push_Lib_Db::get_notifications_total();
+		$this->assertSame(2, $total);
+	}
 	/**
 	 * Test that it returns false when the id is incorrect
 	 */

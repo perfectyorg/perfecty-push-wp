@@ -4,7 +4,7 @@ if [ $# -lt 1 ]; then
   echo "Run utilities"
   echo "----------------------"
 	echo "  usage: $0 <command> [options]"
-  echo "    <command> can be any of: up, down, console, setup, wordpress, composer, phpunit, test"
+  echo "    <command> can be any of: up, down, console, setup, wordpress, composer, phpunit, test, format"
   echo " .  [options]: --verbose"
 	exit 1
 fi
@@ -65,10 +65,15 @@ test() {
   compose_exec "$CMD"
 }
 
+format() {
+  CMD=$(plugin_cmd 'vendor/bin/phpcbf')
+  compose_exec "$CMD"
+}
+
 #----------------------------------------------
 
 case $COMMAND in
-  "up" | "down" | "setup" | "wordpress" | "composer" | "composer" | "phpunit" | "test" | "console")
+  "up" | "down" | "setup" | "wordpress" | "composer" | "composer" | "phpunit" | "test" | "format" | "console")
     if [[ $VERBOSE == '--verbose' ]]; then
       set -ex
     else

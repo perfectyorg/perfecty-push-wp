@@ -6,6 +6,7 @@ default:
 	@echo "  down: Stop the service containers"
 	@echo "  console: Remote console to the wordpress service container"
 	@echo "  test: Run the unit tests"
+	@echo "  format: Run the code beautifier"
 	@echo "  wordpress: Setup wordpress and plugins"
 	@echo "  composer: Install all the composer dependencies"
 	@echo "  phpunit: Setup Wordpress as a testing environment for phpunit"
@@ -20,6 +21,9 @@ down:
 
 test:
 	@./bin/run.sh test
+
+format:
+	@./bin/run.sh format
 
 console:
 	@./bin/run.sh console

@@ -252,17 +252,17 @@ class Perfecty_Push_Admin {
 	}
 
 	/**
-   * Renders the notifications page
-   *
-   * @since 1.0.0
-   */
-  public function print_notifications_page() {
-    global $wpdb;
+	 * Renders the notifications page
+	 *
+	 * @since 1.0.0
+	 */
+	public function print_notifications_page() {
+		global $wpdb;
 
-    $table = new Perfecty_Push_Admin_Notifications_Table();
-    $affected = $table->prepare_items();
+		$table    = new Perfecty_Push_Admin_Notifications_Table();
+		$affected = $table->prepare_items();
 
-    require_once plugin_dir_path(__FILE__) . 'partials/perfecty-push-admin-notifications.php';
+		require_once plugin_dir_path( __FILE__ ) . 'partials/perfecty-push-admin-notifications.php';
 	}
 
 	/**
