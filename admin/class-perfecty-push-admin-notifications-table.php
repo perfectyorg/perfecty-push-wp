@@ -21,7 +21,7 @@ class Perfecty_Push_Admin_Notifications_Table extends WP_List_Table {
 		return $item[ $column_name ];
 	}
 
-	function column_id( $item ) {
+	function column_creation_time( $item ) {
 		$actions = array(
 			'view'   => sprintf( '<a href="?page=perfecty-push-notification&id=%s">%s</a>', $item['id'], 'View' ),
 			'delete' => sprintf( '<a href="#" class="delete-entry" data-page="%s" data-id="%d">%s</a>', $_REQUEST['page'], $item['id'], 'Delete' ),
@@ -29,7 +29,7 @@ class Perfecty_Push_Admin_Notifications_Table extends WP_List_Table {
 
 		return sprintf(
 			'%s %s',
-			$item['id'],
+			$item['creation_time'],
 			$this->row_actions( $actions )
 		);
 	}
@@ -44,12 +44,10 @@ class Perfecty_Push_Admin_Notifications_Table extends WP_List_Table {
 	function get_columns() {
 		$columns = array(
 			'cb'            => '<input type="checkbox" />',
-			'id'            => 'ID',
 			'creation_time' => 'Date',
 			'status'        => 'Status',
 			'total'         => 'Total',
 			'succeeded'     => 'Succeeded',
-			'batch_size'    => 'Batch Size',
 		);
 		return $columns;
 	}
