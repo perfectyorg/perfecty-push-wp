@@ -1,15 +1,3 @@
-<?php
-
-/**
- * Prints the send notification page
- *
- * @link       https://github.com/rwngallego
- * @since      1.0.0
- *
- * @package    Perfecty_Push
- * @subpackage Perfecty_Push/admin/partials
- */
-?>
 <div class="wrap">
 	<div class="icon32 icon32-posts-post" id="icon-edit"><br></div>
 	<h1>Send notification</h1>

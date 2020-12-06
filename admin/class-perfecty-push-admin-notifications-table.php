@@ -5,6 +5,7 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
 }
 
 class Perfecty_Push_Admin_Notifications_Table extends WP_List_Table {
+	private const MAX_LENGTH = 100;
 
 	function __construct() {
 		global $status, $page;
@@ -18,14 +19,24 @@ class Perfecty_Push_Admin_Notifications_Table extends WP_List_Table {
 	}
 
 	function column_default( $item, $column_name ) {
-		return $item[ $column_name ];
+		$content = $item[ $column_name ];
+
+		if ( is_string( $content ) && strlen( $content ) > self::MAX_LENGTH ) {
+			return substr( $content, 0, self::MAX_LENGTH ) . '...';
+		} else {
+			return $content;
+		}
 	}
 
 	function column_creation_time( $item ) {
-		$actions = array(
-			'view'   => sprintf( '<a href="?page=perfecty-push-notification&id=%s">%s</a>', $item['id'], 'View' ),
-			'delete' => sprintf( '<a href="#" class="delete-entry" data-page="%s" data-id="%d">%s</a>', $_REQUEST['page'], $item['id'], 'Delete' ),
+		$action_nonce = wp_create_nonce( 'bulk-' . $this->_args['plural'] );
+		$actions      = array(
+			'view'   => sprintf( '<a href="?page=%s&action=%s&id=%s">%s</a>', $_REQUEST['page'], 'view', $item['id'], 'View' ),
+			'delete' => sprintf( '<a href="#" class="perfecty-push-confirm-action" data-page="%s" data-action="%s" data-id="%d" data-nonce="%s">%s</a>', $_REQUEST['page'], 'delete', $item['id'], $action_nonce, 'Delete' ),
 		);
+		if ( $item['status'] == Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_RUNNING || $item['status'] == Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_SCHEDULED ) {
+			$actions['cancel'] = sprintf( '<a href="#" class="perfecty-push-confirm-action" data-page="%s" data-action="%s" data-id="%d" data-nonce="%s">%s</a>', $_REQUEST['page'], 'cancel', $item['id'], $action_nonce, 'Cancel' );
+		}
 
 		return sprintf(
 			'%s %s',
@@ -45,6 +56,7 @@ class Perfecty_Push_Admin_Notifications_Table extends WP_List_Table {
 		$columns = array(
 			'cb'            => '<input type="checkbox" />',
 			'creation_time' => 'Date',
+			'payload'       => 'Payload',
 			'status'        => 'Status',
 			'total'         => 'Total',
 			'succeeded'     => 'Succeeded',
@@ -65,18 +77,27 @@ class Perfecty_Push_Admin_Notifications_Table extends WP_List_Table {
 	function get_bulk_actions() {
 		$actions = array(
 			'delete' => 'Delete',
+			'cancel' => 'Cancel',
 		);
 		return $actions;
 	}
 
 	function process_bulk_action() {
 		if ( 'delete' === $this->current_action() ) {
-			$ids = isset( $_REQUEST['id'] ) && is_array( $_REQUEST['id'] ) ? $_REQUEST['id'] : array();
+			$nonce = 'bulk-' . $this->_args['plural'];
+			if ( ! isset( $_REQUEST['_wpnonce'] ) || ! wp_verify_nonce( $_REQUEST['_wpnonce'], $nonce ) ) {
+				wp_die( 'Could not verify the action' );
+			}
+
+			if ( ! isset( $_REQUEST['id'] ) ) {
+				wp_die( 'No params were specified' );
+			}
 
 			// filter data
+			$ids = is_array( $_REQUEST['id'] ) ? $_REQUEST['id'] : array( $_REQUEST['id'] );
 			$ids = array_map(
 				function( $item ) {
-					return int( $item );
+					return intval( $item );
 				},
 				$ids
 			);
@@ -89,7 +110,7 @@ class Perfecty_Push_Admin_Notifications_Table extends WP_List_Table {
 		$per_page = 10;
 
 		$columns  = $this->get_columns();
-		$hidden   = array();
+		$hidden   = array( 'perfecty-push-notifications-bulk', wp_create_nonce( 'perfecty-push-notifications-bulk' ) );
 		$sortable = $this->get_sortable_columns();
 
 		$this->_column_headers = array( $columns, $hidden, $sortable );

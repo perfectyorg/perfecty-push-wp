@@ -1,4 +1,8 @@
-.perfecty-items-list {
+.perfecty-push-items-list {
   list-style: circle;
   list-style-position: inside;
+}
+
+.perfecty-push-notifications-view-form label {
+  font-weight: bold;
 }

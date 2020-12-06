@@ -11,6 +11,7 @@ class Perfecty_Push_Lib_Db {
 	private static $allowed_notifications_fields = 'id,payload,total,succeeded,last_cursor,batch_size,status,is_taken,creation_time';
 
 	public const NOTIFICATIONS_STATUS_SCHEDULED = 'scheduled';
+	public const NOTIFICATIONS_STATUS_RUNNING   = 'running';
 	public const NOTIFICATIONS_STATUS_FAILED    = 'failed';
 	public const NOTIFICATIONS_STATUS_COMPLETED = 'completed';
 
@@ -253,6 +254,7 @@ class Perfecty_Push_Lib_Db {
 	 * @param $size int Limit
 	 * @param $order_by string Field to order by
 	 * @param $order_asc string 'asc' or 'desc'
+	 * @param $mode Wpdb_Constant How to return the results
 	 * @return array The result
 	 */
 	public static function get_notifications( $offset, $size, $order_by = 'creation_time', $order_asc = 'desc', $mode = OBJECT ) {

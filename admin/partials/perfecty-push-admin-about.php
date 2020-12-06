@@ -18,7 +18,7 @@
 	own your data.</p>
 	<h2>Advantages</h2>
 	<p>
-	<ul class="perfecty-items-list">
+	<ul class="perfecty-push-items-list">
 		<li>Open Source and self-hosted</li>
 		<li>No third party dependencies when self-hosted </li>
 		<li>Offline browser notifications through <a href="https://developer.mozilla.org/en-US/docs/Web/API/Push_API">Push API</a> (Safari is not supported yet)</li>
@@ -27,7 +27,7 @@
 	</p>
 	<h2>Requirements</h2>
 	<p>
-	<ul class="perfecty-items-list">
+	<ul class="perfecty-push-items-list">
 		<li>PHP 7.1+</li>
 		<li>The gmp extension</li>
 	</ul>
