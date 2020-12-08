@@ -139,6 +139,15 @@ class Perfecty_Push_Admin {
 
 		add_submenu_page(
 			'perfecty-push',
+			'Users',
+			'Users',
+			'manage_options',
+			'perfecty-push-users',
+			array( $this, 'print_users_page' )
+		);
+
+		add_submenu_page(
+			'perfecty-push',
 			'Settings',
 			'Settings',
 			'manage_options',
@@ -269,6 +278,26 @@ class Perfecty_Push_Admin {
 		$table    = new Perfecty_Push_Admin_Notifications_Table();
 		$affected = $table->prepare_items();
 		require_once plugin_dir_path( __FILE__ ) . 'partials/perfecty-push-admin-notifications.php';
+	}
+
+	/**
+	 * Renders the users page
+	 *
+	 * @since 1.0.0
+	 */
+	public function print_users_page() {
+		if ( isset( $_GET['id'] ) && ! empty( $_GET['id'] ) &&
+			isset( $_GET['action'] ) && $_GET['action'] == 'view' ) {
+			$id   = intval( $_REQUEST['id'] );
+			$item = Perfecty_Push_Lib_Db::get_user( $id );
+
+			require_once plugin_dir_path( __FILE__ ) . 'partials/perfecty-push-admin-users-view.php';
+			return true;
+		}
+
+		$table    = new Perfecty_Push_Admin_Users_Table();
+		$affected = $table->prepare_items();
+		require_once plugin_dir_path( __FILE__ ) . 'partials/perfecty-push-admin-users.php';
 	}
 
 	/**

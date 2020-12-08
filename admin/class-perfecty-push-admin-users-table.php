@@ -28,7 +28,7 @@ class Perfecty_Push_Admin_Users_Table extends WP_List_Table {
 		}
 	}
 
-	function column_creation_time( $item ) {
+	function column_uuid( $item ) {
 		$action_nonce = wp_create_nonce( 'bulk-' . $this->_args['plural'] );
 		$actions      = array(
 			'view'   => sprintf( '<a href="?page=%s&action=%s&id=%s">%s</a>', $_REQUEST['page'], 'view', $item['id'], 'View' ),
@@ -37,7 +37,7 @@ class Perfecty_Push_Admin_Users_Table extends WP_List_Table {
 
 		return sprintf(
 			'%s %s',
-			$item['creation_time'],
+			$item['uuid'],
 			$this->row_actions( $actions )
 		);
 	}
@@ -49,6 +49,14 @@ class Perfecty_Push_Admin_Users_Table extends WP_List_Table {
 		);
 	}
 
+	function column_is_active( $item ) {
+		return $item['is_active'] == 1 ? 'Yes' : 'No';
+	}
+
+	function column_disabled( $item ) {
+		return $item['disabled'] == 1 ? 'Yes' : '';
+	}
+
 	function get_columns() {
 		$columns = array(
 			'cb'            => '<input type="checkbox" />',
@@ -57,7 +65,7 @@ class Perfecty_Push_Admin_Users_Table extends WP_List_Table {
 			'endpoint'      => 'Endpoint',
 			'is_active'     => 'Active',
 			'disabled'      => 'Disabled',
-			'creation_time' => 'Date',
+			'creation_time' => 'Registered',
 		);
 		return $columns;
 	}
@@ -97,7 +105,7 @@ class Perfecty_Push_Admin_Users_Table extends WP_List_Table {
 				$ids
 			);
 
-			Perfecty_Push_Lib_Db::delete_user( $ids );
+			Perfecty_Push_Lib_Db::delete_users( $ids );
 		}
 	}
 
@@ -112,7 +120,7 @@ class Perfecty_Push_Admin_Users_Table extends WP_List_Table {
 
 		$affected = $this->process_bulk_action();
 
-		$total_items = Perfecty_Push_Lib_Db::get_users_total();
+		$total_items = Perfecty_Push_Lib_Db::get_total_users();
 
 		$paged   = isset( $_REQUEST['paged'] ) ? max( 0, intval( $_REQUEST['paged'] ) - 1 ) : 0;
 		$orderby = ( isset( $_REQUEST['orderby'] ) && in_array( $_REQUEST['orderby'], array_keys( $this->get_sortable_columns() ) ) ) ? $_REQUEST['orderby'] : 'creation_time';

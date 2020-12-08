@@ -7,7 +7,7 @@ use Ramsey\Uuid\Uuid;
  */
 class Perfecty_Push_Lib_Db {
 
-	private static $allowed_users_fields         = 'id,uuid,endpoint,key_auth,key_p256dh,remote_ip,is_active,creation_time';
+	private static $allowed_users_fields         = 'id,uuid,endpoint,key_auth,key_p256dh,remote_ip,is_active,disabled,creation_time';
 	private static $allowed_notifications_fields = 'id,payload,total,succeeded,last_cursor,batch_size,status,is_taken,creation_time';
 
 	public const NOTIFICATIONS_STATUS_SCHEDULED = 'scheduled';
@@ -134,6 +134,26 @@ class Perfecty_Push_Lib_Db {
 		$result = $wpdb->update(
 			self::users_table(),
 			array( 'is_active' => $is_active ),
+			array( 'id' => $user_id )
+		);
+
+		return $result;
+	}
+
+	/**
+	 * Changes the disabled property for the subcription
+	 *
+	 * @param $user_id int id
+	 * @param $disabled bool True or false
+	 *
+	 * @return int|bool Number of rows updated or false
+	 */
+	public static function set_user_disabled( $user_id, $disabled ) {
+		global $wpdb;
+
+		$result = $wpdb->update(
+			self::users_table(),
+			array( 'disabled' => $disabled ),
 			array( 'id' => $user_id )
 		);
 

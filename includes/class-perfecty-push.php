@@ -144,9 +144,10 @@ class Perfecty_Push {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-perfecty-push-admin.php';
 
 		/**
-	 * Contains the notifications form table
-	 */
+		 * Contains the form tables
+		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-perfecty-push-admin-notifications-table.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-perfecty-push-admin-users-table.php';
 
 		/**
 		 * The class responsible for defining all actions that occur in the public-facing

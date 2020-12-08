@@ -3,7 +3,7 @@
 	<h1>Notification details</h1>
 
 	<tbody >
-  <div class="formdata perfecty-push-notifications-view-form">
+  <div class="formdata perfecty-push-view-form">
 	<form >
 	  <div>
 		<p>

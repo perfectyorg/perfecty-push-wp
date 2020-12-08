@@ -1,8 +1,7 @@
 <div class="wrap">
 
 	<div class="icon32 icon32-posts-post" id="icon-edit"><br></div>
-	<h2>Notifications</h2>
-	<a class="add-new-h2 button-primary" href="<?php echo get_admin_url( get_current_blog_id(), 'admin.php?page=perfecty-push-send-notification' ); ?>">Send notification</a>
+	<h2>Users</h2>
 
 	<?php
 	if ( ! empty( $message ) ) {
