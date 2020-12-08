@@ -29,7 +29,7 @@ class DbTest extends WP_UnitTestCase {
 	public function test_user_creation() {
 		global $wpdb;
 
-		Perfecty_Push_Lib_Db::store_user( 'my_endpoint_url', 'my_key_auth', 'my_p256dh_key', '127.0.0.1' );
+		Perfecty_Push_Lib_Db::create_user( 'my_endpoint_url', 'my_key_auth', 'my_p256dh_key', '127.0.0.1' );
 		$sql    = 'SELECT * FROM ' . $wpdb->prefix . 'perfecty_push_users';
 		$result = $wpdb->get_row( $sql, ARRAY_A );
 
@@ -50,7 +50,7 @@ class DbTest extends WP_UnitTestCase {
 	public function test_new_users_are_active() {
 		global $wpdb;
 
-		Perfecty_Push_Lib_Db::store_user( 'my_endpoint_url', 'my_key_auth', 'my_p256dh_key', '127.0.0.1' );
+		Perfecty_Push_Lib_Db::create_user( 'my_endpoint_url', 'my_key_auth', 'my_p256dh_key', '127.0.0.1' );
 		$sql    = 'SELECT * FROM ' . $wpdb->prefix . 'perfecty_push_users';
 		$result = $wpdb->get_row( $sql );
 
@@ -60,10 +60,10 @@ class DbTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test that the store_user returns a valid uuid
+	 * Test that the create_user returns a valid uuid
 	 */
 	public function test_uuid_is_valid() {
-		$id           = Perfecty_Push_Lib_Db::store_user( 'my_endpoint_url', 'my_key_auth', 'my_p256dh_key', '127.0.0.1' );
+		$id           = Perfecty_Push_Lib_Db::create_user( 'my_endpoint_url', 'my_key_auth', 'my_p256dh_key', '127.0.0.1' );
 		$user = Perfecty_Push_Lib_Db::get_user( $id );
 
 		$valid = Uuid::isValid( $user->uuid );
@@ -71,20 +71,20 @@ class DbTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test that the store_user returns false on errors
+	 * Test that the create_user returns false on errors
 	 */
 	public function test_user_creation_error_returns_false() {
-		$res = Perfecty_Push_Lib_Db::store_user( 'my_endpoint_url', 'my_key_auth', 'my_p256dh_key', 'this_is_a_really_long_string_with_more_than_46_characters' );
+		$res = Perfecty_Push_Lib_Db::create_user( 'my_endpoint_url', 'my_key_auth', 'my_p256dh_key', 'this_is_a_really_long_string_with_more_than_46_characters' );
 		$this->assertSame( false, $res );
 	}
 
 	/**
 	 * Test total users
 	 */
-	public function test_total_users() {
-		$initial = Perfecty_Push_Lib_Db::total_users();
-		Perfecty_Push_Lib_Db::store_user( 'my_endpoint_url', 'my_key_auth', 'my_p256dh_key', '127.0.0.1' );
-		$current = Perfecty_Push_Lib_Db::total_users();
+	public function test_get_total_users() {
+		$initial = Perfecty_Push_Lib_Db::get_total_users();
+		Perfecty_Push_Lib_Db::create_user( 'my_endpoint_url', 'my_key_auth', 'my_p256dh_key', '127.0.0.1' );
+		$current = Perfecty_Push_Lib_Db::get_total_users();
 		$this->assertSame( $current - $initial, 1 );
 	}
 
@@ -92,7 +92,7 @@ class DbTest extends WP_UnitTestCase {
 	 * Test set user as active
 	 */
 	public function test_set_user_active() {
-		$id = Perfecty_Push_Lib_Db::store_user( 'my_endpoint_url', 'my_key_auth', 'my_p256dh_key', '127.0.0.1' );
+		$id = Perfecty_Push_Lib_Db::create_user( 'my_endpoint_url', 'my_key_auth', 'my_p256dh_key', '127.0.0.1' );
 		Perfecty_Push_Lib_Db::set_user_active( $id, false );
 		$userInactive = Perfecty_Push_Lib_Db::get_user( $id );
 		Perfecty_Push_Lib_Db::set_user_active( $id, true );
@@ -107,7 +107,7 @@ class DbTest extends WP_UnitTestCase {
 	 * Test get user by id
 	 */
 	public function test_get_user() {
-		$id       = Perfecty_Push_Lib_Db::store_user( 'my_endpoint_url', 'my_key_auth', 'my_p256dh_key', '127.0.0.1' );
+		$id       = Perfecty_Push_Lib_Db::create_user( 'my_endpoint_url', 'my_key_auth', 'my_p256dh_key', '127.0.0.1' );
 		$expected = array(
 			'endpoint'   => 'my_endpoint_url',
 			'key_auth'   => 'my_key_auth',
@@ -123,7 +123,7 @@ class DbTest extends WP_UnitTestCase {
 	 * Test get user by uuid
 	 */
 	public function test_get_user_by_uuid() {
-		$id              = Perfecty_Push_Lib_Db::store_user( 'my_endpoint_url', 'my_key_auth', 'my_p256dh_key', '127.0.0.1' );
+		$id              = Perfecty_Push_Lib_Db::create_user( 'my_endpoint_url', 'my_key_auth', 'my_p256dh_key', '127.0.0.1' );
 		$expected        = array(
 			'endpoint'   => 'my_endpoint_url',
 			'key_auth'   => 'my_key_auth',
@@ -139,8 +139,8 @@ class DbTest extends WP_UnitTestCase {
 	 * Test get users
 	 */
 	public function test_get_users() {
-		$id1       = Perfecty_Push_Lib_Db::store_user( 'my_endpoint_url', 'my_key_auth', 'my_p256dh_key', '127.0.0.1' );
-		$id2       = Perfecty_Push_Lib_Db::store_user( 'my_endpoint_url_2', 'my_key_auth_2', 'my_p256dh_key_2', '127.0.0.1_2' );
+		$id1       = Perfecty_Push_Lib_Db::create_user( 'my_endpoint_url', 'my_key_auth', 'my_p256dh_key', '127.0.0.1' );
+		$id2       = Perfecty_Push_Lib_Db::create_user( 'my_endpoint_url_2', 'my_key_auth_2', 'my_p256dh_key_2', '127.0.0.1_2' );
 		$expected1 = array(
 			'endpoint'   => 'my_endpoint_url',
 			'key_auth'   => 'my_key_auth',
@@ -154,20 +154,20 @@ class DbTest extends WP_UnitTestCase {
 			'remote_ip'  => '127.0.0.1_2',
 		);
 
-		$users = Perfecty_Push_Lib_Db::get_users( 0, 2 );
+		$users = Perfecty_Push_Lib_Db::get_users( 0, 2, 'id', 'desc' );
 
-		$this->assertArraySubset( $expected1, (array) $users[0] );
-		$this->assertArraySubset( $expected2, (array) $users[1] );
+		$this->assertArraySubset( $expected1, (array) $users[1] );
+		$this->assertArraySubset( $expected2, (array) $users[0] );
 	}
 
 	/**
 	 * Test get users, limit/offset
 	 */
 	public function test_get_users_limit_offset() {
-		$id1       = Perfecty_Push_Lib_Db::store_user( 'my_endpoint_url', 'my_key_auth', 'my_p256dh_key', '127.0.0.1' );
-		$id2       = Perfecty_Push_Lib_Db::store_user( 'my_endpoint_url_2', 'my_key_auth_2', 'my_p256dh_key_2', '127.0.0.1_2' );
-		$id3       = Perfecty_Push_Lib_Db::store_user( 'my_endpoint_url_3', 'my_key_auth_3', 'my_p256dh_key_3', '127.0.0.1_3' );
-		$id4       = Perfecty_Push_Lib_Db::store_user( 'my_endpoint_url_4', 'my_key_auth_4', 'my_p256dh_key_4', '127.0.0.1_4' );
+		$id1       = Perfecty_Push_Lib_Db::create_user( 'my_endpoint_url', 'my_key_auth', 'my_p256dh_key', '127.0.0.1' );
+		$id2       = Perfecty_Push_Lib_Db::create_user( 'my_endpoint_url_2', 'my_key_auth_2', 'my_p256dh_key_2', '127.0.0.1_2' );
+		$id3       = Perfecty_Push_Lib_Db::create_user( 'my_endpoint_url_3', 'my_key_auth_3', 'my_p256dh_key_3', '127.0.0.1_3' );
+		$id4       = Perfecty_Push_Lib_Db::create_user( 'my_endpoint_url_4', 'my_key_auth_4', 'my_p256dh_key_4', '127.0.0.1_4' );
 		$expected2 = array(
 			'endpoint'   => 'my_endpoint_url_2',
 			'key_auth'   => 'my_key_auth_2',
@@ -194,6 +194,22 @@ class DbTest extends WP_UnitTestCase {
 	public function test_get_users_empty() {
 		$users = Perfecty_Push_Lib_Db::get_users( 0, 2 );
 		$this->assertSame( array(), $users );
+	}
+
+	/**
+	 * Test delete users
+	 */
+	public function test_delete_users() {
+		$id1          = Perfecty_Push_Lib_Db::create_user( 'my_endpoint_url', 'my_key_auth', 'my_p256dh_key', '127.0.0.1' );
+		$id2          = Perfecty_Push_Lib_Db::create_user( 'my_endpoint_url_2', 'my_key_auth_2', 'my_p256dh_key_2', '127.0.0.1_2' );
+		$users_before = Perfecty_Push_Lib_Db::get_users(0, 30);
+
+		$total = Perfecty_Push_Lib_Db::delete_users([$id1, $id2]);
+		$users_after = Perfecty_Push_Lib_Db::get_users(0, 30);
+
+		$this->assertSame($total, 2);
+		$this->assertSame(count($users_before), 2);
+		$this->assertSame(count($users_after), 0);
 	}
 
 	/**
@@ -316,6 +332,7 @@ class DbTest extends WP_UnitTestCase {
 		$total = Perfecty_Push_Lib_Db::get_notifications_total();
 		$this->assertSame(2, $total);
 	}
+
 	/**
 	 * Test that it returns false when the id is incorrect
 	 */

@@ -29,7 +29,7 @@ class RestActiveInactiveTest extends WP_UnitTestCase {
 	 * Test set user inactive
 	 */
 	public function test_set_inactive() {
-		$id           = Perfecty_Push_Lib_Db::store_user( 'my_endpoint_url', 'my_key_auth', 'my_p256dh_key', '127.0.0.1' );
+		$id           = Perfecty_Push_Lib_Db::create_user( 'my_endpoint_url', 'my_key_auth', 'my_p256dh_key', '127.0.0.1' );
 		$user = Perfecty_Push_Lib_Db::get_user( $id );
 
 		$data        = array(
@@ -56,7 +56,7 @@ class RestActiveInactiveTest extends WP_UnitTestCase {
 	 * Test set user active
 	 */
 	public function test_set_active() {
-		$id = Perfecty_Push_Lib_Db::store_user( 'my_endpoint_url', 'my_key_auth', 'my_p256dh_key', '127.0.0.1' );
+		$id = Perfecty_Push_Lib_Db::create_user( 'my_endpoint_url', 'my_key_auth', 'my_p256dh_key', '127.0.0.1' );
 		Perfecty_Push_Lib_Db::set_user_active( $id, false );
 		$user = Perfecty_Push_Lib_Db::get_user( $id );
 
@@ -84,7 +84,7 @@ class RestActiveInactiveTest extends WP_UnitTestCase {
 	 * Test setting active/inactive invalid
 	 */
 	public function test_active_inactive_invalid() {
-		$id = Perfecty_Push_Lib_Db::store_user( 'my_endpoint_url', 'my_key_auth', 'my_p256dh_key', '127.0.0.1' );
+		$id = Perfecty_Push_Lib_Db::create_user( 'my_endpoint_url', 'my_key_auth', 'my_p256dh_key', '127.0.0.1' );
 		Perfecty_Push_Lib_Db::set_user_active( $id, false );
 		$user = Perfecty_Push_Lib_Db::get_user( $id );
 

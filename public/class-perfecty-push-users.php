@@ -51,7 +51,7 @@ class Perfecty_Push_Users {
 			$remote_ip  = sanitize_text_field( $remote_ip );
 
 			// store the user in the DB
-			$result = Perfecty_Push_Lib_Db::store_user( $endpoint, $key_auth, $key_p256dh, $remote_ip );
+			$result = Perfecty_Push_Lib_Db::create_user( $endpoint, $key_auth, $key_p256dh, $remote_ip );
 
 			if ( $result == false ) {
 				// Could not subscribe

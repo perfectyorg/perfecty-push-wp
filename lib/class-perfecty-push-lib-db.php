@@ -7,7 +7,7 @@ use Ramsey\Uuid\Uuid;
  */
 class Perfecty_Push_Lib_Db {
 
-	private static $allowed_users_fields         = 'id,uuid,endpoint,key_auth,key_p256dh,remote_ip,is_active';
+	private static $allowed_users_fields         = 'id,uuid,endpoint,key_auth,key_p256dh,remote_ip,is_active,creation_time';
 	private static $allowed_notifications_fields = 'id,payload,total,succeeded,last_cursor,batch_size,status,is_taken,creation_time';
 
 	public const NOTIFICATIONS_STATUS_SCHEDULED = 'scheduled';
@@ -84,7 +84,7 @@ class Perfecty_Push_Lib_Db {
 	 *
 	 * @return $uuid The id for the created user or false
 	 */
-	public static function store_user( $endpoint, $key_auth, $key_p256dh, $remote_ip ) {
+	public static function create_user( $endpoint, $key_auth, $key_p256dh, $remote_ip ) {
 		global $wpdb;
 
 		$uuid   = Uuid::uuid4()->toString();
@@ -113,11 +113,11 @@ class Perfecty_Push_Lib_Db {
 	 *
 	 * @return int Total users
 	 */
-	public static function total_users() {
+	public static function get_total_users() {
 		global $wpdb;
 
 		$total = $wpdb->get_var( 'SELECT COUNT(*) FROM ' . self::users_table() );
-		return $total != null ? $total : 0;
+		return $total != null ? intval( $total ) : 0;
 	}
 
 	/**
@@ -177,23 +177,47 @@ class Perfecty_Push_Lib_Db {
 	}
 
 	/**
+	 * Delete user by id
+	 *
+	 * @param $user array User ids
+	 * @return object|null Number of affected rows or null
+	 */
+	public static function delete_users( $user_ids ) {
+		global $wpdb;
+
+		if ( ! is_array( $user_ids ) ) {
+			error_log( 'Wrong parameter, user ids must be an array' );
+			return false;
+		}
+		$ids = implode( ',', $user_ids );
+
+		return $wpdb->query( 'DELETE FROM ' . self::users_table() . " WHERE id IN ($ids)" );
+	}
+
+	/**
 	 * Get the users
 	 *
 	 * @param $offset int Offset
 	 * @param $size int Limit
 	 * @return array The result with the users
 	 */
-	public static function get_users( $offset, $size ) {
+	public static function get_users( $offset, $size, $order_by = 'creation_time', $order_asc = 'desc', $mode = OBJECT ) {
 		global $wpdb;
+
+		if ( strpos( self::$allowed_users_fields, $order_by ) === false ) {
+			throw new Exception( "The order by [$order_by] field is not alllowed" );
+		}
+		$order_asc = $order_asc === 'asc' ? 'asc' : 'desc';
 
 		$sql     = $wpdb->prepare(
 			'SELECT ' . self::$allowed_users_fields .
 			' FROM ' . self::users_table() .
+			' ORDER BY ' . $order_by . ' ' . $order_asc .
 			' LIMIT %d OFFSET %d',
 			$size,
 			$offset
 		);
-		$results = $wpdb->get_results( $sql );
+		$results = $wpdb->get_results( $sql, $mode );
 		return $results;
 	}
 
@@ -380,7 +404,7 @@ class Perfecty_Push_Lib_Db {
 	 * Delete notifications by id
 	 *
 	 * @param $notification_ids array Notification ids
-	 * @return object|null Notification or null
+	 * @return object|null Number of affected rows or null
 	 */
 	public static function delete_notifications( $notification_ids ) {
 		global $wpdb;

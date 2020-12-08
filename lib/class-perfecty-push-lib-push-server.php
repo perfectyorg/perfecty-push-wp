@@ -58,7 +58,7 @@ class Perfecty_Push_Lib_Push_Server {
 			return false;
 		} else {
 			// Fallback to wp-cron
-			$total_users     = Perfecty_Push_Lib_Db::total_users();
+			$total_users     = Perfecty_Push_Lib_Db::get_total_users();
 			$notification_id = Perfecty_Push_Lib_Db::create_notification( $payload, Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_SCHEDULED, $total_users, $batch_size );
 			if ( ! $notification_id ) {
 				error_log( 'Could not schedule the notification.' );

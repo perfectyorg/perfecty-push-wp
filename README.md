@@ -1,6 +1,6 @@
 # Perfecty Push WP Plugin ⚡️
 
-![tests](https://github.com/rwngallego/perfecty-push-wp/workflows/tests/badge.svg)
+[![tests](https://github.com/rwngallego/perfecty-push-wp/workflows/tests/badge.svg)](https://github.com/rwngallego/perfecty-push-wp/actions)
 [![License](https://img.shields.io/badge/license-GLPv2-blue.svg)](./LICENSE.txt)
 
 Self-hosted Push Notifications from your own Wordpress server for free! 🥳
@@ -61,6 +61,9 @@ make console
 
 # run the unit tests
 make test
+
+# run the formatter
+make format
 
 # setup all: make wordpress, make composer, make phpunit
 make setup
