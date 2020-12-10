@@ -34,44 +34,49 @@ class Perfecty_Push_Lib_Db {
 	public static function db_create() {
 		global $wpdb;
 
-		$perfecty_push_db_version = '1.0';
+		$installed_version = get_option( 'perfecty_push_db_version' );
 
 		// We need this for dbDelta() to work
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 
-		$charset = $wpdb->get_charset_collate();
+		$charset             = $wpdb->get_charset_collate();
+		$user_table          = self::users_table();
+		$notifications_table = self::notifications_table();
 
 		// We execute the queries per table
-		$sql = 'CREATE TABLE IF NOT EXISTS ' . self::users_table() . " (
+		$sql = "CREATE TABLE IF NOT EXISTS $user_table (
           id int(11) NOT NULL AUTO_INCREMENT,
-          uuid CHAR(36) NOT NULL,
-          remote_ip VARCHAR(46) DEFAULT '',
-          endpoint VARCHAR(500) NOT NULL UNIQUE,
-          key_auth VARCHAR(100) NOT NULL UNIQUE,
-          key_p256dh VARCHAR(100) NOT NULL UNIQUE,
-          is_active TINYINT(1) DEFAULT 1 NOT NULL,
-          disabled TINYINT(1) DEFAULT 0 NOT NULL,
+          uuid char(36) NOT NULL,
+          remote_ip varchar(46) DEFAULT '',
+          endpoint varchar(500) NOT NULL UNIQUE,
+          key_auth varchar(100) NOT NULL UNIQUE,
+          key_p256dh varchar(100) NOT NULL UNIQUE,
+          is_active tinyint(1) DEFAULT 1 NOT NULL,
+          disabled tinyint(1) DEFAULT 0 NOT NULL,
           creation_time datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
           PRIMARY KEY  (id),
-          UNIQUE KEY `users_uuid_uk` (`uuid`)
+          UNIQUE KEY users_uuid_uk (uuid)
         ) $charset;";
 		dbDelta( $sql );
 
-		$sql = 'CREATE TABLE IF NOT EXISTS ' . self::notifications_table() . " (
+		$sql = "CREATE TABLE IF NOT EXISTS $notifications_table (
           id int(11) NOT NULL AUTO_INCREMENT,
-          payload VARCHAR(500) NOT NULL,
-          total INT(11) DEFAULT 0 NOT NULL,
-          succeeded INT(11) DEFAULT 0 NOT NULL,
-          last_cursor INT(11) DEFAULT 0 NOT NULL,
-          batch_size INT(11) DEFAULT 0 NOT NULL,
-          status VARCHAR(15) DEFAULT 'scheduled' NOT NULL,
-          is_taken TINYINT(1) DEFAULT 0 NOT NULL,
+          payload varchar(500) NOT NULL,
+          total int(11) DEFAULT 0 NOT NULL,
+          succeeded int(11) DEFAULT 0 NOT NULL,
+          last_cursor int(11) DEFAULT 0 NOT NULL,
+          batch_size int(11) DEFAULT 0 NOT NULL,
+          status varchar(15) DEFAULT 'scheduled' NOT NULL,
+          is_taken tinyint(1) DEFAULT 0 NOT NULL,
           creation_time datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
           PRIMARY KEY  (id)
         ) $charset;";
 		dbDelta( $sql );
 
-		add_option( 'perfecty_push_version', $perfecty_push_db_version );
+		if ( $installed_version != PERFECTY_PUSH_DB_VERSION ) {
+			// perform update according to https://codex.wordpress.org/Creating_Tables_with_Plugins
+			update_option( 'perfecty_push_db_version', PERFECTY_PUSH_DB_VERSION );
+		}
 	}
 
 	/**
@@ -83,6 +88,7 @@ class Perfecty_Push_Lib_Db {
 	 * @param $remote_ip
 	 *
 	 * @return $uuid The id for the created user or false
+	 * @throws Exception
 	 */
 	public static function create_user( $endpoint, $key_auth, $key_p256dh, $remote_ip ) {
 		global $wpdb;
@@ -131,13 +137,11 @@ class Perfecty_Push_Lib_Db {
 	public static function set_user_active( $user_id, $is_active ) {
 		global $wpdb;
 
-		$result = $wpdb->update(
+		return $wpdb->update(
 			self::users_table(),
 			array( 'is_active' => $is_active ),
 			array( 'id' => $user_id )
 		);
-
-		return $result;
 	}
 
 	/**
@@ -151,13 +155,11 @@ class Perfecty_Push_Lib_Db {
 	public static function set_user_disabled( $user_id, $disabled ) {
 		global $wpdb;
 
-		$result = $wpdb->update(
+		return $wpdb->update(
 			self::users_table(),
 			array( 'disabled' => $disabled ),
 			array( 'id' => $user_id )
 		);
-
-		return $result;
 	}
 
 	/**
@@ -169,13 +171,12 @@ class Perfecty_Push_Lib_Db {
 	public static function get_user( $user_id ) {
 		global $wpdb;
 
-		$sql    = $wpdb->prepare(
+		$sql = $wpdb->prepare(
 			'SELECT ' . self::$allowed_users_fields .
 			' FROM ' . self::users_table() . ' WHERE id=%d',
 			$user_id
 		);
-		$result = $wpdb->get_row( $sql );
-		return $result;
+		return $wpdb->get_row( $sql );
 	}
 
 	/**
@@ -200,7 +201,7 @@ class Perfecty_Push_Lib_Db {
 	 * Delete user by id
 	 *
 	 * @param $user array User ids
-	 * @return object|null Number of affected rows or null
+	 * @return int|bool Number of affected rows or null
 	 */
 	public static function delete_users( $user_ids ) {
 		global $wpdb;
@@ -298,7 +299,7 @@ class Perfecty_Push_Lib_Db {
 	 * @param $size int Limit
 	 * @param $order_by string Field to order by
 	 * @param $order_asc string 'asc' or 'desc'
-	 * @param $mode Wpdb_Constant How to return the results
+	 * @param $mode int How to return the results
 	 * @return array The result
 	 */
 	public static function get_notifications( $offset, $size, $order_by = 'creation_time', $order_asc = 'desc', $mode = OBJECT ) {
@@ -424,7 +425,7 @@ class Perfecty_Push_Lib_Db {
 	 * Delete notifications by id
 	 *
 	 * @param $notification_ids array Notification ids
-	 * @return object|null Number of affected rows or null
+	 * @return int|bool Number of affected rows or null
 	 */
 	public static function delete_notifications( $notification_ids ) {
 		global $wpdb;

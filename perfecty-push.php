@@ -37,6 +37,11 @@ if ( ! defined( 'WPINC' ) ) {
 define( 'PERFECTY_PUSH_VERSION', '1.0.0' );
 
 /**
+ * DB Version of the plugin
+ */
+define( 'PERFECTY_PUSH_DB_VERSION', '1.0.0' );
+
+/**
  * The code that runs during plugin activation.
  * This action is documented in includes/class-perfecty-push-activator.php
  */

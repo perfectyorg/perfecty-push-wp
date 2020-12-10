@@ -80,6 +80,7 @@ class Perfecty_Push {
 		$this->load_dependencies();
 		$this->set_locale();
 		$this->load_push_server();
+		$this->define_global_hooks();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
 	}
@@ -133,6 +134,11 @@ class Perfecty_Push {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-perfecty-push-loader.php';
 
 		/**
+		 * The class responsible for the global hooks
+		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-perfecty-push-global.php';
+
+		/**
 		 * The class responsible for defining internationalization functionality
 		 * of the plugin.
 		 */
@@ -144,17 +150,17 @@ class Perfecty_Push {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-perfecty-push-admin.php';
 
 		/**
-		 * Contains the form tables
-		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-perfecty-push-admin-notifications-table.php';
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-perfecty-push-admin-users-table.php';
-
-		/**
 		 * The class responsible for defining all actions that occur in the public-facing
 		 * side of the site.
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-perfecty-push-public.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-perfecty-push-users.php';
+
+		/**
+		 * Contains the form tables
+		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-perfecty-push-admin-notifications-table.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-perfecty-push-admin-users-table.php';
 
 		/**
 		 * Contains the lib/ definitions
@@ -205,6 +211,17 @@ class Perfecty_Push {
 		$webpush->setReuseVAPIDHeaders( true );
 		$vapid_generator = array( 'Minishlink\WebPush\VAPID', 'createVapidKeys' );
 		Perfecty_Push_Lib_Push_Server::bootstrap( $webpush, $vapid_generator );
+	}
+
+	/**
+	 * Register the global hooks that are not related to admin or public
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 */
+	private function define_global_hooks() {
+		$global = new Perfecty_Push_Global();
+		$this->loader->add_action( 'plugins_loaded', $global, 'db_upgrade_check' );
 	}
 
 	/**
