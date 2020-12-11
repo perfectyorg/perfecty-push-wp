@@ -44,6 +44,10 @@ class Perfecty_Push_Lib_Push_Server {
 	 * @return int $notification_id if success, false otherwise
 	 */
 	public static function schedule_broadcast_async( $payload ) {
+		// required because is_plugin_active is needed when saving a post
+		// and 'admin_init' hasn't been fired yet
+		require_once ABSPATH . '/wp-admin/includes/plugin.php';
+
 		if ( ! is_string( $payload ) ) {
 			$payload = json_encode( $payload );
 		}

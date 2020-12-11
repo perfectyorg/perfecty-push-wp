@@ -243,6 +243,130 @@ class Perfecty_Push_Admin {
 	}
 
 	/**
+	 * Register the metaboxes
+	 */
+	public function register_metaboxes() {
+		add_meta_box( 'perfecty_push_post_metabox', 'Perfecty Push Notifications', array( $this, 'display_post_metabox' ), 'post', 'side', 'high' );
+	}
+
+	/**
+	 * Displays the metabox in the post
+	 *
+	 * @param $post object Contains the post
+	 */
+	public function display_post_metabox( $post ) {
+		wp_nonce_field( 'perfecty_push_post_metabox', 'perfecty_push_post_metabox_nonce' );
+		$send_notification = ! empty( get_post_meta( $post->ID, '_perfecty_push_send_on_publish', true ) );
+
+		require_once plugin_dir_path( __FILE__ ) . 'partials/perfecty-push-admin-post-metabox.php';
+	}
+
+	/**
+	 * Actions triggered when saving posts
+	 * Hook triggered when saving the posts
+	 *
+	 * @param $post_id
+	 * @return mixed
+	 */
+	public function on_save_post( $post_id ) {
+		// check the nonce
+		if ( ! isset( $_POST['perfecty_push_post_metabox_nonce'] ) ) {
+			return $post_id;
+		}
+		$nonce = $_POST['perfecty_push_post_metabox_nonce'];
+		if ( ! wp_verify_nonce( $nonce, 'perfecty_push_post_metabox' ) ) {
+			return $post_id;
+		}
+
+		// nothing on auto save
+		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+			return $post_id;
+		}
+
+		// check capabilities
+		if ( ! current_user_can( 'edit_post', $post_id ) || ! current_user_can( 'edit_page', $post_id ) ) {
+			return $post_id;
+		}
+
+		$send_notification = ! empty( $_POST['perfecty_push_send_on_publish'] );
+		update_post_meta( $post_id, '_perfecty_push_send_on_publish', $send_notification );
+	}
+
+	/**
+	 * Action triggered when a post changes status
+	 *
+	 * @param $new_status string New status
+	 * @param $old_status string Old status
+	 * @param $post WP_Post Post
+	 */
+	public function on_transition_post_status( $new_status, $old_status, $post ) {
+		// related: https://github.com/WordPress/gutenberg/issues/15094
+		if ( defined( 'REST_REQUEST' ) && REST_REQUEST ) {
+			return;
+		}
+
+		$send_notification = false;
+		if ( isset( $_POST['perfecty_push_post_metabox_nonce'] ) &&
+			wp_verify_nonce( $_POST['perfecty_push_post_metabox_nonce'], 'perfecty_push_post_metabox' ) ) {
+			// we do this because on_transition_post_status is triggered before on_save_post by WordPress
+			$send_notification = ! empty( $_POST['perfecty_push_send_on_publish'] );
+		} else {
+			$send_notification = ! empty( get_post_meta( $post->ID, '_perfecty_push_send_on_publish', true ) );
+		}
+
+		if ( 'publish' == $new_status && $send_notification ) {
+			$payload = array(
+				'title' => get_bloginfo( 'name' ),
+				'body'  => get_the_title( $post ),
+			);
+			$result  = Perfecty_Push_Lib_Push_Server::schedule_broadcast_async( $payload );
+
+			if ( $result === false ) {
+				error_log( 'Could not schedule the broadcast async, check the logs' );
+				$notice = array(
+					'type'    => 'error',
+					'message' => 'Could not send the notification',
+				);
+			} else {
+				$notice = array(
+					'type'    => 'success',
+					'message' => 'Notification message was scheduled',
+				);
+				if ( isset( $_POST['perfecty_push_post_metabox_nonce'] ) ) {
+					// once we sent the notification, we reset the checkbox when the
+					// hook was triggered after clicking the save button
+					unset( $_POST['perfecty_push_send_on_publish'] );
+				}
+				update_post_meta( $post->ID, '_perfecty_push_send_on_publish', false );
+			}
+
+			set_transient( 'perfecty_push_admin_notice', $notice );
+		}
+	}
+
+	/**
+	 * Show the admin notices
+	 *
+	 * Gets the transient 'perfecty_push_admin_notice' which is an array with the type as key and a message as value
+	 */
+	public function show_admin_notice() {
+		$notice = get_transient( 'perfecty_push_admin_notice' );
+
+		if ( $notice && is_array( $notice ) ) {
+			$type    = $notice['type'];
+			$message = $notice['message'];
+
+			if ( $type === 'error' ) {
+				printf( '<div class="notice notice-error is-dismissible"><p>%s</p></div>', $message );
+			} else {
+				printf( '<div class="notice notice-success is-dismissible"><p>%s</p></div>', $message );
+			}
+
+            delete_transient('perfecty_push_admin_notice');
+		}
+	}
+
+	/**
 	 * Renders the dashboard page
 	 *
 	 * @since 1.0.0

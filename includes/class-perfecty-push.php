@@ -239,6 +239,10 @@ class Perfecty_Push {
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'register_admin_menu' );
 		$this->loader->add_action( 'admin_init', $plugin_admin, 'register_options' );
 		$this->loader->add_action( 'perfecty_push_broadcast_notification_event', $plugin_admin, 'execute_broadcast_batch', 10, 1 );
+		$this->loader->add_action( 'add_meta_boxes', $plugin_admin, 'register_metaboxes' );
+		$this->loader->add_action( 'save_post', $plugin_admin, 'on_save_post' );
+		$this->loader->add_action( 'transition_post_status', $plugin_admin, 'on_transition_post_status', 10, 3 );
+        $this->loader->add_action( 'admin_notices', $plugin_admin, 'show_admin_notice' );
 	}
 
 	/**
