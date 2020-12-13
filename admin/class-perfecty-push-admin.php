@@ -266,7 +266,6 @@ class Perfecty_Push_Admin {
 	 * Hook triggered when saving the posts
 	 *
 	 * @param $post_id
-	 * @return mixed
 	 */
 	public function on_save_post( $post_id ) {
 		// check the nonce
@@ -315,11 +314,10 @@ class Perfecty_Push_Admin {
 		}
 
 		if ( 'publish' == $new_status && $send_notification ) {
-			$payload = array(
-				'title' => get_bloginfo( 'name' ),
-				'body'  => get_the_title( $post ),
-			);
-			$result  = Perfecty_Push_Lib_Push_Server::schedule_broadcast_async( $payload );
+			$body        = get_the_title( $post );
+			$url_to_open = get_the_permalink( $post );
+			$payload     = Perfecty_Push_Lib_Payload::build( $body, '', '', $url_to_open );
+			$result      = Perfecty_Push_Lib_Push_Server::schedule_broadcast_async( $payload );
 
 			if ( $result === false ) {
 				error_log( 'Could not schedule the broadcast async, check the logs' );
@@ -345,6 +343,12 @@ class Perfecty_Push_Admin {
 	}
 
 	/**
+	 * Gets a Payload
+	 */
+	public function get_payload() {
+	}
+
+	/**
 	 * Show the admin notices
 	 *
 	 * Gets the transient 'perfecty_push_admin_notice' which is an array with the type as key and a message as value
@@ -362,7 +366,7 @@ class Perfecty_Push_Admin {
 				printf( '<div class="notice notice-success is-dismissible"><p>%s</p></div>', $message );
 			}
 
-            delete_transient('perfecty_push_admin_notice');
+			delete_transient( 'perfecty_push_admin_notice' );
 		}
 	}
 
@@ -434,8 +438,10 @@ class Perfecty_Push_Admin {
 		$notice  = '';
 
 		$default = array(
-			'title'   => '',
-			'message' => '',
+			'title'       => '',
+			'message'     => '',
+			'url_to_open' => '',
+			'image'       => '',
 		);
 
 		if ( isset( $_REQUEST['nonce'] ) && wp_verify_nonce( $_REQUEST['nonce'], 'perfecty_push_send_notification' ) ) {
@@ -444,15 +450,12 @@ class Perfecty_Push_Admin {
 			$validation_result = $this->validate_notification_message( $item );
 			if ( $validation_result === true ) {
 				// filter
-				$item['title']   = sanitize_text_field( $item['title'] );
-				$item['message'] = sanitize_textarea_field( $item['message'] );
+				$item['title']       = sanitize_text_field( $item['title'] );
+				$item['message']     = sanitize_textarea_field( $item['message'] );
+				$item['url_to_open'] = sanitize_text_field( $item['url_to_open'] );
+				$item['image']       = sanitize_text_field( $item['image'] );
 
-				$payload = json_encode(
-					array(
-						'title' => $item['title'],
-						'body'  => $item['message'],
-					)
-				);
+				$payload = Perfecty_Push_Lib_Payload::build( $item['message'], $item['title'], $item['image'], $item['url_to_open'] );
 
 				// send notification
 				$result = Perfecty_Push_Lib_Push_Server::schedule_broadcast_async( $payload );
@@ -485,7 +488,7 @@ class Perfecty_Push_Admin {
 	/**
 	 * Validates the notification details
 	 *
-	 * @param $item Contains the entry
+	 * @param array $item Contains the entry
 	 */
 	public function validate_notification_message( $item ) {
 		$messages = array();
@@ -511,7 +514,7 @@ class Perfecty_Push_Admin {
 	 * @since 1.0.0
 	 */
 	public function print_send_notification_metabox( $item ) {
-		require_once plugin_dir_path( __FILE__ ) . 'partials/send-notification-metabox.php';
+		require_once plugin_dir_path( __FILE__ ) . 'partials/perfecty-push-admin-send-notification-metabox.php';
 	}
 
 	/**
@@ -526,9 +529,10 @@ class Perfecty_Push_Admin {
 	/**
 	 * Sanitize the settings
 	 *
-	 * @param $input Contains the settings
+	 * @param string $input Contains the settings
+	 * @return array
 	 */
-	public function sanitize( $input ) {
+	public function sanitize( string $input ) {
 		$new_input = array();
 		if ( isset( $input['vapid_public_key'] ) ) {
 			$new_input['vapid_public_key'] = sanitize_text_field( $input['vapid_public_key'] );

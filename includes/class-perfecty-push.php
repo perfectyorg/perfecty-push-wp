@@ -167,6 +167,7 @@ class Perfecty_Push {
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'lib/class-perfecty-push-lib-db.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'lib/class-perfecty-push-lib-push-server.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'lib/class-perfecty-push-lib-payload.php';
 
 		$this->loader = new Perfecty_Push_Loader();
 	}
@@ -242,7 +243,7 @@ class Perfecty_Push {
 		$this->loader->add_action( 'add_meta_boxes', $plugin_admin, 'register_metaboxes' );
 		$this->loader->add_action( 'save_post', $plugin_admin, 'on_save_post' );
 		$this->loader->add_action( 'transition_post_status', $plugin_admin, 'on_transition_post_status', 10, 3 );
-        $this->loader->add_action( 'admin_notices', $plugin_admin, 'show_admin_notice' );
+		$this->loader->add_action( 'admin_notices', $plugin_admin, 'show_admin_notice' );
 	}
 
 	/**

@@ -134,7 +134,7 @@ class PushServerTest extends WP_UnitTestCase {
 	 * Test schedule broadcast async
 	 */
 	public function test_schedule_broadcast_async() {
-		$payload         = 'this_is_the_payload';
+		$payload         = array('this_is_the_payload');
 		$notification_id = Perfecty_Push_Lib_Push_Server::schedule_broadcast_async( $payload );
 		$next            = wp_next_scheduled( 'perfecty_push_broadcast_notification_event', array( $notification_id ) );
 
@@ -149,7 +149,7 @@ class PushServerTest extends WP_UnitTestCase {
 		$options['use_action_scheduler'] = true;
 		update_option( 'perfecty_push', $options );
 
-		$payload         = 'this_is_the_payload';
+		$payload         = array('this_is_the_payload');
 		$notification_id = Perfecty_Push_Lib_Push_Server::schedule_broadcast_async( $payload );
 		$next            = wp_next_scheduled( 'perfecty_push_broadcast_notification_event', array( $notification_id ) );
 
@@ -161,7 +161,7 @@ class PushServerTest extends WP_UnitTestCase {
 	 * Test the execution of a broadcast batch
 	 */
 	public function test_execute_broadcast_batch() {
-		$payload = 'this_is_the_payload';
+		$payload = array('this_is_the_payload');
 
 		$mocked_server_result = Mockery::mock( 'result' );
 		$mocked_server_result
@@ -206,7 +206,7 @@ class PushServerTest extends WP_UnitTestCase {
 		// assertions
 		$notification = Perfecty_Push_Lib_Db::get_notification( $notification_id );
 		$expected     = array(
-			'payload'     => 'this_is_the_payload',
+			'payload'     => '["this_is_the_payload"]',
 			'total'       => 2,
 			'succeeded'   => 2,
 			'last_cursor' => 2,
@@ -225,7 +225,7 @@ class PushServerTest extends WP_UnitTestCase {
 	 * Test the execution of two broadcast batches
 	 */
 	public function test_execute_broadcast_batch_multiple() {
-		$payload = 'this_is_the_payload';
+		$payload = array('this_is_the_payload');
 
 		$mocked_server_result = Mockery::mock( 'result' );
 		$mocked_server_result
@@ -272,7 +272,7 @@ class PushServerTest extends WP_UnitTestCase {
 
 		$notification = Perfecty_Push_Lib_Db::get_notification( $notification_id );
 		$expected     = array(
-			'payload'     => 'this_is_the_payload',
+			'payload'     => '["this_is_the_payload"]',
 			'total'       => 3,
 			'succeeded'   => 3,
 			'last_cursor' => 3,

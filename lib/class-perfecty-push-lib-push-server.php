@@ -40,17 +40,19 @@ class Perfecty_Push_Lib_Push_Server {
 	/**
 	 * Schedules an async notification to all the users
 	 *
-	 * @param $payload array|string Payload to be sent, json encoded or array
+	 * @param $payload array Payload to be sent, array
 	 * @return int $notification_id if success, false otherwise
+	 * @throws Exception
 	 */
 	public static function schedule_broadcast_async( $payload ) {
 		// required because is_plugin_active is needed when saving a post
 		// and 'admin_init' hasn't been fired yet
 		require_once ABSPATH . '/wp-admin/includes/plugin.php';
 
-		if ( ! is_string( $payload ) ) {
-			$payload = json_encode( $payload );
+		if ( ! is_array( $payload ) ) {
+			throw new Exception( 'Payload should be an array' );
 		}
+		$payload = json_encode( $payload );
 
 		$options              = get_option( 'perfecty_push' );
 		$use_action_scheduler = isset( $options['use_action_scheduler'] ) ? esc_attr( $options['use_action_scheduler'] ) : false;
@@ -76,7 +78,7 @@ class Perfecty_Push_Lib_Push_Server {
 	/**
 	 * Execute one broadcast batch
 	 *
-	 * @param $notification_id Notification id
+	 * @param int $notification_id Notification id
 	 *
 	 * @return bool Succeeded or failed
 	 */
@@ -97,7 +99,8 @@ class Perfecty_Push_Lib_Push_Server {
 		Perfecty_Push_Lib_Db::take_notification( $notification_id );
 
 		// we get the next batch, starting from $last_cursor we take $batch_size elements
-		$users = Perfecty_Push_Lib_Db::get_users( $notification->last_cursor, $notification->batch_size );
+		// we only fetch the active users (only_active)
+		$users = Perfecty_Push_Lib_Db::get_users( $notification->last_cursor, $notification->batch_size, 'creation_time', 'desc', true );
 
 		if ( count( $users ) == 0 ) {
 			$result = Perfecty_Push_Lib_Db::mark_notification_completed_untake( $notification_id );

@@ -122,7 +122,7 @@ class Perfecty_Push_Lib_Db {
 	public static function get_total_users() {
 		global $wpdb;
 
-		$total = $wpdb->get_var( 'SELECT COUNT(*) FROM ' . self::users_table() );
+		$total = $wpdb->get_var( 'SELECT COUNT(*) FROM ' . self::users_table() . ' WHERE is_active=1 and disabled=0' );
 		return $total != null ? intval( $total ) : 0;
 	}
 
@@ -222,17 +222,19 @@ class Perfecty_Push_Lib_Db {
 	 * @param $size int Limit
 	 * @return array The result with the users
 	 */
-	public static function get_users( $offset, $size, $order_by = 'creation_time', $order_asc = 'desc', $mode = OBJECT ) {
+	public static function get_users( $offset, $size, $order_by = 'creation_time', $order_asc = 'desc', $only_active = false, $mode = OBJECT ) {
 		global $wpdb;
 
 		if ( strpos( self::$allowed_users_fields, $order_by ) === false ) {
 			throw new Exception( "The order by [$order_by] field is not alllowed" );
 		}
-		$order_asc = $order_asc === 'asc' ? 'asc' : 'desc';
+		$order_asc        = $order_asc === 'asc' ? 'asc' : 'desc';
+		$where_conditions = $only_active === false ? '' : ' WHERE is_active=1 AND disabled=false';
 
 		$sql     = $wpdb->prepare(
 			'SELECT ' . self::$allowed_users_fields .
 			' FROM ' . self::users_table() .
+			$where_conditions .
 			' ORDER BY ' . $order_by . ' ' . $order_asc .
 			' LIMIT %d OFFSET %d',
 			$size,
