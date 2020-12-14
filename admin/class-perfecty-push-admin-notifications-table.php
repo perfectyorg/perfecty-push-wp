@@ -19,13 +19,7 @@ class Perfecty_Push_Admin_Notifications_Table extends WP_List_Table {
 	}
 
 	function column_default( $item, $column_name ) {
-		$content = $item[ $column_name ];
-
-		if ( is_string( $content ) && strlen( $content ) > self::MAX_LENGTH ) {
-			return substr( $content, 0, self::MAX_LENGTH ) . '...';
-		} else {
-			return $content;
-		}
+		return $this->limit_text( $item[ $column_name ] );
 	}
 
 	function column_creation_time( $item ) {
@@ -50,6 +44,33 @@ class Perfecty_Push_Admin_Notifications_Table extends WP_List_Table {
 			'<input type="checkbox" name="id[]" value="%s" />',
 			$item['id']
 		);
+	}
+
+	function column_payload( $item ) {
+		$actions     = array(
+			'view' => sprintf( '<a href="?page=%s&action=%s&id=%s">%s</a>', $_REQUEST['page'], 'view', $item['id'], 'View details' ),
+		);
+		$row_actions = $this->row_actions( $actions );
+
+		$payload = json_decode( $item['payload'] );
+		$body    = $this->limit_text( $payload->body );
+		$title   = $payload->title;
+
+		return sprintf( 'Title: %s<br /> Content: %s<br />%s', $title, $body, $row_actions );
+	}
+
+	/**
+	 * Limit the max length of the text and adds '...' if it exceeds it
+	 *
+	 * @param string $content Content to limit
+	 * @return string
+	 */
+	function limit_text( $content ) {
+		if ( is_string( $content ) && strlen( $content ) > self::MAX_LENGTH ) {
+			return substr( $content, 0, self::MAX_LENGTH ) . '...';
+		} else {
+			return $content;
+		}
 	}
 
 	function get_columns() {

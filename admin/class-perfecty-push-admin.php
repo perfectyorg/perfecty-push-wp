@@ -399,6 +399,8 @@ class Perfecty_Push_Admin {
 			$id   = intval( $_REQUEST['id'] );
 			$item = Perfecty_Push_Lib_Db::get_notification( $id );
 
+			$item->payload = json_decode( $item->payload );
+
 			require_once plugin_dir_path( __FILE__ ) . 'partials/perfecty-push-admin-notifications-view.php';
 			return true;
 		}
