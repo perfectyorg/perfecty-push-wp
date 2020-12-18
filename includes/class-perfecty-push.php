@@ -209,10 +209,10 @@ class Perfecty_Push {
 		}
 
 		// This can happen because we missed the gmp extension
-		if (!class_exists(WebPush::class)) {
-            error_log("The WebPush server could not be bootstrapped");
-            return;
-        }
+		if ( ! class_exists( WebPush::class ) ) {
+			error_log( 'The WebPush server could not be bootstrapped' );
+			return;
+		}
 
 		$webpush = new WebPush( $auth );
 		$webpush->setReuseVAPIDHeaders( true );

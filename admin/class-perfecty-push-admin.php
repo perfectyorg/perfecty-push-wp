@@ -376,6 +376,10 @@ class Perfecty_Push_Admin {
 	 * @since 1.0.0
 	 */
 	public function print_dashboard_page() {
+		$users_stats         = Perfecty_Push_Lib_Db::get_users_stats();
+		$notifications_stats = Perfecty_Push_Lib_Db::get_notifications_stats();
+		$jobs_stats          = Perfecty_Push_Lib_Db::get_jobs_stats();
+
 		require_once plugin_dir_path( __FILE__ ) . 'partials/perfecty-push-admin-dashboard.php';
 	}
 

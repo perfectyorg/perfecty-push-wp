@@ -88,6 +88,24 @@ class DbTest extends WP_UnitTestCase {
 		$this->assertSame( $current - $initial, 1 );
 	}
 
+    /**
+     * Test the users stats
+     */
+    public function test_get_users_stats() {
+        $id1           = Perfecty_Push_Lib_Db::create_user( 'my_endpoint_url_1', 'my_key_auth_1', 'my_p256dh_key_1', '127.0.0.1' );
+        $id2           = Perfecty_Push_Lib_Db::create_user( 'my_endpoint_url_2', 'my_key_auth_2', 'my_p256dh_key_2', '127.0.0.1' );
+        $id3           = Perfecty_Push_Lib_Db::create_user( 'my_endpoint_url_3', 'my_key_auth_3', 'my_p256dh_key_3', '127.0.0.1' );
+
+        Perfecty_Push_Lib_Db::set_user_active($id1, false);
+        Perfecty_Push_Lib_Db::set_user_active($id2, false);
+
+        $result = Perfecty_Push_Lib_Db::get_users_stats();
+
+        $this->assertSame(3, $result['total']);
+        $this->assertSame(1, $result['active']);
+        $this->assertSame(2, $result['inactive']);
+    }
+
 	/**
 	 * Test set user as disabled
 	 */
@@ -347,6 +365,46 @@ class DbTest extends WP_UnitTestCase {
 		$total = Perfecty_Push_Lib_Db::get_notifications_total();
 		$this->assertSame(2, $total);
 	}
+
+    /**
+     * Test the notifications stats
+     */
+    public function test_get_notifications_stats() {
+        $id1       = Perfecty_Push_Lib_Db::create_notification( 'my_payload1', Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_SCHEDULED, 35, 20 );
+        $id2       = Perfecty_Push_Lib_Db::create_notification( 'my_payload2', Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_SCHEDULED, 45, 17 );
+        $id3       = Perfecty_Push_Lib_Db::create_notification( 'my_payload2', Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_SCHEDULED, 10, 17 );
+
+        $notification_1 = Perfecty_Push_Lib_Db::get_notification($id1);
+        $notification_1->succeeded = 70;
+        Perfecty_Push_Lib_Db::update_notification($notification_1);
+        $notification_2 = Perfecty_Push_Lib_Db::get_notification($id2);
+        $notification_2->succeeded = 7;
+        Perfecty_Push_Lib_Db::update_notification($notification_2);
+
+        $result = Perfecty_Push_Lib_Db::get_notifications_stats();
+
+        $this->assertSame(90, $result['total']);
+        $this->assertSame(77, $result['succeeded']);
+        $this->assertSame(13, $result['failed']);
+    }
+
+    /**
+     * Test the notifications stats
+     */
+    public function test_get_jobs_stats() {
+        $id1       = Perfecty_Push_Lib_Db::create_notification( 'my_payload1', Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_SCHEDULED, 35, 20 );
+        $id2       = Perfecty_Push_Lib_Db::create_notification( 'my_payload2', Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_RUNNING, 45, 17 );
+        $id3       = Perfecty_Push_Lib_Db::create_notification( 'my_payload3', Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_COMPLETED, 10, 11 );
+        $id4       = Perfecty_Push_Lib_Db::create_notification( 'my_payload4', Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_FAILED, 7, 21 );
+        $id5       = Perfecty_Push_Lib_Db::create_notification( 'my_payload5', Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_RUNNING, 27, 30 );
+
+        $result = Perfecty_Push_Lib_Db::get_jobs_stats();
+
+        $this->assertSame(1, $result['scheduled']);
+        $this->assertSame(2, $result['running']);
+        $this->assertSame(1, $result['failed']);
+        $this->assertSame(1, $result['completed']);
+    }
 
 	/**
 	 * Test that it returns false when the id is incorrect

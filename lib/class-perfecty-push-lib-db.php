@@ -127,6 +127,27 @@ class Perfecty_Push_Lib_Db {
 	}
 
 	/**
+	 * Get the users stats. $result contains:
+	 * - total
+	 * - active
+	 * - inactive
+	 *
+	 * @return array Result
+	 */
+	public static function get_users_stats() {
+		global $wpdb;
+
+		$total  = intval( $wpdb->get_var( 'SELECT COUNT(*) FROM ' . self::users_table() ) );
+		$active = intval( $wpdb->get_var( 'SELECT COUNT(*) FROM ' . self::users_table() . ' WHERE is_active=1 AND disabled=0' ) );
+
+		return array(
+			'total'    => $total,
+			'active'   => $active,
+			'inactive' => $total - $active,
+		);
+	}
+
+	/**
 	 * Changes the is_active property for the subcription
 	 *
 	 * @param $user_id string id
@@ -337,6 +358,52 @@ class Perfecty_Push_Lib_Db {
 	}
 
 	/**
+	 * Get the notification stats. $result contains:
+	 * - total
+	 * - succeeded
+	 * - failed
+	 *
+	 * @return array Result
+	 */
+	public static function get_notifications_stats() {
+		global $wpdb;
+
+		$total     = intval( $wpdb->get_var( 'SELECT SUM(total) FROM ' . self::notifications_table() ) );
+		$succeeded = intval( $wpdb->get_var( 'SELECT SUM(succeeded) FROM ' . self::notifications_table() ) );
+
+		return array(
+			'total'     => $total,
+			'succeeded' => $succeeded,
+			'failed'    => $total - $succeeded,
+		);
+	}
+
+	/**
+	 * Get the jobs stats. $result contains:
+	 * - scheduled
+	 * - running
+	 * - failed
+	 * - completed
+	 *
+	 * @return array Result
+	 */
+	public static function get_jobs_stats() {
+		global $wpdb;
+
+		$scheduled = intval( $wpdb->get_var( 'SELECT COUNT(*) FROM ' . self::notifications_table() . ' WHERE status = \'' . self::NOTIFICATIONS_STATUS_SCHEDULED . '\'' ) );
+		$running   = intval( $wpdb->get_var( 'SELECT COUNT(*) FROM ' . self::notifications_table() . ' WHERE status = \'' . self::NOTIFICATIONS_STATUS_RUNNING . '\'' ) );
+		$failed    = intval( $wpdb->get_var( 'SELECT COUNT(*) FROM ' . self::notifications_table() . ' WHERE status = \'' . self::NOTIFICATIONS_STATUS_FAILED . '\'' ) );
+		$completed = intval( $wpdb->get_var( 'SELECT COUNT(*) FROM ' . self::notifications_table() . ' WHERE status = \'' . self::NOTIFICATIONS_STATUS_COMPLETED . '\'' ) );
+
+		return array(
+			'scheduled' => $scheduled,
+			'running'   => $running,
+			'failed'    => $failed,
+			'completed' => $completed,
+		);
+	}
+
+	/**
 	 * Take the notification
 	 *
 	 * @param $notification_id int Notification id
@@ -380,6 +447,16 @@ class Perfecty_Push_Lib_Db {
 		);
 
 		return $result;
+	}
+
+	/**
+	 * Mark the notification as running
+	 *
+	 * @param $notification_id int Notification id
+	 * @return int|bool Number of rows updated or false
+	 */
+	public static function mark_notification_running( $notification_id ) {
+		return self::mark_notification( $notification_id, self::NOTIFICATIONS_STATUS_RUNNING );
 	}
 
 	/**
@@ -440,10 +517,6 @@ class Perfecty_Push_Lib_Db {
 
 		return $wpdb->query( 'DELETE FROM ' . self::notifications_table() . " WHERE id IN ($ids)" );
 	}
-
-	/*****************************************************************/
-	/* Private */
-	/*****************************************************************/
 
 	/**
 	 * Take or untake the notification

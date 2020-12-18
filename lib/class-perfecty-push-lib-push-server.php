@@ -89,11 +89,25 @@ class Perfecty_Push_Lib_Push_Server {
 			return false;
 		}
 
-		// if it has been taken and was not released, that means a wrong state
+		// if it has been taken but not released, that means a wrong state
 		if ( $notification->is_taken ) {
 			error_log( 'Halted, notification taken but not released, notification_id: ' . $notification_id );
 			Perfecty_Push_Lib_Db::mark_notification_failed( $notification_id );
+			Perfecty_Push_Lib_Db::untake_notification( $notification_id );
 			return false;
+		}
+
+		// we check if it's a valid status
+		if ( $notification->status !== Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_SCHEDULED &&
+		$notification->status !== Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_RUNNING ) {
+			error_log( 'Halted, received a job with an invalid status (' . $notification->status . '), notification_id: ' . $notification_id );
+			Perfecty_Push_Lib_Db::mark_notification_failed( $notification_id );
+			return false;
+		}
+
+		// this is the first time we get here so we mark it as running
+		if ( $notification->status == Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_SCHEDULED ) {
+			Perfecty_Push_Lib_Db::mark_notification_running( $notification_id );
 		}
 
 		Perfecty_Push_Lib_Db::take_notification( $notification_id );
@@ -126,6 +140,8 @@ class Perfecty_Push_Lib_Push_Server {
 			}
 		} else {
 			error_log( "Error executing one batch, result: $result, notification_id: " . $notification_id );
+			Perfecty_Push_Lib_Db::mark_notification_failed( $notification_id );
+			Perfecty_Push_Lib_Db::untake_notification( $notification_id );
 			return false;
 		}
 
