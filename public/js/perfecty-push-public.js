@@ -191,7 +191,7 @@
 	}
 
 	async function perfectyStart(options) {
-		if (checkFeatures()) {
+		if (checkFeatures() && !options.disabled) {
 			// Draw dialog
 			drawDialogControl(options.dialogControl);
 			drawSettingsControl(options.settingsControl);

@@ -15,7 +15,7 @@
 					<div><span>Body:</span> <?php echo $payload->body; ?></div>
 					<div>
 						<span>Url to open:</span>
-						<a href="<?php echo $payload->extra->url_to_open; ?>"><?php echo $payload->extra->url_to_open; ?></a>
+						<a href="<?php echo $payload->extra->url_to_open; ?>" target="_blank"><?php echo $payload->extra->url_to_open; ?></a>
 					</div>
 					<div>
 						<span>Icon:</span>

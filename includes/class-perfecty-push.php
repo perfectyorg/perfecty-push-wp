@@ -208,6 +208,12 @@ class Perfecty_Push {
 			error_log( 'No VAPID Keys were configured' );
 		}
 
+		// This can happen because we missed the gmp extension
+		if (!class_exists(WebPush::class)) {
+            error_log("The WebPush server could not be bootstrapped");
+            return;
+        }
+
 		$webpush = new WebPush( $auth );
 		$webpush->setReuseVAPIDHeaders( true );
 		$vapid_generator = array( 'Minishlink\WebPush\VAPID', 'createVapidKeys' );

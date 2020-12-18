@@ -73,8 +73,15 @@ require plugin_dir_path( __FILE__ ) . 'includes/class-perfecty-push.php';
  * if the gmp extension is enabled. In theory, composer libs can be used
  * in WordPress plugins: https://github.com/awesomemotive/WP-Mail-SMTP
  */
-if ( extension_loaded( 'gmp' ) ) {
+$gmp_loaded = extension_loaded( 'gmp' );
+if ($gmp_loaded && version_compare(PHP_VERSION, '7.1.0', '>=') ) {
 	require __DIR__ . '/vendor/autoload.php';
+} else {
+    error_log(sprintf("Could not load all the features. PHP: %s, gmp extension_loaded: %d", PHP_VERSION, $gmp_loaded));
+
+    if (!defined('PERFECTY_PUSH_DISABLED')) {
+        define('PERFECTY_PUSH_DISABLED', true);
+    }
 }
 
 /**
