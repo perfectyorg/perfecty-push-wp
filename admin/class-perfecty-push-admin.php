@@ -376,9 +376,14 @@ class Perfecty_Push_Admin {
 	 * @since 1.0.0
 	 */
 	public function print_dashboard_page() {
+		$end_date   = new DateTime();
+		$start_date = new DateTime();
+		$start_date->sub( new DateInterval( 'P7D' ) );
+
 		$users_stats         = Perfecty_Push_Lib_Db::get_users_stats();
 		$notifications_stats = Perfecty_Push_Lib_Db::get_notifications_stats();
 		$jobs_stats          = Perfecty_Push_Lib_Db::get_jobs_stats();
+		$daily_stats         = Perfecty_Push_Lib_Db::get_notifications_daily_stats( $start_date, $end_date );
 
 		require_once plugin_dir_path( __FILE__ ) . 'partials/perfecty-push-admin-dashboard.php';
 	}

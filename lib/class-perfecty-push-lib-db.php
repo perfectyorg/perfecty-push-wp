@@ -404,6 +404,44 @@ class Perfecty_Push_Lib_Db {
 	}
 
 	/**
+	 * Get the notification daily stats. $result contains an array as:
+	 * - date
+	 * - succeeded (total)
+	 * - failed (total)
+	 *
+	 * @param $start_date DateTime
+	 * @param $end_date DateTime
+	 * @return array Result
+	 */
+	public static function get_notifications_daily_stats( $start_date, $end_date ): array {
+		global $wpdb;
+
+		$table   = self::notifications_table();
+		$sql     = $wpdb->prepare(
+			"SELECT DATE_FORMAT(creation_time, \"%%Y-%%m-%%d\") as `date`, SUM(total-succeeded) as failed, SUM(succeeded) as succeeded
+                    FROM $table
+                    GROUP BY `date`
+                    HAVING `date` >= %s AND `date` <= %s",
+			$start_date->format( 'Y-m-d' ),
+			$end_date->format( 'Y-m-d' )
+		);
+		$results = $wpdb->get_results( $sql );
+		if ( $results === null ) {
+			return false;
+		}
+
+		// we need the int values
+		$transformed = array();
+		foreach ( $results as $item ) {
+			$item->succeeded = intval( $item->succeeded );
+			$item->failed    = intval( $item->failed );
+			$transformed[]   = $item;
+		}
+
+		return $transformed;
+	}
+
+	/**
 	 * Take the notification
 	 *
 	 * @param $notification_id int Notification id

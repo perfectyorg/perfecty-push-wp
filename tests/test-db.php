@@ -372,7 +372,7 @@ class DbTest extends WP_UnitTestCase {
     public function test_get_notifications_stats() {
         $id1       = Perfecty_Push_Lib_Db::create_notification( 'my_payload1', Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_SCHEDULED, 35, 20 );
         $id2       = Perfecty_Push_Lib_Db::create_notification( 'my_payload2', Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_SCHEDULED, 45, 17 );
-        $id3       = Perfecty_Push_Lib_Db::create_notification( 'my_payload2', Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_SCHEDULED, 10, 17 );
+        Perfecty_Push_Lib_Db::create_notification( 'my_payload2', Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_SCHEDULED, 10, 17 );
 
         $notification_1 = Perfecty_Push_Lib_Db::get_notification($id1);
         $notification_1->succeeded = 70;
@@ -386,6 +386,34 @@ class DbTest extends WP_UnitTestCase {
         $this->assertSame(90, $result['total']);
         $this->assertSame(77, $result['succeeded']);
         $this->assertSame(13, $result['failed']);
+    }
+
+    /**
+     * Test the notifications daily stats
+     */
+    public function test_get_notifications_daily_stats() {
+        $id1       = Perfecty_Push_Lib_Db::create_notification( 'my_payload1', Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_COMPLETED, 35, 20 );
+        $id2       = Perfecty_Push_Lib_Db::create_notification( 'my_payload2', Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_COMPLETED, 45, 17 );
+        Perfecty_Push_Lib_Db::create_notification( 'my_payload3', Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_COMPLETED, 10, 17 );
+        Perfecty_Push_Lib_Db::create_notification( 'my_payload4', Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_COMPLETED, 10, 17 );
+
+        $notification_1 = Perfecty_Push_Lib_Db::get_notification($id1);
+        $notification_1->succeeded = 70;
+        Perfecty_Push_Lib_Db::update_notification($notification_1);
+        $notification_2 = Perfecty_Push_Lib_Db::get_notification($id2);
+        $notification_2->succeeded = 7;
+        Perfecty_Push_Lib_Db::update_notification($notification_2);
+
+        $end_date = new DateTime();
+        $start_date = new DateTime();
+        $start_date->sub(new DateInterval('P7D'));
+        $results = Perfecty_Push_Lib_Db::get_notifications_daily_stats($start_date, $end_date);
+
+        $today = date('Y-m-d');
+
+        $this->assertSame($today, $results[0]->date);
+        $this->assertSame(77, $results[0]->succeeded);
+        $this->assertSame(23, $results[0]->failed);
     }
 
     /**
