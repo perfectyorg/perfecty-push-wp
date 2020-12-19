@@ -108,7 +108,7 @@ class Perfecty_Push_Admin {
 			'manage_options',
 			'perfecty-push',
 			array( $this, 'print_dashboard_page' ),
-            'dashicons-smiley'
+			'dashicons-smiley'
 		);
 
 		add_submenu_page(
@@ -329,7 +329,7 @@ class Perfecty_Push_Admin {
 			} else {
 				$notice = array(
 					'type'    => 'success',
-					'message' => 'Notification message was scheduled',
+					'message' => '<strong>Perfecty Push</strong> has sent a notification for the recently published post: ' . $body,
 				);
 				if ( isset( $_POST['perfecty_push_post_metabox_nonce'] ) ) {
 					// once we sent the notification, we reset the checkbox when the
@@ -362,7 +362,7 @@ class Perfecty_Push_Admin {
 			$message = $notice['message'];
 
 			if ( $type === 'error' ) {
-				printf( '<div class="notice notice-error is-dismissible"><p>%s</p></div>', $message );
+				printf( '<div class="notice notice-warning is-dismissible"><p>%s</p></div>', $message );
 			} else {
 				printf( '<div class="notice notice-success is-dismissible"><p>%s</p></div>', $message );
 			}
@@ -484,6 +484,9 @@ class Perfecty_Push_Admin {
 			}
 		} else {
 			$item = $default;
+			if ( empty( get_site_icon_url() ) ) {
+				$notice = 'This website is missing the Site icon (Appearance > Customize > Site Identity). No icon will be set in the notification.';
+			}
 		}
 
 		add_meta_box(

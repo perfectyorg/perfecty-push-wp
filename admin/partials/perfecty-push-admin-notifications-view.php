@@ -15,11 +15,18 @@
 					<div><span>Body:</span> <?php echo $payload->body; ?></div>
 					<div>
 						<span>Url to open:</span>
-						<a href="<?php echo $payload->extra->url_to_open; ?>" target="_blank"><?php echo $payload->extra->url_to_open; ?></a>
+						<a href="<?php echo $payload->extra->url_to_open; ?>"
+						   target="_blank"><?php echo $payload->extra->url_to_open; ?></a>
 					</div>
 					<div>
 						<span>Icon:</span>
-						<br/><img class="perfecty-push-view-payload-icon" src="<?php echo $payload->icon; ?>" alt="icon"/>
+						<?php
+						if ( empty( $payload->icon ) ) {
+							echo 'No';
+						} else {
+							echo '<br/><img class="perfecty-push-view-payload-icon" src="' . $payload->icon . '" alt="icon"/>';
+						}
+						?>
 					</div>
 					<div>
 						<span>Image:</span>

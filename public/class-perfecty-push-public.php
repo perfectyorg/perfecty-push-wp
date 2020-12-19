@@ -88,20 +88,22 @@ class Perfecty_Push_Public {
 		$users = new Perfecty_Push_Users();
 
 		register_rest_route(
-			'/perfecty-push/v1/',
+			'perfecty-push/v1',
 			'/register/',
 			array(
-				'methods'  => 'POST',
-				'callback' => array( $users, 'register' ),
+				'methods'             => 'POST',
+				'callback'            => array( $users, 'register' ),
+				'permission_callback' => '__return_true',
 			)
 		);
 
 		register_rest_route(
-			'/perfecty-push/v1/',
+			'perfecty-push/v1',
 			'/user/active/',
 			array(
-				'methods'  => 'PUT',
-				'callback' => array( $users, 'set_user_active' ),
+				'methods'             => 'PUT',
+				'callback'            => array( $users, 'set_user_active' ),
+				'permission_callback' => '__return_true',
 			)
 		);
 	}

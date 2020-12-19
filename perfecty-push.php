@@ -13,7 +13,7 @@
  *
  * @wordpress-plugin
  * Plugin Name:       Perfecty Push Notifications
- * Plugin URI:        https://perfecty.co/push-server/wp/
+ * Plugin URI:        https://github.com/rwngallego/perfecty-push-wp/
  * Description:       Self-hosted, Open Source and powerful <strong>Web Push Notifications</strong> plugin to send push notifications <strong>from your own server for free!</strong>
  * Version:           1.0.0
  * Author:            Rowinson Gallego
@@ -78,6 +78,12 @@ if ( $gmp_loaded && version_compare( PHP_VERSION, '7.1.0', '>=' ) ) {
 	require __DIR__ . '/vendor/autoload.php';
 } else {
 	error_log( sprintf( 'Could not load all the features. PHP: %s, gmp extension_loaded: %d', PHP_VERSION, $gmp_loaded ) );
+
+	$notice = array(
+		'type'    => 'error',
+		'message' => 'Perfecty Push plugin requires PHP >=7.1 and the gmp extension to be enabled.',
+	);
+	set_transient( 'perfecty_push_admin_notice', $notice );
 
 	if ( ! defined( 'PERFECTY_PUSH_DISABLED' ) ) {
 		define( 'PERFECTY_PUSH_DISABLED', true );

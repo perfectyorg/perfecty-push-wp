@@ -3,10 +3,10 @@
 	<h1>Send notification</h1>
 
 	<?php if ( ! empty( $notice ) ) : ?>
-	<div id="notice" class="error"><p><?php echo $notice; ?></p></div>
+	<div id="notice" class="notice notice-warning"><p><?php echo $notice; ?></p></div>
 	<?php endif; ?>
 	<?php if ( ! empty( $message ) ) : ?>
-	<div id="message" class="updated"><p><?php echo $message; ?></p></div>
+	<div id="message" class="notice notice-success"><p><?php echo $message; ?></p></div>
 	<?php endif; ?>
 
 	<form id="form" method="POST">
