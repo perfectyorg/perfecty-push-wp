@@ -107,7 +107,8 @@ class Perfecty_Push_Admin {
 			'Perfecty Push',
 			'manage_options',
 			'perfecty-push',
-			array( $this, 'print_dashboard_page' )
+			array( $this, 'print_dashboard_page' ),
+            'dashicons-smiley'
 		);
 
 		add_submenu_page(

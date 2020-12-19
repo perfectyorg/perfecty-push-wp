@@ -12,28 +12,22 @@
 ?>
 <div class="wrap">
 	<h1>About Perfecty Push</h1>
-	<p><a href="https://perfecty.co/push-server" target="_blank">Perfecty Push</a>
-	is an Open Source project that allows you to send push notifications
-	directly from your own server. No hidden fees, no third-party dependencies and you
-	own your data.</p>
-	<h2>Advantages</h2>
+	<p><a href="https://github.com/rwngallego/perfecty-push-wp" target="_blank">Perfecty Push WP</a>
+		is a WordPress plugin for <strong>Perfecty Push</strong>,
+		an Open Source project that allows you to send push notifications
+		directly from your own server: No hidden fees, no third-party dependencies and you
+		own your data.</p>
+	<p>It has a built-in Push Server that uses the <a href="https://github.com/web-push-libs/web-push-php" target="_blank">web-push-php</a> project.</p>
+	<h2>Support</h2>
 	<p>
-	<ul class="perfecty-push-items-list">
-		<li>Open Source and self-hosted</li>
-		<li>No third party dependencies when self-hosted </li>
-		<li>Offline browser notifications through <a href="https://developer.mozilla.org/en-US/docs/Web/API/Push_API">Push API</a> (Safari is not supported yet)</li>
-		<li>You retain and own the user authorization tokens</li>
-	</ul>
+		- You can create an issue in our Github repo:
+		<a href="https://github.com/rwngallego/perfecty-push-wp/issues" target="_blank">https://github.com/rwngallego/perfecty-push-wp/issues</a>
 	</p>
-	<h2>Requirements</h2>
+	<h2>Did you like it?</h2>
 	<p>
-	<ul class="perfecty-push-items-list">
-		<li>PHP 7.1+</li>
-		<li>The gmp extension</li>
-	</ul>
+	Please let us know. Share your love and give us some stars in the Github repo or leave a review in the WordPress plugins marketplace.
 	</p>
 	<p>
-	Note: In the roadmap we plan to support to PHP 7.2+, so the gmp extension will be optional
-	as the PHP 7.2+ improvements are sufficient.
+		Optionally you can <a href="https://rowinson.netlify.app/contact/" target="_blank">send me</a> a message.
 	</p>
 </div>

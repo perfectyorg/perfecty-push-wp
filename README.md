@@ -16,6 +16,7 @@ own your data. 👏
 - Offline browser notifications through [Push API](https://developer.mozilla.org/en-US/docs/Web/API/Push_API) (Safari is not supported yet)
 - You retain and own the user authorization tokens
 - WordPress plugin with a built-in Push Server based on [web-push-php](https://github.com/web-push-libs/web-push-php)
+- Send notifications when publishing posts
 
 ## Requirements 🧩
 
@@ -99,6 +100,8 @@ phpunit --filter test_schedule_broadcast_async
 ## License 👓
 
 The WordPress Plugin is an Open Source project licensed under [GPL v2](./LICENSE.txt).
+
+The bell icon is a Font Awesome icon, a [CC BY 4.0 License](https://creativecommons.org/licenses/by/4.0/).
 
 ## Collaborators 🔥
 
