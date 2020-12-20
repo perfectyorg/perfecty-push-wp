@@ -89,7 +89,7 @@
 		'  <div id="perfecty-push-settings-form">' +
 		' 	 <div>' + options.title + '</div>' +
 		'    <input type="checkbox" id="perfecty-push-settings-subscribed"></input>' +
-		'    <label for="perfecty-push-settings-subscribed">' + options.subscribed + '</label>' +
+		'    <label for="perfecty-push-settings-subscribed">' + options.opt_in + '</label>' +
 		'    <div id="perfecty-push-settings-notification"></div>' +
 		'  </div>' +
 		'	 <div id="perfecty-push-settings-open">' +

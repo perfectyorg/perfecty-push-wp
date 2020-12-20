@@ -76,6 +76,8 @@ class Perfecty_Push_Public {
 	 * @since    1.0.0
 	 */
 	public function print_head() {
+		$options = get_option( 'perfecty_push' );
+
 		require_once plugin_dir_path( __FILE__ ) . 'partials/perfecty-push-public-head.php';
 	}
 

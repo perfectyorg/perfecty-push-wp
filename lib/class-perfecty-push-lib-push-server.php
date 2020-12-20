@@ -161,6 +161,10 @@ class Perfecty_Push_Lib_Push_Server {
 		if ( ! is_string( $payload ) ) {
 			$payload = json_encode( $payload );
 		}
+		if ( ! self::$webpush ) {
+			error_log( 'The Push Server was not bootstrapped.' );
+			return false;
+		}
 
 		foreach ( $users as $item ) {
 			$push_user = new Subscription(

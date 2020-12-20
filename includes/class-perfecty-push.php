@@ -92,7 +92,7 @@ class Perfecty_Push {
 		$options           = get_option( 'perfecty_push', array() );
 		$vapid_public_key  = isset( $options['vapid_public_key'] ) ? $options['vapid_public_key'] : '';
 		$vapid_private_key = isset( $options['vapid_private_key'] ) ? $options['vapid_private_key'] : '';
-		$server_url        = isset( $options['server_url'] ) ? $options['server_url'] : '127.0.0.1:8777';
+		$server_url        = isset( $options['server_url'] ) ? $options['server_url'] : get_site_url();
 
 		if ( ! defined( 'PERFECTY_PUSH_JS_DIR' ) ) {
 			$path = plugin_dir_url( __DIR__ ) . 'public/js';
@@ -206,6 +206,11 @@ class Perfecty_Push {
 			);
 		} else {
 			error_log( 'No VAPID Keys were configured' );
+			$notice = array(
+				'type'    => 'error',
+				'message' => 'The VAPID keys are missing in Perfecty Push, you need to regenerate them.',
+			);
+			set_transient( 'perfecty_push_admin_notice', $notice );
 		}
 
 		// This can happen because we missed the gmp extension
@@ -214,10 +219,14 @@ class Perfecty_Push {
 			return;
 		}
 
-		$webpush = new WebPush( $auth );
-		$webpush->setReuseVAPIDHeaders( true );
-		$vapid_generator = array( 'Minishlink\WebPush\VAPID', 'createVapidKeys' );
-		Perfecty_Push_Lib_Push_Server::bootstrap( $webpush, $vapid_generator );
+		try {
+			$webpush = new WebPush( $auth );
+			$webpush->setReuseVAPIDHeaders( true );
+			$vapid_generator = array( 'Minishlink\WebPush\VAPID', 'createVapidKeys' );
+			Perfecty_Push_Lib_Push_Server::bootstrap( $webpush, $vapid_generator );
+		} catch ( \Exception $ex ) {
+			error_log( 'Could not bootstrap the Push Server: ' . $ex->getMessage() . ', ' . $ex->getTraceAsString() );
+		}
 	}
 
 	/**

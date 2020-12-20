@@ -180,14 +180,14 @@ class Perfecty_Push_Admin {
 
 		add_settings_section(
 			'perfecty_push_dialog_settings', // id
-			'Change the appearance', // title
+			'Public widget', // title
 			array( $this, 'print_dialog_section' ), // callback
 			'perfecty-push-options' // page
 		);
 
 		add_settings_field(
 			'dialog_title', // id
-			'Title', // title
+			'Subscribe text', // title
 			array( $this, 'print_dialog_title' ), // callback
 			'perfecty-push-options', // page
 			'perfecty_push_dialog_settings' // section
@@ -195,7 +195,7 @@ class Perfecty_Push_Admin {
 
 		add_settings_field(
 			'dialog_submit', // id
-			'Continue Button', // title
+			'Continue button', // title
 			array( $this, 'print_dialog_submit' ), // callback
 			'perfecty-push-options', // page
 			'perfecty_push_dialog_settings' // section
@@ -203,8 +203,24 @@ class Perfecty_Push_Admin {
 
 		add_settings_field(
 			'dialog_cancel', // id
-			'Cancel Button', // title
+			'Cancel button', // title
 			array( $this, 'print_dialog_cancel' ), // callback
+			'perfecty-push-options', // page
+			'perfecty_push_dialog_settings' // section
+		);
+
+		add_settings_field(
+			'settings_title', // id
+			'Bell title', // title
+			array( $this, 'print_settings_title' ), // callback
+			'perfecty-push-options', // page
+			'perfecty_push_dialog_settings' // section
+		);
+
+		add_settings_field(
+			'settings_subscribed', // id
+			'Opt-in text', // title
+			array( $this, 'print_settings_opt_in' ), // callback
 			'perfecty-push-options', // page
 			'perfecty_push_dialog_settings' // section
 		);
@@ -216,6 +232,13 @@ class Perfecty_Push_Admin {
 			'perfecty-push-options' // page
 		);
 
+		add_settings_field(
+			'vapid_private_key', // id
+			'Vapid Private Key', // title
+			array( $this, 'print_vapid_private_key' ), // callback
+			'perfecty-push-options', // page
+			'perfecty_push_self_hosted_settings' // section
+		);
 		add_settings_field(
 			'vapid_public_key', // id
 			'Vapid Public Key', // title
@@ -544,16 +567,34 @@ class Perfecty_Push_Admin {
 	/**
 	 * Sanitize the settings
 	 *
-	 * @param string $input Contains the settings
+	 * @param array $input Contains the settings
 	 * @return array
 	 */
-	public function sanitize( string $input ) {
+	public function sanitize( $input ) {
 		$new_input = array();
 		if ( isset( $input['vapid_public_key'] ) ) {
 			$new_input['vapid_public_key'] = sanitize_text_field( $input['vapid_public_key'] );
 		}
+		if ( isset( $input['vapid_private_key'] ) ) {
+			$new_input['vapid_private_key'] = sanitize_text_field( $input['vapid_private_key'] );
+		}
 		if ( isset( $input['server_url'] ) ) {
 			$new_input['server_url'] = sanitize_text_field( $input['server_url'] );
+		}
+		if ( isset( $input['dialog_title'] ) ) {
+			$new_input['dialog_title'] = sanitize_text_field( $input['dialog_title'] );
+		}
+		if ( isset( $input['dialog_submit'] ) ) {
+			$new_input['dialog_submit'] = sanitize_text_field( $input['dialog_submit'] );
+		}
+		if ( isset( $input['dialog_cancel'] ) ) {
+			$new_input['dialog_cancel'] = sanitize_text_field( $input['dialog_cancel'] );
+		}
+		if ( isset( $input['settings_title'] ) ) {
+			$new_input['settings_title'] = sanitize_text_field( $input['settings_title'] );
+		}
+		if ( isset( $input['settings_opt_in'] ) ) {
+			$new_input['settings_opt_in'] = sanitize_text_field( $input['settings_opt_in'] );
 		}
 
 		return $new_input;
@@ -565,7 +606,7 @@ class Perfecty_Push_Admin {
 	 * @since 1.0.0
 	 */
 	public function print_dialog_section() {
-		print 'Change the messages shown in the notification dialog.';
+		print 'Preferences for the widgets shown in the front page.';
 	}
 
 	/**
@@ -588,7 +629,23 @@ class Perfecty_Push_Admin {
 
 		printf(
 			'<input type="text" id="perfecty_push[vapid_public_key]"' .
-			'name="perfecty_push[vapid_public_key]" value="%s" />',
+			'name="perfecty_push[vapid_public_key]" value="%s"/>',
+			$value
+		);
+	}
+
+	/**
+	 * Print the Vapid private key
+	 *
+	 * @since 1.0.0
+	 */
+	public function print_vapid_private_key() {
+		$options = get_option( 'perfecty_push' );
+		$value   = isset( $options['vapid_private_key'] ) ? esc_attr( $options['vapid_private_key'] ) : '';
+
+		printf(
+			'<input type="text" id="perfecty_push[vapid_private_key]"' .
+			'name="perfecty_push[vapid_private_key]" value="%s"/>',
 			$value
 		);
 	}
@@ -653,6 +710,38 @@ class Perfecty_Push_Admin {
 		printf(
 			'<input type="text" id="perfecty_push[dialog_cancel]"' .
 			'name="perfecty_push[dialog_cancel]" value="%s" />',
+			$value
+		);
+	}
+
+	/**
+	 * Print the settings_title option
+	 *
+	 * @since 1.0.0
+	 */
+	public function print_settings_title() {
+		$options = get_option( 'perfecty_push' );
+		$value   = isset( $options['settings_title'] ) ? esc_attr( $options['settings_title'] ) : '';
+
+		printf(
+			'<input type="text" id="perfecty_push[settings_title]"' .
+			'name="perfecty_push[settings_title]" value="%s" />',
+			$value
+		);
+	}
+
+	/**
+	 * Print the settings_opt_in option
+	 *
+	 * @since 1.0.0
+	 */
+	public function print_settings_opt_in() {
+		$options = get_option( 'perfecty_push' );
+		$value   = isset( $options['settings_opt_in'] ) ? esc_attr( $options['settings_opt_in'] ) : '';
+
+		printf(
+			'<input type="text" id="perfecty_push[settings_opt_in]"' .
+			'name="perfecty_push[settings_opt_in]" value="%s" />',
 			$value
 		);
 	}
