@@ -179,10 +179,18 @@ class Perfecty_Push_Admin {
 		);
 
 		add_settings_section(
-			'perfecty_push_dialog_settings', // id
+			'perfecty_push_widget_settings', // id
 			'Public widget', // title
 			array( $this, 'print_dialog_section' ), // callback
 			'perfecty-push-options' // page
+		);
+
+		add_settings_field(
+			'widget_enabled', // id
+			'Enabled', // title
+			array( $this, 'print_widget_enabled' ), // callback
+			'perfecty-push-options', // page
+			'perfecty_push_widget_settings' // section
 		);
 
 		add_settings_field(
@@ -190,23 +198,23 @@ class Perfecty_Push_Admin {
 			'Subscribe text', // title
 			array( $this, 'print_dialog_title' ), // callback
 			'perfecty-push-options', // page
-			'perfecty_push_dialog_settings' // section
+			'perfecty_push_widget_settings' // section
 		);
 
 		add_settings_field(
 			'dialog_submit', // id
-			'Continue button', // title
+			'Continue text', // title
 			array( $this, 'print_dialog_submit' ), // callback
 			'perfecty-push-options', // page
-			'perfecty_push_dialog_settings' // section
+			'perfecty_push_widget_settings' // section
 		);
 
 		add_settings_field(
 			'dialog_cancel', // id
-			'Cancel button', // title
+			'Cancel text', // title
 			array( $this, 'print_dialog_cancel' ), // callback
 			'perfecty-push-options', // page
-			'perfecty_push_dialog_settings' // section
+			'perfecty_push_widget_settings' // section
 		);
 
 		add_settings_field(
@@ -214,7 +222,7 @@ class Perfecty_Push_Admin {
 			'Bell title', // title
 			array( $this, 'print_settings_title' ), // callback
 			'perfecty-push-options', // page
-			'perfecty_push_dialog_settings' // section
+			'perfecty_push_widget_settings' // section
 		);
 
 		add_settings_field(
@@ -222,7 +230,7 @@ class Perfecty_Push_Admin {
 			'Opt-in text', // title
 			array( $this, 'print_settings_opt_in' ), // callback
 			'perfecty-push-options', // page
-			'perfecty_push_dialog_settings' // section
+			'perfecty_push_widget_settings' // section
 		);
 
 		add_settings_section(
@@ -473,10 +481,10 @@ class Perfecty_Push_Admin {
 		$notice  = '';
 
 		$default = array(
-			'title'       => '',
-			'message'     => '',
-			'url_to_open' => '',
-			'image'       => '',
+			'perfecty-push-send-notification-title'       => '',
+			'perfecty-push-send-notification-message'     => '',
+			'perfecty-push-send-notification-url-to-open' => '',
+			'perfecty-push-send-notification-image'       => '',
 		);
 
 		if ( isset( $_REQUEST['nonce'] ) && wp_verify_nonce( $_REQUEST['nonce'], 'perfecty_push_send_notification' ) ) {
@@ -485,12 +493,12 @@ class Perfecty_Push_Admin {
 			$validation_result = $this->validate_notification_message( $item );
 			if ( $validation_result === true ) {
 				// filter
-				$item['title']       = sanitize_text_field( $item['title'] );
-				$item['message']     = sanitize_textarea_field( $item['message'] );
-				$item['url_to_open'] = sanitize_text_field( $item['url_to_open'] );
-				$item['image']       = sanitize_text_field( $item['image'] );
+				$item['perfecty-push-send-notification-title']       = sanitize_text_field( $item['perfecty-push-send-notification-title'] );
+				$item['perfecty-push-send-notification-message']     = sanitize_textarea_field( $item['perfecty-push-send-notification-message'] );
+				$item['perfecty-push-send-notification-url-to-open'] = sanitize_text_field( $item['perfecty-push-send-notification-url-to-open'] );
+				$item['perfecty-push-send-notification-image']       = sanitize_text_field( $item['perfecty-push-send-notification-image'] );
 
-				$payload = Perfecty_Push_Lib_Payload::build( $item['message'], $item['title'], $item['image'], $item['url_to_open'] );
+				$payload = Perfecty_Push_Lib_Payload::build( $item['perfecty-push-send-notification-message'], $item['perfecty-push-send-notification-title'], $item['perfecty-push-send-notification-image'], $item['perfecty-push-send-notification-url-to-open'] );
 
 				// send notification
 				$result = Perfecty_Push_Lib_Push_Server::schedule_broadcast_async( $payload );
@@ -531,11 +539,11 @@ class Perfecty_Push_Admin {
 	public function validate_notification_message( $item ) {
 		$messages = array();
 
-		if ( empty( $item['title'] ) ) {
+		if ( empty( $item['perfecty-push-send-notification-title'] ) ) {
 			$messages[] = 'The title is required';
 		}
 
-		if ( empty( $item['message'] ) ) {
+		if ( empty( $item['perfecty-push-send-notification-message'] ) ) {
 			$messages[] = 'The message is required';
 		}
 
@@ -572,15 +580,15 @@ class Perfecty_Push_Admin {
 	 */
 	public function sanitize( $input ) {
 		$new_input = array();
-		if ( isset( $input['vapid_public_key'] ) ) {
-			$new_input['vapid_public_key'] = sanitize_text_field( $input['vapid_public_key'] );
+
+		// checkbox
+		if ( isset( $input['widget_enabled'] ) ) {
+			$new_input['widget_enabled'] = 1;
+		} else {
+			$new_input['widget_enabled'] = 0;
 		}
-		if ( isset( $input['vapid_private_key'] ) ) {
-			$new_input['vapid_private_key'] = sanitize_text_field( $input['vapid_private_key'] );
-		}
-		if ( isset( $input['server_url'] ) ) {
-			$new_input['server_url'] = sanitize_text_field( $input['server_url'] );
-		}
+
+		// text
 		if ( isset( $input['dialog_title'] ) ) {
 			$new_input['dialog_title'] = sanitize_text_field( $input['dialog_title'] );
 		}
@@ -595,6 +603,15 @@ class Perfecty_Push_Admin {
 		}
 		if ( isset( $input['settings_opt_in'] ) ) {
 			$new_input['settings_opt_in'] = sanitize_text_field( $input['settings_opt_in'] );
+		}
+		if ( isset( $input['vapid_public_key'] ) ) {
+			$new_input['vapid_public_key'] = sanitize_text_field( $input['vapid_public_key'] );
+		}
+		if ( isset( $input['vapid_private_key'] ) ) {
+			$new_input['vapid_private_key'] = sanitize_text_field( $input['vapid_private_key'] );
+		}
+		if ( isset( $input['server_url'] ) ) {
+			$new_input['server_url'] = sanitize_text_field( $input['server_url'] );
 		}
 
 		return $new_input;
@@ -663,6 +680,24 @@ class Perfecty_Push_Admin {
 			'<input type="text" id="perfecty_push[server_url]"' .
 			'name="perfecty_push[server_url]" value="%s" placeholder="127.0.0.1:8777"/>',
 			$value
+		);
+	}
+
+	/**
+	 * Print the widget_enabled option
+	 *
+	 * @since 1.0.0
+	 */
+	public function print_widget_enabled() {
+		$options = get_option( 'perfecty_push' );
+		$value   = isset( $options['widget_enabled'] ) ? esc_attr( $options['widget_enabled'] ) : 0;
+
+		$enabled = $value == 1 ? 'checked="checked"' : '';
+
+		printf(
+			'<input type="checkbox" id="perfecty_push[widget_enabled]"' .
+			'name="perfecty_push[widget_enabled]" %s />',
+			$enabled
 		);
 	}
 

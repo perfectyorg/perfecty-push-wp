@@ -12,5 +12,21 @@
 				window.location.href = url;
 			}
 		});
+
+		$("#perfecty-push-send-notification-image-custom").change(function(e){
+			if (this.checked) {
+				$("#perfecty-push-send-notification-image").removeAttr("disabled");
+			} else {
+				$("#perfecty-push-send-notification-image").attr("disabled", "disabled");
+			}
+		});
+
+		$("#perfecty-push-send-notification-url-to-open-custom").change(function(e){
+			if (this.checked) {
+				$("#perfecty-push-send-notification-url-to-open").removeAttr("disabled");
+			} else {
+				$("#perfecty-push-send-notification-url-to-open").attr("disabled", "disabled");
+			}
+		});
 	});
 })( jQuery );

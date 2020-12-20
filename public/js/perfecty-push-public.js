@@ -258,7 +258,7 @@
 				}
 			}
 		} else {
-			console.log('Browser doesn\'t support notifications');
+			console.log('Browser doesn\'t support notifications or the widget is disabled');
 		}
 	}
 

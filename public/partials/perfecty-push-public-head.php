@@ -5,7 +5,13 @@ $perfecty_push_dialog_cancel   = ! empty( $options['dialog_cancel'] ) ? $options
 $perfecty_push_settings_title  = ! empty( $options['settings_title'] ) ? $options['settings_title'] : 'Notifications preferences';
 $perfecty_push_settings_opt_in = ! empty( $options['settings_opt_in'] ) ? $options['settings_opt_in'] : 'I want to receive notifications';
 $perfecty_push_nonce           = wp_create_nonce( 'wp_rest' );
-$perfecty_push_disabled        = defined( 'PERFECTY_PUSH_DISABLED' ) && PERFECTY_PUSH_DISABLED == true ? 'true' : 'false';
+
+if ( ( defined( 'PERFECTY_PUSH_DISABLED' ) && PERFECTY_PUSH_DISABLED == true ) ||
+	( ! isset( $options['widget_enabled'] ) || $options['widget_enabled'] == 0 ) ) {
+	$perfecty_push_disabled = 'true';
+} else {
+	$perfecty_push_disabled = 'false';
+}
 ?>
 <script language="javascript">
 	window.PerfectyPushOptions = {

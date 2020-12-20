@@ -226,11 +226,11 @@ class Perfecty_Push {
 			Perfecty_Push_Lib_Push_Server::bootstrap( $webpush, $vapid_generator );
 		} catch ( \Exception $ex ) {
 			error_log( 'Could not bootstrap the Push Server: ' . $ex->getMessage() . ', ' . $ex->getTraceAsString() );
-            $notice = array(
-                'type'    => 'error',
-                'message' => 'Could not bootstrap Perfecty Push, check the logs for more information.',
-            );
-            set_transient( 'perfecty_push_admin_notice', $notice );
+			$notice = array(
+				'type'    => 'error',
+				'message' => 'Could not bootstrap Perfecty Push, check the logs for more information.',
+			);
+			set_transient( 'perfecty_push_admin_notice', $notice );
 		}
 	}
 
