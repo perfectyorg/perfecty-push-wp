@@ -49,5 +49,5 @@
 	  </div>
 		</form>
 	</div>
-	<a href="?page=<?php echo $_REQUEST['page']; ?>">Back</a>
+	<a href="?page=<?php echo $page; ?>">Back</a>
 </div>

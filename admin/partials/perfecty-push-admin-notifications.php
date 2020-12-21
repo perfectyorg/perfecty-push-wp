@@ -10,7 +10,7 @@
 	?>
 
 	<form method="POST">
-		<input type="hidden" name="page" value="<?php echo $_REQUEST['page']; ?>"/>
+		<input type="hidden" name="page" value="<?php echo $page; ?>"/>
 		<?php $table->display(); ?>
 	</form>
 

@@ -94,6 +94,7 @@ class Perfecty_Push_Admin {
 		 */
 
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/perfecty-push-admin.js', array( 'jquery' ), $this->version, false );
+		wp_enqueue_script( 'chartjs', plugin_dir_url( __FILE__ ) . 'js/chart.bundle.min.js', array( 'jquery' ), $this->version, false );
 	}
 
 	 /**
@@ -435,6 +436,8 @@ class Perfecty_Push_Admin {
 	 * @since 1.0.0
 	 */
 	public function print_notifications_page() {
+		$page = esc_html( sanitize_key( $_REQUEST['page'] ) );
+
 		if ( isset( $_GET['id'] ) && ! empty( $_GET['id'] ) &&
 			isset( $_GET['action'] ) && $_GET['action'] == 'view' ) {
 			$id   = intval( $_REQUEST['id'] );
@@ -443,7 +446,7 @@ class Perfecty_Push_Admin {
 			$item->payload = json_decode( $item->payload );
 
 			require_once plugin_dir_path( __FILE__ ) . 'partials/perfecty-push-admin-notifications-view.php';
-			return true;
+			return;
 		}
 
 		$table    = new Perfecty_Push_Admin_Notifications_Table();
@@ -457,6 +460,8 @@ class Perfecty_Push_Admin {
 	 * @since 1.0.0
 	 */
 	public function print_users_page() {
+		$page = esc_html( sanitize_key( $_REQUEST['page'] ) );
+
 		if ( isset( $_GET['id'] ) && ! empty( $_GET['id'] ) &&
 			isset( $_GET['action'] ) && $_GET['action'] == 'view' ) {
 			$id   = intval( $_REQUEST['id'] );

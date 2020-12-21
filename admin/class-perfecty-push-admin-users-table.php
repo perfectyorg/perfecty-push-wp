@@ -30,9 +30,11 @@ class Perfecty_Push_Admin_Users_Table extends WP_List_Table {
 
 	function column_uuid( $item ) {
 		$action_nonce = wp_create_nonce( 'bulk-' . $this->_args['plural'] );
-		$actions      = array(
-			'view'   => sprintf( '<a href="?page=%s&action=%s&id=%s">%s</a>', $_REQUEST['page'], 'view', $item['id'], 'View' ),
-			'delete' => sprintf( '<a href="#" class="perfecty-push-confirm-action" data-page="%s" data-action="%s" data-id="%d" data-nonce="%s">%s</a>', $_REQUEST['page'], 'delete', $item['id'], $action_nonce, 'Delete' ),
+		$page         = esc_html( sanitize_key( $_REQUEST['page'] ) );
+
+		$actions = array(
+			'view'   => sprintf( '<a href="?page=%s&action=%s&id=%s">%s</a>', $page, 'view', $item['id'], 'View' ),
+			'delete' => sprintf( '<a href="#" class="perfecty-push-confirm-action" data-page="%s" data-action="%s" data-id="%d" data-nonce="%s">%s</a>', $page, 'delete', $item['id'], $action_nonce, 'Delete' ),
 		);
 
 		return sprintf(
@@ -96,17 +98,23 @@ class Perfecty_Push_Admin_Users_Table extends WP_List_Table {
 				wp_die( 'No params were specified' );
 			}
 
-			// filter data
+			// validate, sanitize and filter
 			$ids = is_array( $_REQUEST['id'] ) ? $_REQUEST['id'] : array( $_REQUEST['id'] );
-			$ids = array_map(
-				function( $item ) {
-					return intval( $item );
-				},
-				$ids
-			);
+			$ids = $this->filter_array( $ids );
 
 			Perfecty_Push_Lib_Db::delete_users( $ids );
 		}
+	}
+
+	function filter_array( $ids ) {
+		$ids = array_map(
+			function( $item ) {
+				$item = sanitize_key( $item );
+				return intval( $item );
+			},
+			$ids
+		);
+		return $ids;
 	}
 
 	function prepare_items() {

@@ -32,6 +32,8 @@ Requirements:
 will be optional and recommended only for better performance.
 The supported PHP version will start from `7.2+`.
 
+This plugin uses the [Chart.js](https://www.chartjs.org/) library for the admin stats charts.
+
 == Installation ==
 
 ## Perfecty Push installation

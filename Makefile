@@ -11,6 +11,7 @@ default:
 	@echo "  composer: Install all the composer dependencies"
 	@echo "  phpunit: Setup Wordpress as a testing environment for phpunit"
 	@echo "  setup: Runs wordpress, composer and phpunit"
+	@echo "  bundle: Builds the vendor in production mode and generates the distributable zip file"
 
 up:
 	@./bin/run.sh up	
@@ -39,3 +40,6 @@ phpunit:
 
 setup:
 	@./bin/run.sh setup
+
+bundle:
+	@./bin/run.sh bundle

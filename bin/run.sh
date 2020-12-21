@@ -4,7 +4,7 @@ if [ $# -lt 1 ]; then
   echo "Run utilities"
   echo "----------------------"
 	echo "  usage: $0 <command> [options]"
-  echo "    <command> can be any of: up, down, console, setup, wordpress, composer, phpunit, test, format"
+  echo "    <command> can be any of: up, down, console, setup, wordpress, composer, phpunit, test, format, bundle"
   echo " .  [options]: --verbose"
 	exit 1
 fi
@@ -51,7 +51,7 @@ wordpress() {
 }
 
 composer() {
-  CMD=$(plugin_cmd 'composer install')
+  CMD=$(plugin_cmd 'rm -rf vendor && composer install')
   compose_exec "$CMD"
 }
 
@@ -70,10 +70,17 @@ format() {
   compose_exec "$CMD"
 }
 
+bundle() {
+  CMD=$(plugin_cmd 'rm -rf vendor && composer install --no-dev --optimize-autoloader')
+  compose_exec "$CMD"
+  cp index.php vendor/
+  zip -v -r plugin.zip admin/ assets/ includes/ languages/ lib/ public/ vendor/ composer.json composer.lock index.php LICENSE.txt perfecty-push.php README.txt uninstall.php
+}
+
 #----------------------------------------------
 
 case $COMMAND in
-  "up" | "down" | "setup" | "wordpress" | "composer" | "composer" | "phpunit" | "test" | "format" | "console")
+  "up" | "down" | "setup" | "wordpress" | "composer" | "composer" | "phpunit" | "test" | "format" | "console" | "bundle")
     if [[ $VERBOSE == '--verbose' ]]; then
       set -ex
     else
