@@ -60,12 +60,12 @@
 	
 	async function drawDialogControl(options) {
 		const dialogControl =
-		'<div class="perfecty-push-dialog-container" id="perfecty-push-dialog-container">' +
+		'<div class="site perfecty-push-dialog-container" id="perfecty-push-dialog-container">' +
 		'  <div class="perfecty-push-dialog-box">' +
 		'    <div class="perfecty-push-dialog-title">' + options.title + '</div>' +
 		'    <div>' + 
-		'      <button id="perfecty-push-dialog-cancel" type="button" class="secondary">' + options.cancel + '</button>' +
-		'      <button id="perfecty-push-dialog-subscribe" type="button" class="primary">' + options.submit + '</button> ' +
+		'      <button id="perfecty-push-dialog-cancel" type="button" class="button secondary">' + options.cancel + '</button>' +
+		'      <button id="perfecty-push-dialog-subscribe" type="button" class="button primary">' + options.submit + '</button> ' +
 		'    </div>' +
 		'  </div>' +
 		'</div>';
