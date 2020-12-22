@@ -108,7 +108,8 @@ class Perfecty_Push_Admin_Notifications_Table extends WP_List_Table {
 	}
 
 	function process_bulk_action() {
-		if ( 'delete' === $this->current_action() ) {
+		$action = $this->current_action();
+		if ( in_array( $action, array( 'delete', 'cancel' ) ) ) {
 			$nonce = 'bulk-' . $this->_args['plural'];
 			if ( ! isset( $_REQUEST['_wpnonce'] ) || ! wp_verify_nonce( $_REQUEST['_wpnonce'], $nonce ) ) {
 				wp_die( 'Could not verify the action' );
@@ -122,7 +123,24 @@ class Perfecty_Push_Admin_Notifications_Table extends WP_List_Table {
 			$ids = is_array( $_REQUEST['id'] ) ? $_REQUEST['id'] : array( $_REQUEST['id'] );
 			$ids = $this->filter_array( $ids );
 
-			Perfecty_Push_Lib_Db::delete_notifications( $ids );
+			switch ( $action ) {
+				case 'delete':
+					Perfecty_Push_Lib_Db::delete_notifications( $ids );
+					break;
+				case 'cancel':
+					$this->mark_notifications_failed( $ids );
+					break;
+			}
+		}
+	}
+
+	function mark_notifications_failed( $ids ) {
+		foreach ( $ids as $id ) {
+			$notification = Perfecty_Push_Lib_Db::get_notification( $id );
+			if ( $notification->status === Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_RUNNING ) {
+				Perfecty_Push_Lib_Db::mark_notification_failed( $id );
+				Perfecty_Push_Lib_Db::untake_notification( $id );
+			}
 		}
 	}
 

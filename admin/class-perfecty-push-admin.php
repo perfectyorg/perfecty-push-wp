@@ -279,7 +279,7 @@ class Perfecty_Push_Admin {
 	 * Register the metaboxes
 	 */
 	public function register_metaboxes() {
-		add_meta_box( 'perfecty_push_post_metabox', 'Perfecty Push Notifications', array( $this, 'display_post_metabox' ), 'post', 'side', 'high' );
+		add_meta_box( 'perfecty_push_post_metabox', 'Perfecty Push', array( $this, 'display_post_metabox' ), 'post', 'side', 'high' );
 	}
 
 	/**
@@ -520,9 +520,6 @@ class Perfecty_Push_Admin {
 			}
 		} else {
 			$item = $default;
-			if ( empty( get_site_icon_url() ) ) {
-				$notice = 'This website is missing the Site icon (Appearance > Customize > Site Identity). No icon will be set in the notification.';
-			}
 		}
 
 		add_meta_box(

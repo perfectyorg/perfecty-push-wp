@@ -16,7 +16,7 @@
 	</div>
 	<div>
 		<p>
-			<label for="perfecty-push-send-notification-image-custom">Custom image URL <i>(default: no image)</i></label>
+			<label for="perfecty-push-send-notification-image-custom">Image URL <i>(default: no image)</i></label>
 			<br />
 			<input id="perfecty-push-send-notification-image-custom" name="perfecty-push-send-notification-image-custom" type="checkbox"/>
 			<input id="perfecty-push-send-notification-image" name="perfecty-push-send-notification-image" type="text" value="<?php echo esc_attr( $item['perfecty-push-send-notification-image'] ); ?>" disabled="disabled">
@@ -29,6 +29,17 @@
 			<input id="perfecty-push-send-notification-url-to-open-custom" name="perfecty-push-send-notification-url-to-open-custom" type="checkbox"/>
 			<input id="perfecty-push-send-notification-url-to-open" name="perfecty-push-send-notification-url-to-open" type="text" value="<?php echo esc_attr( $item['perfecty-push-send-notification-url-to-open'] ); ?>" disabled="disabled">
 		</p>
+	</div>
+	<div>
+		<span>Icon:</span><br />
+		<?php
+		$icon_url = get_site_icon_url();
+		if ( empty( $icon_url ) ) {
+			echo '<i>Add a website icon in Appearance > Customize > Site Identity</i>';
+		} else {
+			echo '<br/><img class="perfecty-push-send-notification-icon" src="' . $icon_url . '" alt="icon"/>';
+		}
+		?>
 	</div>
 </div>
 

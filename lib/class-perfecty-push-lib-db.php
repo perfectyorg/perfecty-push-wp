@@ -55,7 +55,8 @@ class Perfecty_Push_Lib_Db {
           disabled tinyint(1) DEFAULT 0 NOT NULL,
           creation_time datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
           PRIMARY KEY  (id),
-          UNIQUE KEY users_uuid_uk (uuid)
+          UNIQUE KEY users_uuid_uk (uuid),
+          UNIQUE KEY users_endpoint_uk (endpoint)
         ) $charset;";
 		dbDelta( $sql );
 
@@ -169,7 +170,7 @@ class Perfecty_Push_Lib_Db {
 	 * Changes the disabled property for the subcription
 	 *
 	 * @param $user_id int id
-	 * @param $disabled bool True or false
+	 * @param $disabled bool True to disable or false to enable
 	 *
 	 * @return int|bool Number of rows updated or false
 	 */
@@ -180,6 +181,24 @@ class Perfecty_Push_Lib_Db {
 			self::users_table(),
 			array( 'disabled' => $disabled ),
 			array( 'id' => $user_id )
+		);
+	}
+
+	/**
+	 * Changes the disabled property for the subscription using the endpoint as key
+	 *
+	 * @param $endpoint string Endpoint (unique)
+	 * @param $disabled bool True to disable or false to enable
+	 *
+	 * @return int|bool Number of rows updated or false
+	 */
+	public static function set_user_disabled_with_endpoint( $endpoint, $disabled ) {
+		global $wpdb;
+
+		return $wpdb->update(
+			self::users_table(),
+			array( 'disabled' => $disabled ),
+			array( 'endpoint' => $endpoint )
 		);
 	}
 

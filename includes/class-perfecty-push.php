@@ -194,7 +194,9 @@ class Perfecty_Push {
 	 * @access   private
 	 */
 	private function load_push_server() {
-		$auth = array();
+		$auth      = array();
+		$activated = get_option( 'perfecty_push_activated', 0 );
+
 		if ( defined( 'PERFECTY_PUSH_VAPID_PUBLIC_KEY' ) && defined( 'PERFECTY_PUSH_VAPID_PRIVATE_KEY' )
 		&& PERFECTY_PUSH_VAPID_PUBLIC_KEY && PERFECTY_PUSH_VAPID_PRIVATE_KEY ) {
 			$auth = array(
@@ -204,7 +206,7 @@ class Perfecty_Push {
 					'privateKey' => PERFECTY_PUSH_VAPID_PRIVATE_KEY,
 				),
 			);
-		} else {
+		} elseif ( $activated == 1 ) {
 			error_log( 'No VAPID Keys were configured' );
 			$notice = array(
 				'type'    => 'error',

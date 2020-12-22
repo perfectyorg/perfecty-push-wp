@@ -173,16 +173,22 @@ class Perfecty_Push_Lib_Push_Server {
 				$item->key_auth
 			);
 
-			self::$webpush->sendNotification( $push_user, $payload );
+			self::$webpush->queueNotification( $push_user, $payload );
 		}
 
 		$total     = count( $users );
 		$succeeded = 0;
-		foreach ( self::$webpush->flush() as $result ) {
-			if ( $result->isSuccess() ) {
+		foreach ( self::$webpush->flush() as $report ) {
+			if ( $report->isSuccess() ) {
 				$succeeded++;
 			} else {
-				error_log( 'Failed to send one notification, error: ' . $result->getReason() );
+				error_log( 'Failed to send one notification, error: ' . $report->getReason() );
+
+				$endpoint = $report->getEndpoint();
+				if ( $report->isSubscriptionExpired() ) {
+                    error_log( "User subscription has expired, disabling it: $endpoint" );
+					Perfecty_Push_Lib_Db::set_user_disabled_with_endpoint( $endpoint, true );
+				}
 			}
 		}
 		return array( $total, $succeeded );

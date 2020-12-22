@@ -78,7 +78,7 @@ class PushServerTest extends WP_UnitTestCase {
 		$mocked_server
 		->shouldReceive(
 			array(
-				'sendNotification' => true,
+				'queueNotification' => true,
 				'flush'            => array( $mocked_server_result ),
 			)
 		)
@@ -105,6 +105,8 @@ class PushServerTest extends WP_UnitTestCase {
 			array(
 				'isSuccess' => false,
 				'getReason' => 'mocked reason',
+                'getEndpoint' => 'my_endpoint_url',
+                'isSubscriptionExpired' => false,
 			)
 		)
 		->once();
@@ -113,7 +115,7 @@ class PushServerTest extends WP_UnitTestCase {
 		$mocked_server
 		->shouldReceive(
 			array(
-				'sendNotification' => true,
+				'queueNotification' => true,
 				'flush'            => array( $mocked_server_result ),
 			)
 		)
@@ -129,6 +131,48 @@ class PushServerTest extends WP_UnitTestCase {
 
 		$this->assertSame( array( 1, 0 ), $result );
 	}
+
+    /**
+     * Test sending one notification to an expired subscription
+     */
+    public function test_send_one_notification_expired_subscription() {
+        $mocked_server_result = Mockery::mock( 'result' );
+        $mocked_server_result
+            ->shouldReceive(
+                array(
+                    'isSuccess' => false,
+                    'getReason' => 'mocked reason',
+                    'getEndpoint' => 'my_endpoint_url',
+                    'isSubscriptionExpired' => true,
+                )
+            )
+            ->once();
+
+        $mocked_server = Mockery::mock( 'webpush' );
+        $mocked_server
+            ->shouldReceive(
+                array(
+                    'queueNotification' => true,
+                    'flush'            => array( $mocked_server_result ),
+                )
+            )
+            ->once();
+
+        Perfecty_Push_Lib_Push_Server::bootstrap( $mocked_server, $this->mocked_vapid_callback );
+
+        $id            = Perfecty_Push_Lib_Db::create_user( 'my_endpoint_url', 'my_key_auth', 'my_p256dh_key', '127.0.0.1' );
+        $user_before = Perfecty_Push_Lib_Db::get_user($id);
+        $users = array(
+            Perfecty_Push_Lib_Db::get_user( $id ),
+        );
+        $result        = Perfecty_Push_Lib_Push_Server::send_notification( 'this_is_the_payload', $users );
+
+        $user_after = Perfecty_Push_Lib_Db::get_user($id);
+
+        $this->assertSame( array( 1, 0 ), $result );
+        $this->assertEquals(0, $user_before->disabled);
+        $this->assertEquals(1, $user_after->disabled);
+    }
 
 	/**
 	 * Test schedule broadcast async
@@ -179,7 +223,7 @@ class PushServerTest extends WP_UnitTestCase {
 		->once()
 		->shouldReceive(
 			array(
-				'sendNotification' => true,
+				'queueNotification' => true,
 			)
 		)
 		->twice();
@@ -249,7 +293,7 @@ class PushServerTest extends WP_UnitTestCase {
 		->once()
 		->shouldReceive(
 			array(
-				'sendNotification' => true, // total notifications: 3 items
+				'queueNotification' => true, // total notifications: 3 items
 			)
 		)
 		->times( 3 );

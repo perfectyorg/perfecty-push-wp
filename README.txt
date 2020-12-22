@@ -2,9 +2,9 @@
 Contributors: rwngallego
 Donate link: https://github.com/rwngallego
 Tags: web push, push api, push notifications
-Requires at least: 5.3
-Tested up to: 5.5
-Stable tag: 5.3
+Requires at least: 5.2
+Tested up to: 5.6
+Stable tag: 5.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -25,12 +25,11 @@ Features:
 - Send notifications when publishing posts
 
 Requirements:
-- PHP 7.1+
+- PHP 7.2
 - The gmp extension.
 
-**Note**: Support for `PHP 7.1` will be drop in the mid-term, so the `gmp` extension
-will be optional and recommended only for better performance.
-The supported PHP version will start from `7.2+`.
+**Note**: The `gmp` extension is optional and recommended only
+for better performance.
 
 This plugin uses the [Chart.js](https://www.chartjs.org/) library for the admin stats charts.
 

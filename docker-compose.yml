@@ -3,7 +3,7 @@ version: '3.1'
 services:
 
   wordpress:
-    image: custom-wordpress:5.2.3-php7.1-apache
+    image: custom-wordpress:5.6.0-php7.2-apache
     restart: always
     ports:
       - 80:80

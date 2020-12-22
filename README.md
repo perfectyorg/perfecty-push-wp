@@ -20,12 +20,11 @@ own your data. 👏
 
 ## Requirements 🧩
 
-- `PHP 7.1+`
+- `PHP 7.2+`
 - The `gmp` extension.
 
-**Note**: Support for `PHP 7.1` will be drop in the mid-term, so the `gmp` extension
-will be optional and recommended only for better performance.
-The supported PHP version will start from `7.2+`.
+**Note**: The `gmp` extension is optional and recommended only
+for better performance.
 
 ## Local development 👨🏻‍💻
 
@@ -33,7 +32,7 @@ To see it in action in your local development enviroment, you need a set of
 services which Wordpress relies on. You start off by creating the docker image:
 
 ```
-docker build -t custom-wordpress:5.2.3-php7.1-apache .
+docker build -t custom-wordpress:5.6.0-php7.2-apache .
 ```
 
 Then start all the services and run the setup:
@@ -77,6 +76,9 @@ make composer
 
 # setup wordpress as a testing environment for phpunit
 make phpunit
+
+# generates the redistributable bundle as perfecty-push.zip
+make bundle
 ```
 
 ## Testing ✅
@@ -95,6 +97,15 @@ Run a single test:
 make console
 cd wp-contents/plugins/perfecty-push/
 phpunit --filter test_schedule_broadcast_async
+```
+
+## Troubleshooting
+
+**Not intended for production:** In case the plugins cannot be installed on your local installation do:
+
+```
+make console
+chown -R www-data wp-content
 ```
 
 ## License 👓

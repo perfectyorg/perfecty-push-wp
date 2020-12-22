@@ -74,14 +74,14 @@ require plugin_dir_path( __FILE__ ) . 'includes/class-perfecty-push.php';
  * in WordPress plugins: https://github.com/awesomemotive/WP-Mail-SMTP
  */
 $gmp_loaded = extension_loaded( 'gmp' );
-if ( $gmp_loaded && version_compare( PHP_VERSION, '7.1.0', '>=' ) ) {
+if ( $gmp_loaded && version_compare( PHP_VERSION, '7.2.0', '>=' ) ) {
 	require __DIR__ . '/vendor/autoload.php';
 } else {
 	error_log( sprintf( 'Could not load all the features. PHP: %s, gmp extension_loaded: %d', PHP_VERSION, $gmp_loaded ) );
 
 	$notice = array(
 		'type'    => 'error',
-		'message' => 'Perfecty Push plugin requires PHP >=7.1 and the gmp extension to be enabled.',
+		'message' => 'Perfecty Push plugin requires PHP >=7.2 and the gmp extension to be enabled.',
 	);
 	set_transient( 'perfecty_push_admin_notice', $notice );
 

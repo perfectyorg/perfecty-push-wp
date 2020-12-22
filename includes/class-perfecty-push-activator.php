@@ -51,6 +51,8 @@ class Perfecty_Push_Activator {
 		if ( ! $result ) {
 			error_log( 'Could not set the default options' );
 		}
+
+		add_option( 'perfecty_push_activated', 1 );
 	}
 
 }

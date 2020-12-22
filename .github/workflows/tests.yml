@@ -10,8 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        wordpress-version: ['5.3', '5.4', 'latest']
-        php-versions: ['7.1', '7.2', '7.3', '7.4']
+        wordpress-version: ['5.2', '5.3', '5.4', '5.5', 'latest']
+        php-versions: ['7.2', '7.3', '7.4']
 
     name: PHP:${{ matrix.php-versions }} / WP:${{ matrix.wordpress-version }}
     services:

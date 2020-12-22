@@ -121,6 +121,25 @@ class DbTest extends WP_UnitTestCase {
 		$this->assertEquals( 0, $userEnabled->disabled);
 	}
 
+    /**
+     * Test set user as disabled
+     */
+    public function test_set_user_disabled_with_endpoint() {
+        $id1 = Perfecty_Push_Lib_Db::create_user( 'my_endpoint_url_1', 'my_key_auth_1', 'my_p256dh_key_1', '127.0.0.1' );
+        $id2 = Perfecty_Push_Lib_Db::create_user( 'my_endpoint_url_2', 'my_key_auth_2', 'my_p256dh_key_2', '127.0.0.1' );
+        Perfecty_Push_Lib_Db::set_user_disabled_with_endpoint( 'my_endpoint_url_2', true);
+        $userDisabled = Perfecty_Push_Lib_Db::get_user( $id2 );
+        Perfecty_Push_Lib_Db::set_user_disabled( $id2, false );
+        $userEnabled = Perfecty_Push_Lib_Db::get_user( $id2 );
+
+        $userNotTouched = Perfecty_Push_Lib_Db::get_user( $id1 );
+
+        // TODO: AssertSame with booleans instead!
+        $this->assertEquals( 1, $userDisabled->disabled);
+        $this->assertEquals( 0, $userEnabled->disabled);
+        $this->assertEquals( 0, $userNotTouched->disabled);
+    }
+
 	/**
 	 * Test set user as active
 	 */
