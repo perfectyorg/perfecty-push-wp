@@ -77,7 +77,7 @@ make composer
 # setup wordpress as a testing environment for phpunit
 make phpunit
 
-# generates the redistributable bundle as perfecty-push.zip
+# generates the redistributable bundle as perfecty-push-notifications.zip
 make bundle
 ```
 

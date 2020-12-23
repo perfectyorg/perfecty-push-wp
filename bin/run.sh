@@ -74,7 +74,7 @@ bundle() {
   CMD=$(plugin_cmd 'rm -rf vendor && composer install --no-dev --optimize-autoloader')
   compose_exec "$CMD"
   cp index.php vendor/
-  zip -v -r perfecty-push.zip admin/ assets/ includes/ languages/ lib/ public/ vendor/ composer.json composer.lock index.php LICENSE.txt perfecty-push.php README.txt uninstall.php
+  zip -v -r perfecty-push-notifications.zip admin/ assets/ includes/ languages/ lib/ public/ vendor/ composer.json composer.lock index.php LICENSE.txt perfecty-push.php README.txt uninstall.php
 }
 
 #----------------------------------------------

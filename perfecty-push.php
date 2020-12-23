@@ -20,7 +20,7 @@
  * Author URI:        https://github.com/rwngallego
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
- * Text Domain:       perfecty-push
+ * Text Domain:       perfecty-push-notifications
  * Domain Path:       /languages
  */
 

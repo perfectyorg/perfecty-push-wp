@@ -82,7 +82,6 @@ class Perfecty_Push_Admin_Users_Table extends WP_List_Table {
 	function get_bulk_actions() {
 		$actions = array(
 			'delete' => 'Delete',
-			'cancel' => 'Cancel',
 		);
 		return $actions;
 	}

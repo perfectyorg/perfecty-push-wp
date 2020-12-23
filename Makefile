@@ -11,7 +11,7 @@ default:
 	@echo "  composer: Install all the composer dependencies"
 	@echo "  phpunit: Setup Wordpress as a testing environment for phpunit"
 	@echo "  setup: Runs wordpress, composer and phpunit"
-	@echo "  bundle: Builds the vendor in production mode and generates the distributable zip file (perfecty-push.zip)"
+	@echo "  bundle: Builds the vendor in production mode and generates the distributable zip file (perfecty-push-notifications.zip)"
 
 up:
 	@./bin/run.sh up	
