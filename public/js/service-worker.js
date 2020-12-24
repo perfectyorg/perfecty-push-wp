@@ -1,5 +1,4 @@
 self.addEventListener('push', async (event) => {
-  // see: https://developer.mozilla.org/en-US/docs/Web/API/ExtendableEvent/waitUntil
   event.waitUntil(getContent(event).then(data => {
     const title = data.title
     const options = {
@@ -24,6 +23,11 @@ self.addEventListener('notificationclick', event => {
   event.notification.close()
 
   event.waitUntil(openWindow(url))
+})
+
+self.addEventListener('install', event => {
+  // This is required when there is a third-party installation already
+  self.skipWaiting()
 })
 
 const getContent = async (event) => {

@@ -187,7 +187,53 @@ class DbTest extends WP_UnitTestCase {
 		$user = Perfecty_Push_Lib_Db::get_user_by_uuid( $user_db->uuid );
 		$this->assertArraySubset( $expected, (array) $user );
 	}
-	/**
+
+    /**
+     * Test get user by endpoint
+     */
+    public function test_get_user_by_endpoint() {
+        $id              = Perfecty_Push_Lib_Db::create_user( 'my_existing_endpoint_url', 'my_key_auth', 'my_p256dh_key', '127.0.0.1' );
+        $expected        = array(
+            'endpoint'   => 'my_existing_endpoint_url',
+            'key_auth'   => 'my_key_auth',
+            'key_p256dh' => 'my_p256dh_key',
+            'remote_ip'  => '127.0.0.1',
+        );
+
+        $user = Perfecty_Push_Lib_Db::get_user_by_endpoint( "my_existing_endpoint_url" );
+        $this->assertArraySubset( $expected, (array) $user );
+    }
+
+    /**
+     * Test update user
+     */
+    public function test_update_user() {
+        $id              = Perfecty_Push_Lib_Db::create_user( 'my_endpoint_url', 'my_key_auth', 'my_p256dh_key', '127.0.0.1' );
+        $user = Perfecty_Push_Lib_Db::get_user( $id );
+
+        $user->endpoint   = 'updated_my_endpoint_url';
+        $user->key_auth   = 'updated_my_key_auth';
+        $user->key_p256dh = 'updated_my_p256dh_key';
+        $user->remote_ip  = '192.168.0.1';
+        $user->is_active  = 0;
+        $user->disabled   = 1;
+
+        Perfecty_Push_Lib_Db::update_user( $user );
+        $updated_user = Perfecty_Push_Lib_Db::get_user( $id );
+
+        $expected        = array(
+            'endpoint'   => 'updated_my_endpoint_url',
+            'key_auth'   => 'updated_my_key_auth',
+            'key_p256dh' => 'updated_my_p256dh_key',
+            'remote_ip'  => '192.168.0.1',
+            'is_active'  => 0,
+            'disabled'   => 1,
+        );
+
+        $this->assertArraySubset( $expected, (array) $updated_user);
+    }
+
+    /**
 	 * Test get users
 	 */
 	public function test_get_users() {

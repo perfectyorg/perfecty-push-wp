@@ -50,21 +50,31 @@ class Perfecty_Push_Users {
 			$key_p256dh = sanitize_text_field( $key_p256dh );
 			$remote_ip  = sanitize_text_field( $remote_ip );
 
-			// store the user in the DB
-			$result = Perfecty_Push_Lib_Db::create_user( $endpoint, $key_auth, $key_p256dh, $remote_ip );
-
-			if ( $result == false ) {
-				// Could not subscribe
-				return new WP_Error( 'failed_user', 'Could not subscribe the user', array( 'status' => 500 ) );
+			$user = Perfecty_Push_Lib_Db::get_user_by_endpoint( $endpoint );
+			if ( $user ) {
+				$user->key_auth   = $key_auth;
+				$user->key_p256dh = $key_p256dh;
+				$user->remote_ip  = $remote_ip;
+				$result           = Perfecty_Push_Lib_Db::update_user( $user );
+				if ( $result === false ) {
+					// Could not update the user
+					return new WP_Error( 'failed_update', 'Could not update the user', array( 'status' => 500 ) );
+				}
 			} else {
-				// The user was correct
-				$user     = Perfecty_Push_Lib_Db::get_user( $result );
-				$response = array(
-					'success' => true,
-					'uuid'    => $user->uuid,
-				);
-				return (object) $response;
+				$result = Perfecty_Push_Lib_Db::create_user( $endpoint, $key_auth, $key_p256dh, $remote_ip );
+				if ( $result === false ) {
+					// Could not subscribe
+					return new WP_Error( 'failed_create', 'Could not subscribe the user', array( 'status' => 500 ) );
+				}
+				$user = Perfecty_Push_Lib_Db::get_user( $result );
 			}
+
+			// The user was registered
+			$response = array(
+				'success' => true,
+				'uuid'    => $user->uuid,
+			);
+			return (object) $response;
 		} else {
 			error_log( $validation );
 			return new WP_Error( 'validation_error', $validation, array( 'status' => 400 ) );

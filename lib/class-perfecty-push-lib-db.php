@@ -238,6 +238,49 @@ class Perfecty_Push_Lib_Db {
 	}
 
 	/**
+	 * Get the user by endpoint
+	 *
+	 * @param $endpoint string User endpoint
+	 * @return object|null User or null
+	 */
+	public static function get_user_by_endpoint( $endpoint ) {
+		global $wpdb;
+
+		$sql    = $wpdb->prepare(
+			'SELECT ' . self::$allowed_users_fields .
+			' FROM ' . self::users_table() . ' WHERE endpoint=%s',
+			$endpoint
+		);
+		$result = $wpdb->get_row( $sql );
+		return $result;
+	}
+
+	/**
+	 * Update the user
+	 *
+	 * @param $user object User object
+	 * @return int|bool Number of rows updated or false on error
+	 */
+	public static function update_user( $user ) {
+		global $wpdb;
+
+		$result = $wpdb->update(
+			self::users_table(),
+			array(
+				'remote_ip'  => $user->remote_ip,
+				'endpoint'   => $user->endpoint,
+				'key_auth'   => $user->key_auth,
+				'key_p256dh' => $user->key_p256dh,
+				'is_active'  => $user->is_active,
+				'disabled'   => $user->disabled,
+			),
+			array( 'id' => $user->id )
+		);
+
+		return $result;
+	}
+
+	/**
 	 * Delete user by id
 	 *
 	 * @param $user array User ids

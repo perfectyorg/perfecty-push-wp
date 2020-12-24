@@ -93,7 +93,7 @@ class Perfecty_Push_Public {
 			'perfecty-push/v1',
 			'/register/',
 			array(
-				'methods'             => 'POST',
+				'methods'             => 'PUT',
 				'callback'            => array( $users, 'register' ),
 				'permission_callback' => '__return_true',
 			)

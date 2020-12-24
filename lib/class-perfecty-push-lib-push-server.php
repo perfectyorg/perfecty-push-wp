@@ -186,7 +186,7 @@ class Perfecty_Push_Lib_Push_Server {
 
 				$endpoint = $report->getEndpoint();
 				if ( $report->isSubscriptionExpired() ) {
-                    error_log( "User subscription has expired, disabling it: $endpoint" );
+					error_log( "User subscription has expired, disabling it: $endpoint" );
 					Perfecty_Push_Lib_Db::set_user_disabled_with_endpoint( $endpoint, true );
 				}
 			}
