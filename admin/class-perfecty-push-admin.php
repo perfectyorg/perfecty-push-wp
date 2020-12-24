@@ -263,6 +263,14 @@ class Perfecty_Push_Admin {
 			'perfecty-push-options', // page
 			'perfecty_push_self_hosted_settings' // section
 		);
+
+		add_settings_field(
+			'batch_size', // id
+			'Batch Size', // title
+			array( $this, 'print_batch_size' ), // callback
+			'perfecty-push-options', // page
+			'perfecty_push_self_hosted_settings' // section
+		);
 	}
 
 	/**
@@ -615,6 +623,9 @@ class Perfecty_Push_Admin {
 		if ( isset( $input['server_url'] ) ) {
 			$new_input['server_url'] = sanitize_text_field( $input['server_url'] );
 		}
+		if ( isset( $input['batch_size'] ) ) {
+			$new_input['batch_size'] = intval( sanitize_text_field( $input['batch_size'] ) );
+		}
 
 		return $new_input;
 	}
@@ -681,6 +692,22 @@ class Perfecty_Push_Admin {
 		printf(
 			'<input type="text" id="perfecty_push[server_url]"' .
 			'name="perfecty_push[server_url]" value="%s" placeholder="127.0.0.1:8777"/>',
+			$value
+		);
+	}
+
+	/**
+	 * Print the batch_size option
+	 *
+	 * @since 1.0.0
+	 */
+	public function print_batch_size() {
+		$options = get_option( 'perfecty_push' );
+		$value   = isset( $options['batch_size'] ) ? esc_attr( $options['batch_size'] ) : '';
+
+		printf(
+			'<input type="text" id="perfecty_push[batch_size]"' .
+			'name="perfecty_push[batch_size]" value="%s"/>',
 			$value
 		);
 	}

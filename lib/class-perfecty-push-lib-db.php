@@ -8,7 +8,7 @@ use Ramsey\Uuid\Uuid;
 class Perfecty_Push_Lib_Db {
 
 	private static $allowed_users_fields         = 'id,uuid,endpoint,key_auth,key_p256dh,remote_ip,is_active,disabled,creation_time';
-	private static $allowed_notifications_fields = 'id,payload,total,succeeded,last_cursor,batch_size,status,is_taken,creation_time';
+	private static $allowed_notifications_fields = 'id,payload,total,succeeded,last_cursor,batch_size,status,is_taken,creation_time,completed_time';
 
 	public const NOTIFICATIONS_STATUS_SCHEDULED = 'scheduled';
 	public const NOTIFICATIONS_STATUS_RUNNING   = 'running';
@@ -70,6 +70,7 @@ class Perfecty_Push_Lib_Db {
           status varchar(15) DEFAULT 'scheduled' NOT NULL,
           is_taken tinyint(1) DEFAULT 0 NOT NULL,
           creation_time datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
+          completed_time datetime NULL,
           PRIMARY KEY  (id)
         ) $charset;";
 		dbDelta( $sql );
@@ -591,8 +592,9 @@ class Perfecty_Push_Lib_Db {
 		$result = $wpdb->update(
 			self::notifications_table(),
 			array(
-				'status'   => self::NOTIFICATIONS_STATUS_COMPLETED,
-				'is_taken' => 0,
+				'status'         => self::NOTIFICATIONS_STATUS_COMPLETED,
+				'is_taken'       => 0,
+				'completed_time' => current_time( 'mysql', 1 ),
 			),
 			array( 'id' => $notification_id )
 		);

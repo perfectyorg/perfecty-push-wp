@@ -46,10 +46,16 @@ class Perfecty_Push_Activator {
 		if ( empty( $options['server_url'] ) ) {
 			$options['server_url'] = get_site_url();
 		}
+		if ( empty( $options['batch_size'] ) ) {
+			$options['batch_size'] = Perfecty_Push_Lib_Push_Server::DEFAULT_BATCH_SIZE;
+		}
 
-		$result = update_option( 'perfecty_push', $options );
-		if ( ! $result ) {
-			error_log( 'Could not set the default options' );
+		if ( get_option( 'perfecty_push' ) == false ) {
+			if ( ! add_option( 'perfecty_push', $options ) ) {
+				error_log( 'Could not set the default options' );
+			}
+		} else {
+			update_option( 'perfecty_push', $options );
 		}
 
 		add_option( 'perfecty_push_activated', 1 );

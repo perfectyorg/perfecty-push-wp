@@ -50,6 +50,24 @@
 					<br>
 				<div><?php echo $item->status; ?></div>
 				</p>
+				<?php
+				if ( $item->completed_time ) {
+					try {
+						$completed_at = new DateTime( $item->completed_time );
+						$created_at   = new DateTime( $item->creation_time );
+						$diff         = $completed_at->diff( $created_at );
+						?>
+						<p>
+							<label for="duration">Duration: </label>
+							<br/>
+						<div><?php echo $diff->format( '%S seconds' ); ?></div>
+						</p>
+						<?php
+					} catch ( Exception $ex ) {
+						error_log( 'Could not calculate the duration: ' . $ex->getMessage() );
+					}
+				}
+				?>
 				<p>
 					<label for="stats">Stats: </label>
 					<br>

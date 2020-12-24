@@ -620,5 +620,6 @@ class DbTest extends WP_UnitTestCase {
 		$this->assertEquals( 1, $notification->is_taken );
 		$this->assertSame( 'completed', $completed_notification->status );
 		$this->assertEquals( 0, $completed_notification->is_taken );
+        $this->assertNotEquals( null, $completed_notification->completed_time );
 	}
 }

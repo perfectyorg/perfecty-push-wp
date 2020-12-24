@@ -9,7 +9,8 @@ use Minishlink\WebPush\Subscription;
  */
 class Perfecty_Push_Lib_Push_Server {
 
-	private const DEFAULT_BATCH_SIZE = 30;
+	public const DEFAULT_BATCH_SIZE = 30;
+
 	private static $webpush;
 	private static $vapid_generator;
 
