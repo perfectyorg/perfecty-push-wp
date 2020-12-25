@@ -99,6 +99,7 @@ class Perfecty_Push_Lib_Push_Server {
 		}
 
 		// we check if it's a valid status
+		// we only process running or scheduled jobs
 		if ( $notification->status !== Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_SCHEDULED &&
 		$notification->status !== Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_RUNNING ) {
 			error_log( 'Halted, received a job with an invalid status (' . $notification->status . '), notification_id: ' . $notification_id );
@@ -115,7 +116,7 @@ class Perfecty_Push_Lib_Push_Server {
 
 		// we get the next batch, starting from $last_cursor we take $batch_size elements
 		// we only fetch the active users (only_active)
-		$users = Perfecty_Push_Lib_Db::get_users( $notification->last_cursor, $notification->batch_size, 'creation_time', 'desc', true );
+		$users = Perfecty_Push_Lib_Db::get_users( $notification->last_cursor, $notification->batch_size, 'created_at', 'desc', true );
 
 		if ( count( $users ) == 0 ) {
 			$result = Perfecty_Push_Lib_Db::mark_notification_completed_untake( $notification_id );
@@ -129,6 +130,7 @@ class Perfecty_Push_Lib_Push_Server {
 		// we send one batch
 		$result = self::send_notification( $notification->payload, $users );
 		if ( is_array( $result ) ) {
+			$notification               = Perfecty_Push_Lib_Db::get_notification( $notification_id );
 			$total_batch                = $result[0];
 			$succeeded                  = $result[1];
 			$notification->last_cursor += $total_batch;

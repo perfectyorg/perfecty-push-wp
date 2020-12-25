@@ -22,7 +22,7 @@ class Perfecty_Push_Admin_Notifications_Table extends WP_List_Table {
 		return $this->limit_text( $item[ $column_name ] );
 	}
 
-	function column_creation_time( $item ) {
+	function column_created_at( $item ) {
 		$action_nonce = wp_create_nonce( 'bulk-' . $this->_args['plural'] );
 		$page         = esc_html( sanitize_key( $_REQUEST['page'] ) );
 
@@ -36,7 +36,7 @@ class Perfecty_Push_Admin_Notifications_Table extends WP_List_Table {
 
 		return sprintf(
 			'%s %s',
-			$item['creation_time'],
+			$item['created_at'],
 			$this->row_actions( $actions )
 		);
 	}
@@ -79,22 +79,22 @@ class Perfecty_Push_Admin_Notifications_Table extends WP_List_Table {
 
 	function get_columns() {
 		$columns = array(
-			'cb'            => '<input type="checkbox" />',
-			'creation_time' => 'Date',
-			'payload'       => 'Payload',
-			'status'        => 'Status',
-			'total'         => 'Total',
-			'succeeded'     => 'Succeeded',
+			'cb'         => '<input type="checkbox" />',
+			'created_at' => 'Date',
+			'payload'    => 'Payload',
+			'status'     => 'Status',
+			'total'      => 'Total',
+			'succeeded'  => 'Succeeded',
 		);
 		return $columns;
 	}
 
 	function get_sortable_columns() {
 		$sortable_columns = array(
-			'creation_time' => array( 'creation_time', true ),
-			'total'         => array( 'total', true ),
-			'succeeded'     => array( 'succeeded', true ),
-			'status'        => array( 'status', true ),
+			'created_at' => array( 'created_at', true ),
+			'total'      => array( 'total', true ),
+			'succeeded'  => array( 'succeeded', true ),
+			'status'     => array( 'status', true ),
 		);
 		return $sortable_columns;
 	}
@@ -169,7 +169,7 @@ class Perfecty_Push_Admin_Notifications_Table extends WP_List_Table {
 		$total_items = Perfecty_Push_Lib_Db::get_notifications_total();
 
 		$paged   = isset( $_REQUEST['paged'] ) ? max( 0, intval( $_REQUEST['paged'] ) - 1 ) : 0;
-		$orderby = ( isset( $_REQUEST['orderby'] ) && in_array( $_REQUEST['orderby'], array_keys( $this->get_sortable_columns() ) ) ) ? $_REQUEST['orderby'] : 'creation_time';
+		$orderby = ( isset( $_REQUEST['orderby'] ) && in_array( $_REQUEST['orderby'], array_keys( $this->get_sortable_columns() ) ) ) ? $_REQUEST['orderby'] : 'created_at';
 		$order   = ( isset( $_REQUEST['order'] ) && in_array( $_REQUEST['order'], array( 'asc', 'desc' ) ) ) ? $_REQUEST['order'] : 'desc';
 
 		$notifications = Perfecty_Push_Lib_Db::get_notifications( $paged, $per_page, $orderby, $order, ARRAY_A );

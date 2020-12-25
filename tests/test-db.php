@@ -459,8 +459,9 @@ class DbTest extends WP_UnitTestCase {
     public function test_get_notifications_daily_stats() {
         $id1       = Perfecty_Push_Lib_Db::create_notification( 'my_payload1', Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_COMPLETED, 35, 20 );
         $id2       = Perfecty_Push_Lib_Db::create_notification( 'my_payload2', Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_COMPLETED, 45, 17 );
-        Perfecty_Push_Lib_Db::create_notification( 'my_payload3', Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_COMPLETED, 10, 17 );
+        $id3       = Perfecty_Push_Lib_Db::create_notification( 'my_payload3', Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_RUNNING, 10, 17 );
         Perfecty_Push_Lib_Db::create_notification( 'my_payload4', Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_COMPLETED, 10, 17 );
+        Perfecty_Push_Lib_Db::create_notification( 'my_payload5', Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_COMPLETED, 10, 17 );
 
         $notification_1 = Perfecty_Push_Lib_Db::get_notification($id1);
         $notification_1->succeeded = 70;
@@ -468,6 +469,9 @@ class DbTest extends WP_UnitTestCase {
         $notification_2 = Perfecty_Push_Lib_Db::get_notification($id2);
         $notification_2->succeeded = 7;
         Perfecty_Push_Lib_Db::update_notification($notification_2);
+        $notification_3 = Perfecty_Push_Lib_Db::get_notification($id3);
+        $notification_3->succeeded = 10;
+        Perfecty_Push_Lib_Db::update_notification($notification_3);
 
         $end_date = new DateTime();
         $start_date = new DateTime();
@@ -476,6 +480,7 @@ class DbTest extends WP_UnitTestCase {
 
         $today = date('Y-m-d');
 
+        // we have discarded the with running status ($notification_3), so total = 77 instead of 87
         $this->assertSame($today, $results[0]->date);
         $this->assertSame(77, $results[0]->succeeded);
         $this->assertSame(23, $results[0]->failed);
@@ -620,6 +625,6 @@ class DbTest extends WP_UnitTestCase {
 		$this->assertEquals( 1, $notification->is_taken );
 		$this->assertSame( 'completed', $completed_notification->status );
 		$this->assertEquals( 0, $completed_notification->is_taken );
-        $this->assertNotEquals( null, $completed_notification->completed_time );
+        $this->assertNotEquals( null, $completed_notification->completed_at );
 	}
 }

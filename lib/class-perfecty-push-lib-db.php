@@ -7,8 +7,8 @@ use Ramsey\Uuid\Uuid;
  */
 class Perfecty_Push_Lib_Db {
 
-	private static $allowed_users_fields         = 'id,uuid,endpoint,key_auth,key_p256dh,remote_ip,is_active,disabled,creation_time';
-	private static $allowed_notifications_fields = 'id,payload,total,succeeded,last_cursor,batch_size,status,is_taken,creation_time,completed_time';
+	private static $allowed_users_fields         = 'id,uuid,endpoint,key_auth,key_p256dh,remote_ip,is_active,disabled,created_at';
+	private static $allowed_notifications_fields = 'id,payload,total,succeeded,last_cursor,batch_size,status,is_taken,created_at,completed_at';
 
 	public const NOTIFICATIONS_STATUS_SCHEDULED = 'scheduled';
 	public const NOTIFICATIONS_STATUS_RUNNING   = 'running';
@@ -53,7 +53,7 @@ class Perfecty_Push_Lib_Db {
           key_p256dh varchar(100) NOT NULL UNIQUE,
           is_active tinyint(1) DEFAULT 1 NOT NULL,
           disabled tinyint(1) DEFAULT 0 NOT NULL,
-          creation_time datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
+          created_at datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
           PRIMARY KEY  (id),
           UNIQUE KEY users_uuid_uk (uuid),
           UNIQUE KEY users_endpoint_uk (endpoint)
@@ -69,8 +69,8 @@ class Perfecty_Push_Lib_Db {
           batch_size int(11) DEFAULT 0 NOT NULL,
           status varchar(15) DEFAULT 'scheduled' NOT NULL,
           is_taken tinyint(1) DEFAULT 0 NOT NULL,
-          creation_time datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
-          completed_time datetime NULL,
+          created_at datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
+          completed_at datetime NULL,
           PRIMARY KEY  (id)
         ) $charset;";
 		dbDelta( $sql );
@@ -306,11 +306,11 @@ class Perfecty_Push_Lib_Db {
 	 * @param $size int Limit
 	 * @return array The result with the users
 	 */
-	public static function get_users( $offset, $size, $order_by = 'creation_time', $order_asc = 'desc', $only_active = false, $mode = OBJECT ) {
+	public static function get_users( $offset, $size, $order_by = 'created_at', $order_asc = 'desc', $only_active = false, $mode = OBJECT ) {
 		global $wpdb;
 
 		if ( strpos( self::$allowed_users_fields, $order_by ) === false ) {
-			throw new Exception( "The order by [$order_by] field is not alllowed" );
+			throw new Exception( "The order by [$order_by] field is not allowed" );
 		}
 		$order_asc        = $order_asc === 'asc' ? 'asc' : 'desc';
 		$where_conditions = $only_active === false ? '' : ' WHERE is_active=1 AND disabled=false';
@@ -388,7 +388,7 @@ class Perfecty_Push_Lib_Db {
 	 * @param $mode int How to return the results
 	 * @return array The result
 	 */
-	public static function get_notifications( $offset, $size, $order_by = 'creation_time', $order_asc = 'desc', $mode = OBJECT ) {
+	public static function get_notifications( $offset, $size, $order_by = 'created_at', $order_asc = 'desc', $mode = OBJECT ) {
 		global $wpdb;
 
 		if ( strpos( self::$allowed_notifications_fields, $order_by ) === false ) {
@@ -481,10 +481,12 @@ class Perfecty_Push_Lib_Db {
 
 		$table   = self::notifications_table();
 		$sql     = $wpdb->prepare(
-			"SELECT DATE_FORMAT(creation_time, \"%%Y-%%m-%%d\") as `date`, SUM(total-succeeded) as failed, SUM(succeeded) as succeeded
+			"SELECT DATE_FORMAT(created_at, \"%%Y-%%m-%%d\") as `date`, SUM(total-succeeded) as failed, SUM(succeeded) as succeeded
                     FROM $table
+                    WHERE status != %s
                     GROUP BY `date`
                     HAVING `date` >= %s AND `date` <= %s",
+			self::NOTIFICATIONS_STATUS_RUNNING,
 			$start_date->format( 'Y-m-d' ),
 			$end_date->format( 'Y-m-d' )
 		);
@@ -592,9 +594,9 @@ class Perfecty_Push_Lib_Db {
 		$result = $wpdb->update(
 			self::notifications_table(),
 			array(
-				'status'         => self::NOTIFICATIONS_STATUS_COMPLETED,
-				'is_taken'       => 0,
-				'completed_time' => current_time( 'mysql', 1 ),
+				'status'       => self::NOTIFICATIONS_STATUS_COMPLETED,
+				'is_taken'     => 0,
+				'completed_at' => current_time( 'mysql', 1 ),
 			),
 			array( 'id' => $notification_id )
 		);

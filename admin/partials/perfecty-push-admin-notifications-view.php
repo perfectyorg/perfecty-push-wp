@@ -41,9 +41,9 @@
 				</div>
 				</p>
 				<p>
-					<label for="creation_time">Date: </label>
+					<label for="created_at">Date: </label>
 					<br>
-				<div><?php echo $item->creation_time; ?></div>
+				<div><?php echo $item->created_at; ?></div>
 				</p>
 				<p>
 					<label for="status">Status: </label>
@@ -51,16 +51,16 @@
 				<div><?php echo $item->status; ?></div>
 				</p>
 				<?php
-				if ( $item->completed_time ) {
+				if ( $item->completed_at ) {
 					try {
-						$completed_at = new DateTime( $item->completed_time );
-						$created_at   = new DateTime( $item->creation_time );
+						$completed_at = new DateTime( $item->completed_at );
+						$created_at   = new DateTime( $item->created_at );
 						$diff         = $completed_at->diff( $created_at );
 						?>
 						<p>
 							<label for="duration">Duration: </label>
 							<br/>
-						<div><?php echo $diff->format( '%S seconds' ); ?></div>
+						<div><?php echo $diff->format( '%Hh:%Im:%Ss' ); ?></div>
 						</p>
 						<?php
 					} catch ( Exception $ex ) {

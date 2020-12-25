@@ -61,20 +61,22 @@ class Perfecty_Push_Admin_Users_Table extends WP_List_Table {
 
 	function get_columns() {
 		$columns = array(
-			'cb'            => '<input type="checkbox" />',
-			'uuid'          => 'UUID',
-			'remote_ip'     => 'IP',
-			'endpoint'      => 'Endpoint',
-			'is_active'     => 'Active',
-			'disabled'      => 'Disabled',
-			'creation_time' => 'Registered at',
+			'cb'         => '<input type="checkbox" />',
+			'uuid'       => 'UUID',
+			'remote_ip'  => 'IP',
+			'endpoint'   => 'Endpoint',
+			'is_active'  => 'Active',
+			'disabled'   => 'Disabled',
+			'created_at' => 'Registered at',
 		);
 		return $columns;
 	}
 
 	function get_sortable_columns() {
 		$sortable_columns = array(
-			'creation_time' => array( 'creation_time', true ),
+			'created_at' => array( 'created_at', true ),
+			'disabled'   => array( 'disabled', true ),
+			'is_active'  => array( 'is_active', true ),
 		);
 		return $sortable_columns;
 	}
@@ -130,7 +132,7 @@ class Perfecty_Push_Admin_Users_Table extends WP_List_Table {
 		$total_items = Perfecty_Push_Lib_Db::get_total_users();
 
 		$paged   = isset( $_REQUEST['paged'] ) ? max( 0, intval( $_REQUEST['paged'] ) - 1 ) : 0;
-		$orderby = ( isset( $_REQUEST['orderby'] ) && in_array( $_REQUEST['orderby'], array_keys( $this->get_sortable_columns() ) ) ) ? $_REQUEST['orderby'] : 'creation_time';
+		$orderby = ( isset( $_REQUEST['orderby'] ) && in_array( $_REQUEST['orderby'], array_keys( $this->get_sortable_columns() ) ) ) ? $_REQUEST['orderby'] : 'created_at';
 		$order   = ( isset( $_REQUEST['order'] ) && in_array( $_REQUEST['order'], array( 'asc', 'desc' ) ) ) ? $_REQUEST['order'] : 'desc';
 
 		$users       = Perfecty_Push_Lib_Db::get_users( $paged, $per_page, $orderby, $order, false, ARRAY_A );

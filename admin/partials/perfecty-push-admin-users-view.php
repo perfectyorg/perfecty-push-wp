@@ -22,9 +22,9 @@
 				<div><?php echo $item->endpoint; ?></div>
 				</p>
 				<p>
-					<label for="creation_time">Registered at: </label>
+					<label for="created_at">Registered at: </label>
 					<br>
-				<div><?php echo $item->creation_time; ?></div>
+				<div><?php echo $item->created_at; ?></div>
 				</p>
 				<p>
 					<label for="key_auth">Key auth: </label>
