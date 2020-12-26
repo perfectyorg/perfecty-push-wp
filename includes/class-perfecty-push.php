@@ -206,7 +206,7 @@ class Perfecty_Push {
 					'privateKey' => PERFECTY_PUSH_VAPID_PRIVATE_KEY,
 				),
 			);
-		} elseif ( $activated == 1 ) {
+		} elseif ( $activated == 1 && !defined('PERFECTY_PUSH_DISABLED')) {
 			error_log( 'No VAPID Keys were configured' );
 			$notice = array(
 				'type'    => 'error',

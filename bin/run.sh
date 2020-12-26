@@ -74,7 +74,7 @@ bundle() {
   CMD=$(plugin_cmd 'rm -rf vendor && composer install --no-dev --optimize-autoloader')
   compose_exec "$CMD"
   cp index.php vendor/
-  zip -v -r perfecty-push-notifications.zip admin/ assets/ includes/ languages/ lib/ public/ vendor/ composer.json composer.lock index.php LICENSE.txt perfecty-push.php README.txt uninstall.php
+  zip -v -r perfecty-push-notifications.zip admin/ includes/ languages/ lib/ public/ vendor/ composer.json composer.lock index.php LICENSE.txt perfecty-push.php README.txt uninstall.php
   echo "########################################################"
   echo "# BUNDLE COMPLETED                                     #"
   echo "########################################################"
@@ -82,10 +82,20 @@ bundle() {
   composer
 }
 
+prepare() {
+  CMD=$(plugin_cmd 'rm -rf vendor && composer install --no-dev --optimize-autoloader')
+  compose_exec "$CMD"
+  cp index.php vendor/
+  mkdir dist/
+  svn co https://plugins.svn.wordpress.org/perfecty-push-notifications dist/
+  cp assets/* dist/assets/
+  cp -Rp admin includes languages lib public vendor composer.json composer.lock index.php LICENSE.txt perfecty-push.php README.txt uninstall.php dist/trunk/
+}
+
 #----------------------------------------------
 
 case $COMMAND in
-  "up" | "down" | "setup" | "wordpress" | "composer" | "composer" | "phpunit" | "test" | "format" | "console" | "bundle")
+  "up" | "down" | "setup" | "wordpress" | "composer" | "composer" | "phpunit" | "test" | "format" | "console" | "bundle" | "prepare")
     if [[ $VERBOSE == '--verbose' ]]; then
       set -ex
     else
