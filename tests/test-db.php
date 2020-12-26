@@ -83,9 +83,18 @@ class DbTest extends WP_UnitTestCase {
 	 */
 	public function test_get_total_users() {
 		$initial = Perfecty_Push_Lib_Db::get_total_users();
-		Perfecty_Push_Lib_Db::create_user( 'my_endpoint_url', 'my_key_auth', 'my_p256dh_key', '127.0.0.1' );
-		$current = Perfecty_Push_Lib_Db::get_total_users();
-		$this->assertSame( $current - $initial, 1 );
+		Perfecty_Push_Lib_Db::create_user( 'my_endpoint_url_1', 'my_key_auth', 'my_p256dh_key', '127.0.0.1' );
+        $id2 = Perfecty_Push_Lib_Db::create_user( 'my_endpoint_url_2', 'my_key_auth_2', 'my_p256dh_key_2', '127.0.0.1' );
+        $id3 = Perfecty_Push_Lib_Db::create_user( 'my_endpoint_url_3', 'my_key_auth_3', 'my_p256dh_key_3', '127.0.0.1' );
+        Perfecty_Push_Lib_Db::set_user_active($id2,false);
+        Perfecty_Push_Lib_Db::set_user_disabled($id3, true);
+
+		$total_all = Perfecty_Push_Lib_Db::get_total_users();
+        $total_only_active = Perfecty_Push_Lib_Db::get_total_users(true);
+
+		$this->assertSame( $initial, 0 );
+        $this->assertSame( $total_all, 3 );
+        $this->assertSame( $total_only_active, 1 );
 	}
 
     /**
@@ -625,6 +634,6 @@ class DbTest extends WP_UnitTestCase {
 		$this->assertEquals( 1, $notification->is_taken );
 		$this->assertSame( 'completed', $completed_notification->status );
 		$this->assertEquals( 0, $completed_notification->is_taken );
-        $this->assertNotEquals( null, $completed_notification->completed_at );
+        $this->assertNotEquals( null, $completed_notification->finished_at );
 	}
 }

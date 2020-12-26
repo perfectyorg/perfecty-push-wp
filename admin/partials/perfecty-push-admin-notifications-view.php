@@ -50,37 +50,44 @@
 					<br>
 				<div><?php echo $item->status; ?></div>
 				</p>
-				<?php
-				if ( $item->completed_at ) {
-					try {
-						$completed_at = new DateTime( $item->completed_at );
-						$created_at   = new DateTime( $item->created_at );
-						$diff         = $completed_at->diff( $created_at );
-						?>
-						<p>
-							<label for="duration">Duration: </label>
-							<br/>
-						<div><?php echo $diff->format( '%Hh:%Im:%Ss' ); ?></div>
-						</p>
-						<?php
-					} catch ( Exception $ex ) {
-						error_log( 'Could not calculate the duration: ' . $ex->getMessage() );
-					}
-				}
-				?>
 				<p>
 					<label for="stats">Stats: </label>
 					<br>
-				<div>Total: <?php echo $item->total; ?> - Succeeded: <?php echo $item->succeeded; ?> |
-					Failed: <?php echo( $item->total - $item->succeeded ); ?></div>
+				<div>Total: <?php echo $item->total; ?></div>
+				<div>Succeeded: <?php echo $item->succeeded; ?></div>
+				<?php
+				if ( $item->status != Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_RUNNING ) {
+					echo '<div>Failed: ' . ( $item->total - $item->succeeded ) . '</div>';
+				}
+				?>
 				</p>
 				<p>
-					<label for="progress">Execution progress: </label>
+					<label for="progress">Execution details: </label>
 					<br>
 				<div>
-					<?php echo $item->last_cursor; ?> sent out of <?php echo $item->total; ?> (Batches
-					of <?php echo $item->batch_size; ?>)
+					<?php
+					if ( $item->status == Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_RUNNING ) {
+						echo $item->last_cursor . ' sent out of ' . $item->total;
+					} else {
+						echo 'Finished';
+					}
+					?>
 				</div>
+				<div>
+					<?php echo 'Batch size: ' . $item->batch_size; ?>
+				</div>
+				<?php
+				try {
+					$finished_at = $item->finished_at ? new DateTime( $item->finished_at ) : new DateTime();
+					$created_at  = new DateTime( $item->created_at );
+					$diff        = $finished_at->diff( $created_at );
+					?>
+						<div><?php echo 'Duration: ' . $diff->format( '%Hh:%Im:%Ss' ); ?></div>
+						<?php
+				} catch ( Exception $ex ) {
+					error_log( 'Could not calculate the duration: ' . $ex->getMessage() );
+				}
+				?>
 				</p>
 			</div>
 		</form>

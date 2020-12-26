@@ -5,6 +5,8 @@
 
 Self-hosted Push Notifications from your own Wordpress server for free! 🥳
 
+![Perfecty Push for Wordpress](assets/banner-1544x500.png)
+
 **Perfecty Push WP** is a Wordpress plugin for **Perfecty Push**, an Open Source project that allows you to send Web Push notifications
 directly from your own server: No hidden fees, no third-party dependencies and you
 own your data. 👏
@@ -45,8 +47,6 @@ make setup
 You can now go to http://localhost/wp-login.php > Plugins > Activate the
 **Perfecty Push** plugin.
 
-![Screenshot preview](https://github.com/rwngallego/perfecty-push-wp/raw/master/.github/assets/perfecty.gif "Preview")
-
 ## Available commands 👾
 
 ```
@@ -80,6 +80,16 @@ make phpunit
 # generates the redistributable bundle as perfecty-push-notifications.zip
 make bundle
 ```
+## Demo 🎭
+
+### Admin Dashboard
+
+![Dashboard](assets/screenshot-1.png)
+
+### Public view
+
+![Screenshot preview](.github/assets/perfecty.gif "Preview")
+
 
 ## Testing ✅
 
@@ -113,6 +123,8 @@ chown -R www-data wp-content
 The WordPress Plugin is an Open Source project licensed under [GPL v2](./LICENSE.txt).
 
 The bell icon is a Font Awesome icon, a [CC BY 4.0 License](https://creativecommons.org/licenses/by/4.0/).
+
+<span>Photo by <a href="https://unsplash.com/@nasa?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">NASA</a> on <a href="https://unsplash.com/s/photos/world?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">Unsplash</a></span>
 
 ## Collaborators 🔥
 

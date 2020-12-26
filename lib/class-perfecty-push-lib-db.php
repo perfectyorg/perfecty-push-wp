@@ -8,7 +8,7 @@ use Ramsey\Uuid\Uuid;
 class Perfecty_Push_Lib_Db {
 
 	private static $allowed_users_fields         = 'id,uuid,endpoint,key_auth,key_p256dh,remote_ip,is_active,disabled,created_at';
-	private static $allowed_notifications_fields = 'id,payload,total,succeeded,last_cursor,batch_size,status,is_taken,created_at,completed_at';
+	private static $allowed_notifications_fields = 'id,payload,total,succeeded,last_cursor,batch_size,status,is_taken,created_at,finished_at';
 
 	public const NOTIFICATIONS_STATUS_SCHEDULED = 'scheduled';
 	public const NOTIFICATIONS_STATUS_RUNNING   = 'running';
@@ -70,7 +70,7 @@ class Perfecty_Push_Lib_Db {
           status varchar(15) DEFAULT 'scheduled' NOT NULL,
           is_taken tinyint(1) DEFAULT 0 NOT NULL,
           created_at datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
-          completed_at datetime NULL,
+          finished_at datetime NULL,
           PRIMARY KEY  (id)
         ) $charset;";
 		dbDelta( $sql );
@@ -119,12 +119,17 @@ class Perfecty_Push_Lib_Db {
 	/**
 	 * Return the current total users
 	 *
+	 * @param bool $only_active false to get all the users
 	 * @return int Total users
 	 */
-	public static function get_total_users() {
+	public static function get_total_users( $only_active = false ) {
 		global $wpdb;
 
-		$total = $wpdb->get_var( 'SELECT COUNT(*) FROM ' . self::users_table() . ' WHERE is_active=1 and disabled=0' );
+		$where = '';
+		if ( $only_active === true ) {
+			$where = ' WHERE is_active=1 and disabled=0';
+		}
+		$total = $wpdb->get_var( 'SELECT COUNT(*) FROM ' . self::users_table() . $where );
 		return $total != null ? intval( $total ) : 0;
 	}
 
@@ -431,8 +436,8 @@ class Perfecty_Push_Lib_Db {
 	public static function get_notifications_stats() {
 		global $wpdb;
 
-		$total     = intval( $wpdb->get_var( 'SELECT SUM(total) FROM ' . self::notifications_table() ) );
-		$succeeded = intval( $wpdb->get_var( 'SELECT SUM(succeeded) FROM ' . self::notifications_table() ) );
+		$total     = intval( $wpdb->get_var( 'SELECT SUM(total) FROM ' . self::notifications_table() . " WHERE status !='" . self::NOTIFICATIONS_STATUS_RUNNING . "'" ) );
+		$succeeded = intval( $wpdb->get_var( 'SELECT SUM(succeeded) FROM ' . self::notifications_table() . " WHERE status !='" . self::NOTIFICATIONS_STATUS_RUNNING . "'" ) );
 
 		return array(
 			'total'     => $total,
@@ -559,7 +564,17 @@ class Perfecty_Push_Lib_Db {
 	 * @return int|bool Number of rows updated or false
 	 */
 	public static function mark_notification_running( $notification_id ) {
-		return self::mark_notification( $notification_id, self::NOTIFICATIONS_STATUS_RUNNING );
+		global $wpdb;
+
+		$result = $wpdb->update(
+			self::notifications_table(),
+			array(
+				'status' => self::NOTIFICATIONS_STATUS_RUNNING,
+			),
+			array( 'id' => $notification_id )
+		);
+
+		return $result;
 	}
 
 	/**
@@ -569,7 +584,18 @@ class Perfecty_Push_Lib_Db {
 	 * @return int|bool Number of rows updated or false
 	 */
 	public static function mark_notification_failed( $notification_id ) {
-		return self::mark_notification( $notification_id, self::NOTIFICATIONS_STATUS_FAILED );
+		global $wpdb;
+
+		$result = $wpdb->update(
+			self::notifications_table(),
+			array(
+				'status'      => self::NOTIFICATIONS_STATUS_FAILED,
+				'finished_at' => current_time( 'mysql', 1 ),
+			),
+			array( 'id' => $notification_id )
+		);
+
+		return $result;
 	}
 
 	/**
@@ -579,7 +605,18 @@ class Perfecty_Push_Lib_Db {
 	 * @return int|bool Number of rows updated or false
 	 */
 	public static function mark_notification_completed( $notification_id ) {
-		return self::mark_notification( $notification_id, self::NOTIFICATIONS_STATUS_COMPLETED );
+		global $wpdb;
+
+		$result = $wpdb->update(
+			self::notifications_table(),
+			array(
+				'status'      => self::NOTIFICATIONS_STATUS_COMPLETED,
+				'finished_at' => current_time( 'mysql', 1 ),
+			),
+			array( 'id' => $notification_id )
+		);
+
+		return $result;
 	}
 
 	/**
@@ -594,9 +631,9 @@ class Perfecty_Push_Lib_Db {
 		$result = $wpdb->update(
 			self::notifications_table(),
 			array(
-				'status'       => self::NOTIFICATIONS_STATUS_COMPLETED,
-				'is_taken'     => 0,
-				'completed_at' => current_time( 'mysql', 1 ),
+				'status'      => self::NOTIFICATIONS_STATUS_COMPLETED,
+				'finished_at' => current_time( 'mysql', 1 ),
+				'is_taken'    => 0,
 			),
 			array( 'id' => $notification_id )
 		);
@@ -635,25 +672,6 @@ class Perfecty_Push_Lib_Db {
 		$result = $wpdb->update(
 			self::notifications_table(),
 			array( 'is_taken' => $take ),
-			array( 'id' => $notification_id )
-		);
-
-		return $result;
-	}
-
-	/**
-	 * Mark the notification as the specified status
-	 *
-	 * @param $notification_id int Notification id
-	 * @param $status string one of the NOTIFICATION_STATUS_*
-	 * @return int|bool Number of rows updated or false
-	 */
-	private static function mark_notification( $notification_id, $status ) {
-		global $wpdb;
-
-		$result = $wpdb->update(
-			self::notifications_table(),
-			array( 'status' => $status ),
 			array( 'id' => $notification_id )
 		);
 

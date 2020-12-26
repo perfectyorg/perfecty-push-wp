@@ -11,16 +11,29 @@
 
 .perfecty-push-dialog-box {
   display: block;
-  width: 500px;
+  width: 450px;
   background: white;
-  padding: 20px 30px;
+  padding: 15px;
   border-radius: 5px;
   box-shadow: 0px 7px 30px 0px grey;
   margin: 0 auto;
+  text-align: center;
+}
+
+@media only screen and (max-width: 370px) {
+  .perfecty-push-dialog-box {
+    width: 320px;
+  }
+}
+
+@media only screen and (min-width: 370px) and (max-width: 425px) {
+  .perfecty-push-dialog-box {
+    width: 350px;
+  }
 }
 
 .perfecty-push-dialog-container button{
-  margin: 0px 15px;
+  margin: 5px 10px;
 }
 
 .perfecty-push-dialog-container .perfecty-push-dialog-title {
