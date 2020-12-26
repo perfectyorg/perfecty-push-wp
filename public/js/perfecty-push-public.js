@@ -189,19 +189,25 @@ function setUserActive(nonce, siteUrl, userId, isActive) {
         });
 }
 
-function detectConflictInstallation() {
+function detectConflictInstallations(unregisterConflicts) {
     let conflictDetected = false
-    return navigator.serviceWorker.getRegistrations().then(function (registrations) {
+    let perfectyPushFound = false
+    return navigator.serviceWorker.getRegistration("/").then(function (registration) {
         let promises = []
-        for (let registration of registrations) {
-            if (registration.active != null && registration.active.scriptURL != null && !/perfecty/i.test(registration.active.scriptURL)) {
-                console.log("Unregistering conflict installation: " + registration.active.scriptURL)
-                promises.push(registration.unregister())
+        if (typeof registration !== "undefined" && registration.active != null && registration.active.scriptURL != null) {
+            if (/perfecty/i.test(registration.active.scriptURL)) {
+                perfectyPushFound = true
+            } else {
                 conflictDetected = true
+
+                if (unregisterConflicts === true) {
+                    console.log("Unregistering conflict installation: " + registration.active.scriptURL)
+                    promises.push(registration.unregister())
+                }
             }
         }
         return Promise.all(promises).then(() => {
-            return Promise.resolve(conflictDetected)
+            return Promise.resolve([conflictDetected, perfectyPushFound])
         })
     });
 }
@@ -218,11 +224,11 @@ async function perfectyStart(options) {
         if (permission === 'default' && !askedForNotifications) {
             showDialogControl();
         } else if (permission === 'granted') {
-            // as we already have 'granted' permissions, we check if it's external
-            detectConflictInstallation().then((conflictDetected) => {
-                if (conflictDetected) {
-                    // we found an external installation so we remove the existing registration
-                    // and register our own
+            // as we already have 'granted' permissions, we check if it was an external worker
+            detectConflictInstallations(options.unregisterConflicts).then(([conflictDetected, perfectyPushFound]) => {
+                if ((conflictDetected && options.unregisterConflicts) || !perfectyPushFound) {
+                    // we didn't find our worker or we removed an external worker
+                    // so we register ours again
                     registerServiceWorker(options.path, options.siteUrl, options.vapidPublicKey, options.nonce);
                 }
             })

@@ -95,10 +95,65 @@ class PushServerTest extends WP_UnitTestCase {
 		$this->assertSame( array( 1, 1 ), $result );
 	}
 
+    /**
+     * Test sending one notification failed
+     */
+    public function test_send_one_notification_failed() {
+        $mocked_response = Mockery::mock('response');
+        $mocked_response
+            ->shouldReceive(
+                array(
+                    'getStatusCode' => 503 //server temporary unavailable
+                )
+            )
+            ->once();
+        $mocked_server_result = Mockery::mock( 'result' );
+        $mocked_server_result
+            ->shouldReceive(
+                array(
+                    'isSuccess' => false,
+                    'getReason' => 'mocked reason',
+                    'getEndpoint' => 'my_endpoint_url',
+                    'isSubscriptionExpired' => false,
+                    'getResponse' => $mocked_response
+                )
+            )
+            ->once();
+
+        $mocked_server = Mockery::mock( 'webpush' );
+        $mocked_server
+            ->shouldReceive(
+                array(
+                    'queueNotification' => true,
+                    'flush'            => array( $mocked_server_result ),
+                )
+            )
+            ->once();
+
+        Perfecty_Push_Lib_Push_Server::bootstrap( $mocked_server, $this->mocked_vapid_callback );
+
+        $id            = Perfecty_Push_Lib_Db::create_user( 'my_endpoint_url', 'my_key_auth', 'my_p256dh_key', '127.0.0.1' );
+        $users = array(
+            Perfecty_Push_Lib_Db::get_user( $id ),
+        );
+        $result        = Perfecty_Push_Lib_Push_Server::send_notification( 'this_is_the_payload', $users );
+
+        $this->assertSame( array( 1, 0 ), $result );
+    }
+
 	/**
 	 * Test sending one notification failed
 	 */
-	public function test_send_one_notification_failed() {
+	public function test_send_one_notification_unauthorize_not_found() {
+	    $mocked_response = Mockery::mock('response');
+	    $mocked_response
+            ->shouldReceive(
+                array(
+                    'getStatusCode' => 403 // unauthorized
+                )
+            )
+        ->once();
+
 		$mocked_server_result = Mockery::mock( 'result' );
 		$mocked_server_result
 		->shouldReceive(
@@ -107,6 +162,7 @@ class PushServerTest extends WP_UnitTestCase {
 				'getReason' => 'mocked reason',
                 'getEndpoint' => 'my_endpoint_url',
                 'isSubscriptionExpired' => false,
+                'getResponse' => $mocked_response
 			)
 		)
 		->once();
@@ -124,12 +180,17 @@ class PushServerTest extends WP_UnitTestCase {
 		Perfecty_Push_Lib_Push_Server::bootstrap( $mocked_server, $this->mocked_vapid_callback );
 
 		$id            = Perfecty_Push_Lib_Db::create_user( 'my_endpoint_url', 'my_key_auth', 'my_p256dh_key', '127.0.0.1' );
+        $user_before = Perfecty_Push_Lib_Db::get_user($id);
 		$users = array(
 			Perfecty_Push_Lib_Db::get_user( $id ),
 		);
 		$result        = Perfecty_Push_Lib_Push_Server::send_notification( 'this_is_the_payload', $users );
 
-		$this->assertSame( array( 1, 0 ), $result );
+        $user_after = Perfecty_Push_Lib_Db::get_user($id);
+
+        $this->assertSame( array( 1, 0 ), $result );
+        $this->assertEquals(0, $user_before->disabled);
+        $this->assertEquals(1, $user_after->disabled);
 	}
 
     /**

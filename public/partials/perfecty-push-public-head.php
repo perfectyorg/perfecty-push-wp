@@ -12,6 +12,13 @@ if ( ( defined( 'PERFECTY_PUSH_DISABLED' ) && PERFECTY_PUSH_DISABLED == true ) |
 } else {
 	$perfecty_push_disabled = 'false';
 }
+
+if ( isset( $options['unregister_conflicts'] ) && $options['unregister_conflicts'] == 1 ) {
+	$perfecty_push_unregister_conflicts = 'true';
+} else {
+	$perfecty_push_unregister_conflicts = 'false';
+}
+
 ?>
 <script language="javascript">
 	window.PerfectyPushOptions = {
@@ -30,5 +37,6 @@ if ( ( defined( 'PERFECTY_PUSH_DISABLED' ) && PERFECTY_PUSH_DISABLED == true ) |
 		vapidPublicKey: "<?php echo PERFECTY_PUSH_VAPID_PUBLIC_KEY; ?>",
 		nonce: "<?php echo $perfecty_push_nonce; ?>",
 		disabled: <?php echo $perfecty_push_disabled; ?>,
+		unregisterConflicts: <?php echo $perfecty_push_unregister_conflicts; ?>,
 	}
 </script>

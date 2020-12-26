@@ -103,7 +103,6 @@ class Perfecty_Push_Lib_Push_Server {
 		if ( $notification->status !== Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_SCHEDULED &&
 		$notification->status !== Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_RUNNING ) {
 			error_log( 'Halted, received a job with an invalid status (' . $notification->status . '), notification_id: ' . $notification_id );
-			Perfecty_Push_Lib_Db::mark_notification_failed( $notification_id );
 			return false;
 		}
 
@@ -191,6 +190,12 @@ class Perfecty_Push_Lib_Push_Server {
 				if ( $report->isSubscriptionExpired() ) {
 					error_log( "User subscription has expired, disabling it: $endpoint" );
 					Perfecty_Push_Lib_Db::set_user_disabled_with_endpoint( $endpoint, true );
+					continue;
+				}
+				if ( $report->getResponse()->getStatusCode() == 403 ) {
+					error_log( "The endpoint should not be tried again, disabling it: $endpoint" );
+					Perfecty_Push_Lib_Db::set_user_disabled_with_endpoint( $endpoint, true );
+					continue;
 				}
 			}
 		}

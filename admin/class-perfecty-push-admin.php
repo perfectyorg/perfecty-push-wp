@@ -195,6 +195,14 @@ class Perfecty_Push_Admin {
 		);
 
 		add_settings_field(
+			'unregister_conflicts', // id
+			'Remove conflicting workers', // title
+			array( $this, 'print_unregister_conflicts' ), // callback
+			'perfecty-push-options', // page
+			'perfecty_push_widget_settings' // section
+		);
+
+		add_settings_field(
 			'dialog_title', // id
 			'Subscribe text', // title
 			array( $this, 'print_dialog_title' ), // callback
@@ -597,6 +605,11 @@ class Perfecty_Push_Admin {
 		} else {
 			$new_input['widget_enabled'] = 0;
 		}
+		if ( isset( $input['unregister_conflicts'] ) ) {
+			$new_input['unregister_conflicts'] = 1;
+		} else {
+			$new_input['unregister_conflicts'] = 0;
+		}
 
 		// text
 		if ( isset( $input['dialog_title'] ) ) {
@@ -726,6 +739,24 @@ class Perfecty_Push_Admin {
 		printf(
 			'<input type="checkbox" id="perfecty_push[widget_enabled]"' .
 			'name="perfecty_push[widget_enabled]" %s />',
+			$enabled
+		);
+	}
+
+	/**
+	 * Print the unregister_conflicts option
+	 *
+	 * @since 1.0.0
+	 */
+	public function print_unregister_conflicts() {
+		$options = get_option( 'perfecty_push' );
+		$value   = isset( $options['unregister_conflicts'] ) ? esc_attr( $options['unregister_conflicts'] ) : 0;
+
+		$enabled = $value == 1 ? 'checked="checked"' : '';
+
+		printf(
+			'<input type="checkbox" id="perfecty_push[unregister_conflicts]"' .
+			'name="perfecty_push[unregister_conflicts]" %s />',
 			$enabled
 		);
 	}

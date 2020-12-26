@@ -75,6 +75,11 @@ bundle() {
   compose_exec "$CMD"
   cp index.php vendor/
   zip -v -r perfecty-push-notifications.zip admin/ assets/ includes/ languages/ lib/ public/ vendor/ composer.json composer.lock index.php LICENSE.txt perfecty-push.php README.txt uninstall.php
+  echo "########################################################"
+  echo "# BUNDLE COMPLETED                                     #"
+  echo "########################################################"
+  echo "Running post-bundle:"
+  composer
 }
 
 #----------------------------------------------
