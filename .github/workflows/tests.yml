@@ -3,7 +3,7 @@ on:
     branches:
       - master
 
-name: tests
+name: Automated tests
 
 jobs:
   test:

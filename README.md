@@ -3,34 +3,39 @@
 [![tests](https://github.com/rwngallego/perfecty-push-wp/workflows/tests/badge.svg)](https://github.com/rwngallego/perfecty-push-wp/actions)
 [![License](https://img.shields.io/badge/license-GLPv2-blue.svg)](./LICENSE.txt)
 
-Self-hosted Push Notifications from your own Wordpress server for free! 🥳
+Self-hosted Push Notifications from your Wordpress server for free! 🥳
 
 ![Perfecty Push for Wordpress](assets/banner-1544x500.png)
 
-**Perfecty Push WP** is a Wordpress plugin for **Perfecty Push**, an Open Source project that allows you to send Web Push notifications
-directly from your own server: No hidden fees, no third-party dependencies and you
-own your data. 👏
+**Perfecty Push WP** is an Open Source plugin for WordPress
+that allows you to send web Push Notifications directly from your server:
+No hidden fees, no third-party dependencies and you own your data. 👏
+
+**Install it now:**
+[https://wordpress.org/plugins/perfecty-push-notifications/](https://wordpress.org/plugins/perfecty-push-notifications/)
 
 ## Features ✨
 
-- Open Source and self-hosted
-- No third-party dependencies when self-hosted
+- **Open Source**, send Push Notifications **from your server for free!**
+- No third-party dependencies
+- Migrate users from other push services like OneSignal
+- Send push notifications on posts publishing
+- Customize the public widget
+- The user authorization tokens stay in your server
 - Offline browser notifications through [Push API](https://developer.mozilla.org/en-US/docs/Web/API/Push_API) (Safari is not supported yet)
-- You retain and own the user authorization tokens
-- WordPress plugin with a built-in Push Server based on [web-push-php](https://github.com/web-push-libs/web-push-php)
-- Send notifications when publishing posts
+- Built-in Push Server based on [web-push-php](https://github.com/web-push-libs/web-push-php)
 
 ## Requirements 🧩
 
 - `PHP 7.2+`
-- The `gmp` extension.
+- `gmp` extension for message encryption
 
-**Note**: The `gmp` extension is optional and recommended only
+**Note**: The `gmp` extension is optional and recommended
 for better performance.
 
 ## Local development 👨🏻‍💻
 
-To see it in action in your local development enviroment, you need a set of
+To see it in action in your local development environment, you need a set of
 services which Wordpress relies on. You start off by creating the docker image:
 
 ```
@@ -77,7 +82,7 @@ make composer
 # setup wordpress as a testing environment for phpunit
 make phpunit
 
-# generates the redistributable bundle as perfecty-push-notifications.zip
+# generates the redistributable bundle in dist/perfecty-push-notifications.zip
 make bundle
 ```
 ## Demo 🎭
@@ -124,7 +129,7 @@ The WordPress Plugin is an Open Source project licensed under [GPL v2](./LICENSE
 
 The bell icon is a Font Awesome icon, a [CC BY 4.0 License](https://creativecommons.org/licenses/by/4.0/).
 
-<span>Photo by <a href="https://unsplash.com/@nasa?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">NASA</a> on <a href="https://unsplash.com/s/photos/world?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">Unsplash</a></span>
+<span>Banner photo by <a href="https://unsplash.com/@nasa?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">NASA</a> on <a href="https://unsplash.com/s/photos/world?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">Unsplash</a></span>
 
 ## Collaborators 🔥
 

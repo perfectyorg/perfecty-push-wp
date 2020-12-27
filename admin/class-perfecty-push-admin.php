@@ -392,12 +392,6 @@ class Perfecty_Push_Admin {
 	}
 
 	/**
-	 * Gets a Payload
-	 */
-	public function get_payload() {
-	}
-
-	/**
 	 * Show the admin notices
 	 *
 	 * Gets the transient 'perfecty_push_admin_notice' which is an array with the type as key and a message as value

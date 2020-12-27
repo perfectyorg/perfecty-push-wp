@@ -12,6 +12,8 @@ default:
 	@echo "  phpunit: Setup Wordpress as a testing environment for phpunit"
 	@echo "  setup: Runs wordpress, composer and phpunit"
 	@echo "  bundle: Builds the vendor in production mode and generates the distributable zip file (perfecty-push-notifications.zip)"
+	@echo "  svnsync: Sync the current code with the SVN upstream repository"
+	@echo "  svnpush: Creates a tag and push it to the SVN repository"
 
 up:
 	@./bin/run.sh up	
@@ -43,3 +45,9 @@ setup:
 
 bundle:
 	@./bin/run.sh bundle
+
+svnsync:
+	@./bin/run.sh svnsync
+
+svnpush:
+	@./bin/run.sh svnpush
