@@ -55,6 +55,11 @@ class Perfecty_Push_Lib_Push_Server {
 		}
 		$payload = json_encode( $payload );
 
+		if ( Class_Perfecty_Push_Lib_Utils::is_disabled() ) {
+			error_log( 'Perfecty Push is disabled, fix the issues already reported.' );
+			return false;
+		}
+
 		$options              = get_option( 'perfecty_push' );
 		$use_action_scheduler = isset( $options['use_action_scheduler'] ) ? esc_attr( $options['use_action_scheduler'] ) : false;
 		$batch_size           = isset( $options['batch_size'] ) ? esc_attr( $options['batch_size'] ) : self::DEFAULT_BATCH_SIZE;

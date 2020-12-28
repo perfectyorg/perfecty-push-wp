@@ -69,25 +69,16 @@ register_deactivation_hook( __FILE__, 'deactivate_perfecty_push' );
 require plugin_dir_path( __FILE__ ) . 'includes/class-perfecty-push.php';
 
 /**
- * We load the composer dependencies. We only load the web-push-php library
- * if the gmp extension is enabled. In theory, composer libs can be used
- * in WordPress plugins: https://github.com/awesomemotive/WP-Mail-SMTP
+ * We load the dependencies and check for the gmp extension
  */
-$gmp_loaded = extension_loaded( 'gmp' );
-if ( $gmp_loaded && version_compare( PHP_VERSION, '7.2.0', '>=' ) ) {
+require plugin_dir_path( __FILE__ ) . 'lib/class-perfecty-push-lib-utils.php';
+if ( version_compare( PHP_VERSION, '7.2.0', '>=' ) ) {
 	require __DIR__ . '/vendor/autoload.php';
+	Class_Perfecty_Push_Lib_Utils::check_gmp();
 } else {
-	error_log( sprintf( 'Could not load all the features. PHP: %s, gmp extension_loaded: %d', PHP_VERSION, $gmp_loaded ) );
-
-	$notice = array(
-		'type'    => 'error',
-		'message' => 'Perfecty Push plugin requires PHP >=7.2 and the gmp extension to be enabled.',
-	);
-	set_transient( 'perfecty_push_admin_notice', $notice );
-
-	if ( ! defined( 'PERFECTY_PUSH_DISABLED' ) ) {
-		define( 'PERFECTY_PUSH_DISABLED', true );
-	}
+	error_log( sprintf( 'Wrong PHP version: %s', PHP_VERSION ) );
+	Class_Perfecty_Push_Lib_Utils::show_message( 'Perfecty Push requires PHP >= 7.2.0' );
+	Class_Perfecty_Push_Lib_Utils::disable();
 }
 
 /**

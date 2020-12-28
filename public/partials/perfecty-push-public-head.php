@@ -6,7 +6,7 @@ $perfecty_push_settings_title  = ! empty( $options['settings_title'] ) ? $option
 $perfecty_push_settings_opt_in = ! empty( $options['settings_opt_in'] ) ? $options['settings_opt_in'] : 'I want to receive notifications';
 $perfecty_push_nonce           = wp_create_nonce( 'wp_rest' );
 
-if ( ( defined( 'PERFECTY_PUSH_DISABLED' ) && PERFECTY_PUSH_DISABLED == true ) ||
+if ( Class_Perfecty_Push_Lib_Utils::is_disabled() ||
 	( ! isset( $options['widget_enabled'] ) || $options['widget_enabled'] == 0 ) ) {
 	$perfecty_push_disabled = 'true';
 } else {

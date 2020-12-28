@@ -592,6 +592,7 @@ class Perfecty_Push_Admin {
 	 */
 	public function sanitize( $input ) {
 		$new_input = array();
+		$options   = get_option( 'perfecty_push' );
 
 		// checkbox
 		if ( isset( $input['widget_enabled'] ) ) {
@@ -634,6 +635,10 @@ class Perfecty_Push_Admin {
 			$new_input['batch_size'] = intval( sanitize_text_field( $input['batch_size'] ) );
 		}
 
+		if ( empty( $options['vapid_public_key'] ) && empty( $options['vapid_private_key'] ) &&
+			! empty( $new_input['vapid_public_key'] ) && ! empty( $new_input['vapid_private_key'] ) ) {
+			Class_Perfecty_Push_Lib_Utils::clean_messages();
+		}
 		return $new_input;
 	}
 

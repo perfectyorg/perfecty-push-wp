@@ -488,10 +488,11 @@ class Perfecty_Push_Lib_Db {
 		$sql     = $wpdb->prepare(
 			"SELECT DATE_FORMAT(created_at, \"%%Y-%%m-%%d\") as `date`, SUM(total-succeeded) as failed, SUM(succeeded) as succeeded
                     FROM $table
-                    WHERE status != %s
+                    WHERE status != %s && status != %s
                     GROUP BY `date`
                     HAVING `date` >= %s AND `date` <= %s",
 			self::NOTIFICATIONS_STATUS_RUNNING,
+			self::NOTIFICATIONS_STATUS_SCHEDULED,
 			$start_date->format( 'Y-m-d' ),
 			$end_date->format( 'Y-m-d' )
 		);

@@ -79,7 +79,9 @@ class Perfecty_Push {
 		$this->define_constants();
 		$this->load_dependencies();
 		$this->set_locale();
-		$this->load_push_server();
+		if ( Class_Perfecty_Push_Lib_Utils::is_enabled() ) {
+			$this->load_push_server();
+		}
 		$this->define_global_hooks();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
@@ -188,14 +190,14 @@ class Perfecty_Push {
 	}
 
 	/**
-	 * Load the required dependencies for the web push server.
+	 * Bootstrap the Push Server
 	 *
 	 * @since    1.0.0
 	 * @access   private
 	 */
 	private function load_push_server() {
-		$auth      = array();
-		$activated = get_option( 'perfecty_push_activated', 0 );
+		$auth             = array();
+		$plugin_activated = get_option( 'perfecty_push_activated', 0 );
 
 		if ( defined( 'PERFECTY_PUSH_VAPID_PUBLIC_KEY' ) && defined( 'PERFECTY_PUSH_VAPID_PRIVATE_KEY' )
 		&& PERFECTY_PUSH_VAPID_PUBLIC_KEY && PERFECTY_PUSH_VAPID_PRIVATE_KEY ) {
@@ -206,21 +208,24 @@ class Perfecty_Push {
 					'privateKey' => PERFECTY_PUSH_VAPID_PRIVATE_KEY,
 				),
 			);
-		} elseif ( $activated == 1 && !defined('PERFECTY_PUSH_DISABLED')) {
-			error_log( 'No VAPID Keys were configured' );
-			$notice = array(
-				'type'    => 'error',
-				'message' => 'The VAPID keys are missing in Perfecty Push, you need to regenerate them.',
-			);
-			set_transient( 'perfecty_push_admin_notice', $notice );
+		} elseif ( $plugin_activated == 1 ) {
+			error_log( 'VAPID Keys are missing' );
+			Class_Perfecty_Push_Lib_Utils::show_message( "The VAPID keys are missing in Perfecty Push. Help: <a href='https://github.com/rwngallego/perfecty-push-wp/wiki/Troubleshooting#the-vapid-keys-are-missing-in-perfecty-push-you-need-to-generate-them'>Generate the VAPID Keys</a>." );
+			Class_Perfecty_Push_Lib_Utils::disable();
+			return false;
 		}
 
-		// This can happen because we missed the gmp extension
-		if ( ! class_exists( WebPush::class ) ) {
-			error_log( 'The WebPush server could not be bootstrapped' );
-			return;
-		}
-
+		set_error_handler(
+			function ( $errno, $errstr, $errfile, $errline ) {
+				if ( strpos( $errstr, 'gmp extension is not loaded' ) !== false ) {
+					// we know this, however we capture the E_WARNING because we have previously
+					// informed the user about this in a nicer way
+					error_log( "You're missing the gmp extension, recommended for better performance" );
+					return true;
+				}
+				return false; // we raise it to the next handler otherwise
+			}
+		);
 		try {
 			$webpush = new WebPush( $auth );
 			$webpush->setReuseVAPIDHeaders( true );
@@ -228,12 +233,12 @@ class Perfecty_Push {
 			Perfecty_Push_Lib_Push_Server::bootstrap( $webpush, $vapid_generator );
 		} catch ( \Exception $ex ) {
 			error_log( 'Could not bootstrap the Push Server: ' . $ex->getMessage() . ', ' . $ex->getTraceAsString() );
-			$notice = array(
-				'type'    => 'error',
-				'message' => 'Could not bootstrap Perfecty Push, check the logs for more information.',
-			);
-			set_transient( 'perfecty_push_admin_notice', $notice );
+			Class_Perfecty_Push_Lib_Utils::show_message( 'Could not bootstrap Perfecty Push, check the php error logs for more information.' );
+			Class_Perfecty_Push_Lib_Utils::disable();
 		}
+		restore_error_handler();
+
+		return true;
 	}
 
 	/**

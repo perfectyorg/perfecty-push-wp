@@ -27,8 +27,8 @@ No hidden fees, no third-party dependencies and you own your data. 👏
 
 ## Requirements 🧩
 
-- `PHP 7.2+`
-- `gmp` extension for message encryption
+- `PHP >= 7.2`
+- `gmp` extension for message encryption (optional)
 
 **Note**: The `gmp` extension is optional and recommended
 for better performance.
