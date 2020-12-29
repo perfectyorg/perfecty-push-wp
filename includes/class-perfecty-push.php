@@ -210,7 +210,7 @@ class Perfecty_Push {
 			);
 		} elseif ( $plugin_activated == 1 ) {
 			error_log( 'VAPID Keys are missing' );
-			Class_Perfecty_Push_Lib_Utils::show_message( "The VAPID keys are missing in Perfecty Push. Help: <a href='https://github.com/rwngallego/perfecty-push-wp/wiki/Troubleshooting#the-vapid-keys-are-missing-in-perfecty-push-you-need-to-generate-them'>Generate the VAPID Keys</a>." );
+			Class_Perfecty_Push_Lib_Utils::show_message( "The VAPID keys are missing in Perfecty Push. Help: <a href='https://github.com/rwngallego/perfecty-push-wp/wiki/Troubleshooting#the-vapid-keys-are-missing-in-perfecty-push-generate-the-vapid-keys' target='_blank'>Generate the VAPID Keys</a>." );
 			Class_Perfecty_Push_Lib_Utils::disable();
 			return false;
 		}
@@ -220,7 +220,6 @@ class Perfecty_Push {
 				if ( strpos( $errstr, 'gmp extension is not loaded' ) !== false ) {
 					// we know this, however we capture the E_WARNING because we have previously
 					// informed the user about this in a nicer way
-					error_log( "You're missing the gmp extension, recommended for better performance" );
 					return true;
 				}
 				return false; // we raise it to the next handler otherwise

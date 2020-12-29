@@ -17,6 +17,11 @@
 		is a WordPress plugin that allows you to send push notifications
 		directly from your own server: No hidden fees, no third-party dependencies and you
 		own your data.</p>
+	<h2>Documentation</h2>
+	<p>
+		You can go to the
+		<a href="https://github.com/rwngallego/perfecty-push-wp/wiki" target="_blank">wiki page</a>
+	</p>
 	<h2>Support</h2>
 	<p>
 		- You can create an issue in our Github repo:
@@ -24,8 +29,8 @@
 	</p>
 	<h2>Did you like it?</h2>
 	<p>
-		Please let me know. Share your love and give it some stars in the <a href="https://github.com/rwngallego/perfecty-push-wp">Github</a> repo
-		or leave a review in the WordPress plugins marketplace.
+		Please let me know, give it some stars in the <a href="https://github.com/rwngallego/perfecty-push-wp">Github</a> repo
+		or leave a review in the <a href="https://wordpress.org/plugins/perfecty-push-notifications/#reviews">WordPress marketplace</a>.
 	</p>
 	<p>
 		Optionally you can <a href="https://rowinson.netlify.app/contact/" target="_blank">send me</a> a message.

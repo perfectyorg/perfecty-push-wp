@@ -64,15 +64,12 @@ class Class_Perfecty_Push_Lib_Utils {
 		$gmp_loaded     = extension_loaded( 'gmp' );
 		$options        = get_option( 'perfecty_push', array() );
 		$has_vapid_keys = ! empty( $options['vapid_public_key'] ) && ! empty( $options['vapid_private_key'] );
-		if ( ! $gmp_loaded ) {
-			error_log( 'Missing the gmp extension' );
-		}
 		if ( ! $has_vapid_keys && ! $gmp_loaded && version_compare( PHP_VERSION, '7.3', '<' ) ) {
 			error_log( sprintf( 'Missing VAPID keys, and the gmp extension is not enabled on PHP < 7.3 (current: %s)', PHP_VERSION ) );
-			self::show_message( "Perfecty Push cannot generate the VAPID keys automatically. Help: <a href='https://github.com/rwngallego/perfecty-push-wp/wiki/Troubleshooting#cannot-generate-the-vapid-keys-automatically'>Cannot generate the VAPID keys automatically.</a>" );
+			self::show_message( "Perfecty Push cannot generate the VAPID keys automatically. Help: <a href='https://github.com/rwngallego/perfecty-push-wp/wiki/Troubleshooting#cannot-generate-the-vapid-keys-automatically' target='_blank'>Cannot generate the VAPID keys automatically.</a>" );
 			self::disable();
 		} elseif ( $has_vapid_keys && ! $gmp_loaded && version_compare( PHP_VERSION, '7.3', '<' ) ) {
-			self::show_message( "Perfecty Push performance is not optimal because of your current setup. Help: <a href='https://github.com/rwngallego/perfecty-push-wp/wiki/Troubleshooting#better-performance'>Better performance</a>" );
+			self::show_message( "Perfecty Push performance is not optimal because of your current setup. Help: <a href='https://github.com/rwngallego/perfecty-push-wp/wiki/Troubleshooting#better-performance' target='_blank'>Better performance</a>" );
 		}
 	}
 }

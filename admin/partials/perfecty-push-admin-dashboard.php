@@ -80,10 +80,8 @@
 <div class="wrap">
 	<h1>Perfecty Push</h1>
 	<h2>Plugin stats</h2>
-	<div class="notice notice-notice"><p>Welcome to Perfecty Push. Start off by
-			<a href="<?php echo admin_url( 'admin.php?page=perfecty-push-options' ); ?>">enabling</a> the public widget,
-			then subscribe from the <a href="<?php echo site_url(); ?>">front page</a>
-			and <a href="<?php echo admin_url( 'admin.php?page=perfecty-push-send-notification' ); ?>">send</a> your first notification!</p></div>
+	<div class="notice notice-notice"><p>Welcome to Perfecty Push. Start off by subscribing from the <a href="<?php echo site_url(); ?>">front page</a>
+			and send your first <a href="<?php echo admin_url( 'admin.php?page=perfecty-push-send-notification' ); ?>">notification</a>!</p></div>
 	<div style="width: 800px;">
 		<canvas id="daily-notifications"></canvas>
 	</div>

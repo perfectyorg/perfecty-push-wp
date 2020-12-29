@@ -197,7 +197,8 @@ class Perfecty_Push_Lib_Push_Server {
 					Perfecty_Push_Lib_Db::set_user_disabled_with_endpoint( $endpoint, true );
 					continue;
 				}
-				if ( $report->getResponse()->getStatusCode() == 403 ) {
+				$response = $report->getResponse();
+				if ( $response != null && $response->getStatusCode() == 403 ) {
 					error_log( "The endpoint should not be tried again, disabling it: $endpoint" );
 					Perfecty_Push_Lib_Db::set_user_disabled_with_endpoint( $endpoint, true );
 					continue;

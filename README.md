@@ -2,6 +2,8 @@
 
 [![tests](https://github.com/rwngallego/perfecty-push-wp/workflows/tests/badge.svg)](https://github.com/rwngallego/perfecty-push-wp/actions)
 [![License](https://img.shields.io/badge/license-GLPv2-blue.svg)](./LICENSE.txt)
+[![PHP compatibility](https://plugintests.com/plugins/wporg/perfecty-push-notifications/php-badge.svg)](https://plugintests.com/plugins/wporg/perfecty-push-notifications/latest)
+[![WP compatibility](https://plugintests.com/plugins/wporg/perfecty-push-notifications/wp-badge.svg)](https://plugintests.com/plugins/wporg/perfecty-push-notifications/latest)
 
 Self-hosted Push Notifications from your Wordpress server for free! 🥳
 

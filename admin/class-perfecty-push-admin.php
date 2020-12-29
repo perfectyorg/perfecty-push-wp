@@ -520,7 +520,7 @@ class Perfecty_Push_Admin {
 				if ( $result === false ) {
 					  $notice = 'Could not schedule the notification, check the logs';
 				} else {
-					$message = 'The notification job has started';
+					$message = 'The notification job has been scheduled';
 
 					// we clear the form
 					$item = $default;

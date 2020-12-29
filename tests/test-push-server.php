@@ -26,7 +26,17 @@ class PushServerTest extends WP_UnitTestCase {
 	}
 
 	public function tearDown() {
+        set_error_handler(
+            function ( $errno, $errstr, $errfile, $errline ) {
+                if ( strpos( $errstr, 'gmp extension is not loaded' ) !== false ) {
+                    return true;
+                }
+                return false; // we raise it to the next handler otherwise
+            }
+        );
 		$webpush         = new WebPush();
+        restore_error_handler();
+
 		$vapid_generator = array( 'Minishlink\WebPush\VAPID', 'createVapidKeys' );
 		Perfecty_Push_Lib_Push_Server::bootstrap( $webpush, $vapid_generator );
 
