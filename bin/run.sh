@@ -105,10 +105,15 @@ svnsync() {
     rsync -q -av $OUTPUT_PATH/* $SVN_PATH/trunk
   fi
 
-  (cd $SVN_PATH && svn diff && svn stat)
+  (cd $SVN_PATH && svn add --force . && svn diff && svn stat)
 }
 
 svnpush() {
+  if (cd $SVN_PATH && svn status | grep -e ^?); then
+    echo "There are changes not added to the SVN"
+    exit 1
+  fi
+
   if [ -z "$SVN_TAG" ]; then
     echo "You need to provide the tag version as SVN_TAG=1.0.1"
     exit 1
