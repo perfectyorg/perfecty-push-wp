@@ -33,8 +33,8 @@ class Perfecty_Push_Admin_Users_Table extends WP_List_Table {
 		$page         = esc_html( sanitize_key( $_REQUEST['page'] ) );
 
 		$actions = array(
-			'view'   => sprintf( '<a href="?page=%s&action=%s&id=%s">%s</a>', $page, 'view', $item['id'], 'View' ),
-			'delete' => sprintf( '<a href="#" class="perfecty-push-confirm-action" data-page="%s" data-action="%s" data-id="%d" data-nonce="%s">%s</a>', $page, 'delete', $item['id'], $action_nonce, 'Delete' ),
+			'view'   => sprintf( '<a href="?page=%s&action=%s&id=%s">%s</a>', $page, 'view', $item['id'], esc_html( 'View', 'perfecty-push-notifications' ) ),
+			'delete' => sprintf( '<a href="#" class="perfecty-push-confirm-action" data-page="%s" data-action="%s" data-id="%d" data-nonce="%s">%s</a>', $page, 'delete', $item['id'], $action_nonce, esc_html( 'Delete', 'perfecty-push-notifications' ) ),
 		);
 
 		return sprintf(
@@ -52,22 +52,22 @@ class Perfecty_Push_Admin_Users_Table extends WP_List_Table {
 	}
 
 	function column_is_active( $item ) {
-		return $item['is_active'] == 1 ? 'Yes' : 'No';
+		return $item['is_active'] == 1 ? esc_html( 'Yes', 'perfecty-push-notifications' ) : esc_html( 'No', 'perfecty-push-notifications' );
 	}
 
 	function column_disabled( $item ) {
-		return $item['disabled'] == 1 ? 'Yes' : 'No';
+		return $item['disabled'] == 1 ? esc_html( 'Yes', 'perfecty-push-notifications' ) : esc_html( 'No', 'perfecty-push-notifications' );
 	}
 
 	function get_columns() {
 		$columns = array(
 			'cb'         => '<input type="checkbox" />',
-			'uuid'       => 'UUID',
-			'remote_ip'  => 'IP',
-			'endpoint'   => 'Endpoint',
-			'is_active'  => 'Active',
-			'disabled'   => 'Disabled',
-			'created_at' => 'Registered at',
+			'uuid'       => esc_html( 'UUID', 'perfecty-push-notifications' ),
+			'remote_ip'  => esc_html( 'IP', 'perfecty-push-notifications' ),
+			'endpoint'   => esc_html( 'Endpoint', 'perfecty-push-notifications' ),
+			'is_active'  => esc_html( 'Active', 'perfecty-push-notifications' ),
+			'disabled'   => esc_html( 'Disabled', 'perfecty-push-notifications' ),
+			'created_at' => esc_html( 'Registered at', 'perfecty-push-notifications' ),
 		);
 		return $columns;
 	}
@@ -92,11 +92,11 @@ class Perfecty_Push_Admin_Users_Table extends WP_List_Table {
 		if ( 'delete' === $this->current_action() ) {
 			$nonce = 'bulk-' . $this->_args['plural'];
 			if ( ! isset( $_REQUEST['_wpnonce'] ) || ! wp_verify_nonce( $_REQUEST['_wpnonce'], $nonce ) ) {
-				wp_die( 'Could not verify the action' );
+				wp_die( esc_html( 'Could not verify the action', 'perfecty-push-notifications' ) );
 			}
 
 			if ( ! isset( $_REQUEST['id'] ) ) {
-				wp_die( 'No params were specified' );
+				wp_die( esc_html( 'No params were specified', 'perfecty-push-notifications' ) );
 			}
 
 			// validate, sanitize and filter

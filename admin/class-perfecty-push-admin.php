@@ -93,7 +93,7 @@ class Perfecty_Push_Admin {
 		 * class.
 		 */
 
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/perfecty-push-admin.js', array( 'jquery' ), $this->version, false );
+		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/perfecty-push-admin.js', array( 'jquery', 'wp-i18n' ), $this->version, false );
 		wp_enqueue_script( 'chartjs', plugin_dir_url( __FILE__ ) . 'js/chart.bundle.min.js', array( 'jquery' ), $this->version, false );
 	}
 
@@ -114,8 +114,8 @@ class Perfecty_Push_Admin {
 
 		add_submenu_page(
 			'perfecty-push',
-			'Dashboard',
-			'Dashboard',
+			esc_html__( 'Dashboard', 'perfecty-push-notifications' ),
+			esc_html__( 'Dashboard', 'perfecty-push-notifications' ),
 			'manage_options',
 			'perfecty-push',
 			array( $this, 'print_dashboard_page' )
@@ -123,8 +123,8 @@ class Perfecty_Push_Admin {
 
 		add_submenu_page(
 			'perfecty-push',
-			'Send notification',
-			'Send notification',
+			esc_html__( 'Send notification', 'perfecty-push-notifications' ),
+			esc_html__( 'Send notification', 'perfecty-push-notifications' ),
 			'manage_options',
 			'perfecty-push-send-notification',
 			array( $this, 'print_send_notification_page' )
@@ -132,8 +132,8 @@ class Perfecty_Push_Admin {
 
 		add_submenu_page(
 			'perfecty-push',
-			'Notifications',
-			'Notifications',
+			esc_html__( 'Notifications', 'perfecty-push-notifications' ),
+			esc_html__( 'Notifications', 'perfecty-push-notifications' ),
 			'manage_options',
 			'perfecty-push-notifications',
 			array( $this, 'print_notifications_page' )
@@ -141,8 +141,8 @@ class Perfecty_Push_Admin {
 
 		add_submenu_page(
 			'perfecty-push',
-			'Users',
-			'Users',
+			esc_html__( 'Users', 'perfecty-push-notifications' ),
+			esc_html__( 'Users', 'perfecty-push-notifications' ),
 			'manage_options',
 			'perfecty-push-users',
 			array( $this, 'print_users_page' )
@@ -150,8 +150,8 @@ class Perfecty_Push_Admin {
 
 		add_submenu_page(
 			'perfecty-push',
-			'Settings',
-			'Settings',
+			esc_html__( 'Settings', 'perfecty-push-notifications' ),
+			esc_html__( 'Settings', 'perfecty-push-notifications' ),
 			'manage_options',
 			'perfecty-push-options',
 			array( $this, 'print_options_page' )
@@ -159,8 +159,8 @@ class Perfecty_Push_Admin {
 
 		add_submenu_page(
 			'perfecty-push',
-			'About',
-			'About',
+			esc_html__( 'About', 'perfecty-push-notifications' ),
+			esc_html__( 'About', 'perfecty-push-notifications' ),
 			'manage_options',
 			'perfecty-push-about',
 			array( $this, 'print_about_page' )
@@ -181,14 +181,14 @@ class Perfecty_Push_Admin {
 
 		add_settings_section(
 			'perfecty_push_widget_settings', // id
-			'Public widget', // title
+			esc_html__( 'Public widget', 'perfecty-push-notifications' ), // title
 			array( $this, 'print_dialog_section' ), // callback
 			'perfecty-push-options' // page
 		);
 
 		add_settings_field(
 			'widget_enabled', // id
-			'Enabled', // title
+			esc_html__( 'Enabled', 'perfecty-push-notifications' ), // title
 			array( $this, 'print_widget_enabled' ), // callback
 			'perfecty-push-options', // page
 			'perfecty_push_widget_settings' // section
@@ -196,7 +196,7 @@ class Perfecty_Push_Admin {
 
 		add_settings_field(
 			'unregister_conflicts', // id
-			'Remove conflicting workers', // title
+			esc_html__( 'Remove conflicting workers', 'perfecty-push-notifications' ), // title
 			array( $this, 'print_unregister_conflicts' ), // callback
 			'perfecty-push-options', // page
 			'perfecty_push_widget_settings' // section
@@ -204,7 +204,7 @@ class Perfecty_Push_Admin {
 
 		add_settings_field(
 			'dialog_title', // id
-			'Subscribe text', // title
+			esc_html__( 'Subscribe text', 'perfecty-push-notifications' ), // title
 			array( $this, 'print_dialog_title' ), // callback
 			'perfecty-push-options', // page
 			'perfecty_push_widget_settings' // section
@@ -212,7 +212,7 @@ class Perfecty_Push_Admin {
 
 		add_settings_field(
 			'dialog_submit', // id
-			'Continue text', // title
+			esc_html__( 'Continue text', 'perfecty-push-notifications' ), // title
 			array( $this, 'print_dialog_submit' ), // callback
 			'perfecty-push-options', // page
 			'perfecty_push_widget_settings' // section
@@ -220,7 +220,7 @@ class Perfecty_Push_Admin {
 
 		add_settings_field(
 			'dialog_cancel', // id
-			'Cancel text', // title
+			esc_html__( 'Cancel text', 'perfecty-push-notifications' ), // title
 			array( $this, 'print_dialog_cancel' ), // callback
 			'perfecty-push-options', // page
 			'perfecty_push_widget_settings' // section
@@ -228,7 +228,7 @@ class Perfecty_Push_Admin {
 
 		add_settings_field(
 			'settings_title', // id
-			'Bell title', // title
+			esc_html__( 'Bell title', 'perfecty-push-notifications' ), // title
 			array( $this, 'print_settings_title' ), // callback
 			'perfecty-push-options', // page
 			'perfecty_push_widget_settings' // section
@@ -236,7 +236,7 @@ class Perfecty_Push_Admin {
 
 		add_settings_field(
 			'settings_subscribed', // id
-			'Opt-in text', // title
+			esc_html__( 'Opt-in text', 'perfecty-push-notifications' ), // title
 			array( $this, 'print_settings_opt_in' ), // callback
 			'perfecty-push-options', // page
 			'perfecty_push_widget_settings' // section
@@ -244,21 +244,21 @@ class Perfecty_Push_Admin {
 
 		add_settings_section(
 			'perfecty_push_self_hosted_settings', // id
-			'Self-hosted server', // title
+			esc_html__( 'Self-hosted server', 'perfecty-push-notifications' ), // title
 			array( $this, 'print_self_hosted_section' ), // callback
 			'perfecty-push-options' // page
 		);
 
 		add_settings_field(
 			'vapid_private_key', // id
-			'Vapid Private Key', // title
+			esc_html__( 'Vapid Private Key', 'perfecty-push-notifications' ), // title
 			array( $this, 'print_vapid_private_key' ), // callback
 			'perfecty-push-options', // page
 			'perfecty_push_self_hosted_settings' // section
 		);
 		add_settings_field(
 			'vapid_public_key', // id
-			'Vapid Public Key', // title
+			esc_html__( 'Vapid Public Key', 'perfecty-push-notifications' ), // title
 			array( $this, 'print_vapid_public_key' ), // callback
 			'perfecty-push-options', // page
 			'perfecty_push_self_hosted_settings' // section
@@ -266,7 +266,7 @@ class Perfecty_Push_Admin {
 
 		add_settings_field(
 			'server_url', // id
-			'Server Url', // title
+			esc_html__( 'Server Url', 'perfecty-push-notifications' ), // title
 			array( $this, 'print_server_url' ), // callback
 			'perfecty-push-options', // page
 			'perfecty_push_self_hosted_settings' // section
@@ -274,7 +274,7 @@ class Perfecty_Push_Admin {
 
 		add_settings_field(
 			'batch_size', // id
-			'Batch Size', // title
+			esc_html__( 'Batch Size', 'perfecty-push-notifications' ), // title
 			array( $this, 'print_batch_size' ), // callback
 			'perfecty-push-options', // page
 			'perfecty_push_self_hosted_settings' // section
@@ -369,15 +369,15 @@ class Perfecty_Push_Admin {
 			$result      = Perfecty_Push_Lib_Push_Server::schedule_broadcast_async( $payload );
 
 			if ( $result === false ) {
-				error_log( 'Could not schedule the broadcast async, check the logs' );
+				error_log( esc_html__( 'Could not schedule the broadcast async, check the logs', 'perfecty-push-notifications' ) );
 				$notice = array(
 					'type'    => 'error',
-					'message' => 'Could not send the notification',
+					'message' => esc_html__( 'Could not send the notification', 'perfecty-push-notifications' ),
 				);
 			} else {
 				$notice = array(
 					'type'    => 'success',
-					'message' => '<strong>Perfecty Push</strong> has sent a notification for the recently published post: ' . $body,
+					'message' => '<strong>Perfecty Push</strong>' . esc_html__( 'has sent a notification for the recently published post:', 'perfecty-push-notifications' ) . $body,
 				);
 				if ( isset( $_POST['perfecty_push_post_metabox_nonce'] ) ) {
 					// once we sent the notification, we reset the checkbox when the
@@ -414,7 +414,7 @@ class Perfecty_Push_Admin {
 	}
 
 	/**
-	 * Renders the dashboard page
+	 * Renders the f page
 	 *
 	 * @since 1.0.0
 	 */
@@ -518,9 +518,9 @@ class Perfecty_Push_Admin {
 				// send notification
 				$result = Perfecty_Push_Lib_Push_Server::schedule_broadcast_async( $payload );
 				if ( $result === false ) {
-					  $notice = 'Could not schedule the notification, check the logs';
+					  $notice = esc_html__( 'Could not schedule the notification, check the logs', 'perfecty-push-notifications' );
 				} else {
-					$message = 'The notification job has been scheduled';
+					$message = esc_html__( 'The notification job has been scheduled', 'perfecty-push-notifications' );
 
 					// we clear the form
 					$item = $default;
@@ -534,7 +534,7 @@ class Perfecty_Push_Admin {
 
 		add_meta_box(
 			'perfecty_push_send_notification_meta_box',
-			'Notification details',
+			esc_html__( 'Notification details', 'perfecty-push-notifications' ),
 			array( $this, 'print_send_notification_metabox' ),
 			'perfecty-push-send-notification',
 			'normal'
@@ -552,11 +552,11 @@ class Perfecty_Push_Admin {
 		$messages = array();
 
 		if ( empty( $item['perfecty-push-send-notification-title'] ) ) {
-			$messages[] = 'The title is required';
+			$messages[] = esc_html__( 'The title is required', 'perfecty-push-notifications' );
 		}
 
 		if ( empty( $item['perfecty-push-send-notification-message'] ) ) {
-			$messages[] = 'The message is required';
+			$messages[] = esc_html__( 'The message is required', 'perfecty-push-notifications' );
 		}
 
 		if ( empty( $messages ) ) {
@@ -648,7 +648,7 @@ class Perfecty_Push_Admin {
 	 * @since 1.0.0
 	 */
 	public function print_dialog_section() {
-		print 'Preferences for the widgets shown in the front page.';
+		print esc_html__( 'Preferences for the widgets shown in the front page.', 'perfecty-push-notifications' );
 	}
 
 	/**
@@ -657,7 +657,7 @@ class Perfecty_Push_Admin {
 	 * @since 1.0.0
 	 */
 	public function print_self_hosted_section() {
-		print 'Configure how to connect your website with your self-hosted Perfecty Push Server.';
+		print esc_html__( 'Configure how to connect your website with your self-hosted Perfecty Push Server.', 'perfecty-push-notifications' );
 	}
 
 	/**
