@@ -82,11 +82,16 @@
 	<h2><?php printf( esc_html__( 'Plugin stats', 'perfecty-push-notifications' ) ); ?></h2>
 	<div class="notice notice-notice"><p>
 	<?php
-	/* translators: %1$s: Link to site front page; %2$s: Link to notifications admin page */
 	printf(
-		__( 'Welcome to Perfecty Push. Start off by subscribing from the %1$s and send your first %2$s', 'perfecty-push-notifications' ),
-		'<a href="' . site_url() . '">' . esc_html__( 'front page', 'perfecty-push-notifications' ) . '</a>',
-		'<a href="' . admin_url( 'admin.php?page=perfecty-push-send-notification' ) . '">' . esc_html__( 'notification', 'perfecty-push-notifications' )
+		// translators: %1$s is the opening a tag
+		// translators: %2$s is the closing a tag
+		// translators: %3$s is the opening a tag
+		// translators: %4$s is the closing a tag
+		esc_html__( 'Welcome to Perfecty Push. Start off by subscribing from the %1$s front page %2$s and send your first %3$s notification %4$s', 'perfecty-push-notifications' ),
+		'<a href="' . site_url() . '">',
+		'</a>',
+		'<a href="' . admin_url( 'admin.php?page=perfecty-push-send-notification' ) . '">',
+		'</a>',
 	);
 	?>
 	</a>!</p></div>
@@ -97,7 +102,7 @@
 		<div>
 			<h3><?php printf( esc_html__( 'Users', 'perfecty-push-notifications' ) ); ?></h3>
 			<div class="perfecty-push-stats-text">
-				<span><?php printf( esc_html__( 'Total users:', 'perfecty-push-notifications' ), $users_stats['total'] ); ?> </span><span><?php echo $users_stats['total']; ?></span>
+				<span><?php printf( esc_html__( 'Total users:', 'perfecty-push-notifications' ) ); ?> </span><span><?php echo $users_stats['total']; ?></span>
 			</div>
 			<div class="perfecty-push-stats-text">
 				<span><?php printf( esc_html__( 'Active:', 'perfecty-push-notifications' ) ); ?> </span><span><?php echo $users_stats['active']; ?></span>
@@ -109,7 +114,7 @@
 		<div>
 			<h3><?php printf( esc_html__( 'Notifications', 'perfecty-push-notifications' ) ); ?></h3>
 			<div class="perfecty-push-stats-text">
-				<span><?php printf( esc_html__( 'Total notifications:', 'perfecty-push-notifications' ) ); ?> < /span><span><?php echo $notifications_stats['total']; ?></span>
+				<span><?php printf( esc_html__( 'Total notifications:', 'perfecty-push-notifications' ) ); ?> </span><span><?php echo $notifications_stats['total']; ?></span>
 			</div>
 			<div class="perfecty-push-stats-text">
 				<span><?php printf( esc_html__( 'Succeeded:', 'perfecty-push-notifications' ) ); ?> </span><span><?php echo $notifications_stats['succeeded']; ?></span>
