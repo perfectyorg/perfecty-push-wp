@@ -109,7 +109,7 @@
 		<div>
 			<h3><?php printf( esc_html__( 'Notifications', 'perfecty-push-notifications' ) ); ?></h3>
 			<div class="perfecty-push-stats-text">
-				<span><?php printf( esc_html__( 'Total notifications:', 'perfecty-push-notifications' ) ); ?>< /span><span><?php echo $notifications_stats['total']; ?></span>
+				<span><?php printf( esc_html__( 'Total notifications:', 'perfecty-push-notifications' ) ); ?> < /span><span><?php echo $notifications_stats['total']; ?></span>
 			</div>
 			<div class="perfecty-push-stats-text">
 				<span><?php printf( esc_html__( 'Succeeded:', 'perfecty-push-notifications' ) ); ?> </span><span><?php echo $notifications_stats['succeeded']; ?></span>

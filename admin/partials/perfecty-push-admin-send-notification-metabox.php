@@ -25,10 +25,10 @@
 	<div>
 		<p>
 			<label for="perfecty-push-send-notification-url-to-open-custom"><?php printf( esc_html__( 'Url to open', 'perfecty-push-notifications' ) ); ?> <i>
-																						  <?php
-																							printf( esc_html__( '(default:', 'perfecty-push-notifications' ) );
-																							printf( site_url() );
-																							?>
+			  <?php
+				printf( esc_html__( '(default:', 'perfecty-push-notifications' ) );
+				printf( site_url() );
+				?>
 			)</i></label>
 			<br>
 			<input id="perfecty-push-send-notification-url-to-open-custom" name="perfecty-push-send-notification-url-to-open-custom" type="checkbox"/>

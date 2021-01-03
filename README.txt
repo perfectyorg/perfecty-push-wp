@@ -2,7 +2,7 @@
 Contributors: rwngallego
 Donate link: https://github.com/rwngallego
 Tags: push notifications, push, notifications, user engage
-Requires at least: 5.2
+Requires at least: 5.0
 Tested up to: 5.6
 Stable tag: 1.0.4
 Requires PHP: 7.2
@@ -29,6 +29,12 @@ Features:
 - Customize the public widget
 - The user authorization tokens stay in your server
 - Offline browser notifications through [Push API](https://developer.mozilla.org/en-US/docs/Web/API/Push_API) (Safari is not supported yet)
+
+## Documentation
+
+[https://github.com/rwngallego/perfecty-push-wp/wiki](https://github.com/rwngallego/perfecty-push-wp/wiki)
+
+## Code
 
 Want to check the code? [https://github.com/rwngallego/perfecty-push-wp](https://github.com/rwngallego/perfecty-push-wp)
 
@@ -65,14 +71,6 @@ The `gmp` extension is optional in PHP >= 7.3. In PHP 7.2 you can't generate the
 = How do I install the `gmp` extension? =
 
 It depends on the operating system, but in theory you install it as a regular PHP extension. More information: [Install the gmp extension](https://github.com/rwngallego/perfecty-push-wp/wiki/Troubleshooting#install-the-gmp-extension)
-
-= The VAPID keys are missing in Perfecty Push, you need to generate them. =
-
-This is due to two reasons:
-- You use PHP 7.2 and you didn't have the `gmp` extension enabled, and now you have it.
-- You have deleted the VAPID keys from the Settings.
-
-In any case, you can generate them by deactivating/activating your plugin from the WordPress plugin UI.
 
 = Is this tested in production? =
 
