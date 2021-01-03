@@ -27,11 +27,11 @@ class Perfecty_Push_Admin_Notifications_Table extends WP_List_Table {
 		$page         = esc_html( sanitize_key( $_REQUEST['page'] ) );
 
 		$actions = array(
-			'view'   => sprintf( '<a href="?page=%s&action=%s&id=%s">%s</a>', $page, 'view', $item['id'], esc_html( 'View', 'perfecty-push-notifications' ) ),
-			'delete' => sprintf( '<a href="#" class="perfecty-push-confirm-action" data-page="%s" data-action="%s" data-id="%d" data-nonce="%s">%s</a>', $page, 'delete', $item['id'], $action_nonce, esc_html( 'Delete', 'perfecty-push-notifications' ) ),
+			'view'   => sprintf( '<a href="?page=%s&action=%s&id=%s">%s</a>', $page, 'view', $item['id'], esc_html__( 'View', 'perfecty-push-notifications' ) ),
+			'delete' => sprintf( '<a href="#" class="perfecty-push-confirm-action" data-page="%s" data-action="%s" data-id="%d" data-nonce="%s">%s</a>', $page, 'delete', $item['id'], $action_nonce, esc_html__( 'Delete', 'perfecty-push-notifications' ) ),
 		);
 		if ( $item['status'] == Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_RUNNING || $item['status'] == Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_SCHEDULED ) {
-			$actions['cancel'] = sprintf( '<a href="#" class="perfecty-push-confirm-action" data-page="%s" data-action="%s" data-id="%d" data-nonce="%s">%s</a>', $page, 'cancel', $item['id'], $action_nonce, esc_html( 'Cancel', 'perfecty-push-notifications' ) );
+			$actions['cancel'] = sprintf( '<a href="#" class="perfecty-push-confirm-action" data-page="%s" data-action="%s" data-id="%d" data-nonce="%s">%s</a>', $page, 'cancel', $item['id'], $action_nonce, esc_html__( 'Cancel', 'perfecty-push-notifications' ) );
 		}
 
 		return sprintf(
@@ -52,7 +52,7 @@ class Perfecty_Push_Admin_Notifications_Table extends WP_List_Table {
 		$page = esc_html( sanitize_key( $_REQUEST['page'] ) );
 
 		$actions     = array(
-			'view' => sprintf( '<a href="?page=%s&action=%s&id=%s">%s</a>', $page, 'view', $item['id'], esc_html( 'View details', 'perfecty-push-notifications' ) ),
+			'view' => sprintf( '<a href="?page=%s&action=%s&id=%s">%s</a>', $page, 'view', $item['id'], esc_html__( 'View details', 'perfecty-push-notifications' ) ),
 		);
 		$row_actions = $this->row_actions( $actions );
 
@@ -60,7 +60,7 @@ class Perfecty_Push_Admin_Notifications_Table extends WP_List_Table {
 		$body    = $this->limit_text( $payload->body );
 		$title   = $payload->title;
 
-		return sprintf( __( 'Title: %1$s<br /> Content: %2$s<br />%3$s', 'perfecty-push-notifications' ), $title, $body, $row_actions );
+		return sprintf( esc_html__( 'Title: %1$s %2$s Content: %3$s %4$s %5$s', 'perfecty-push-notifications' ), $title, '<br />', $body, '<br />', $row_actions );
 	}
 
 	/**
@@ -80,11 +80,10 @@ class Perfecty_Push_Admin_Notifications_Table extends WP_List_Table {
 	function get_columns() {
 		$columns = array(
 			'cb'         => '<input type="checkbox" />',
-			'created_at' => esc_html( 'Date', 'perfecty-push-notifications' ),
-			'payload'    => esc_html( 'Payload', 'perfecty-push-notifications' ),
-			'status'     => esc_html( 'Status', 'perfecty-push-notifications' ),
-			'total'      => esc_html( 'Total', 'perfecty-push-notifications' ),
-			'succeeded'  => esc_html( 'Succeeded', 'perfecty-push-notifications' ),
+			'created_at' => esc_html__( 'Date', 'perfecty-push-notifications' ),
+			'payload'    => esc_html__( 'Payload', 'perfecty-push-notifications' ),
+			'status'     => esc_html__( 'Status', 'perfecty-push-notifications' ),
+			'total'      => esc_html__( 'Total', 'perfecty-push-notifications' ),
 		);
 		return $columns;
 	}
@@ -101,8 +100,8 @@ class Perfecty_Push_Admin_Notifications_Table extends WP_List_Table {
 
 	function get_bulk_actions() {
 		$actions = array(
-			'delete' => esc_html( 'Delete', 'perfecty-push-notifications' ),
-			'cancel' => esc_html( 'Cancel', 'perfecty-push-notifications' ),
+			'delete' => esc_html__( 'Delete', 'perfecty-push-notifications' ),
+			'cancel' => esc_html__( 'Cancel', 'perfecty-push-notifications' ),
 		);
 		return $actions;
 	}
@@ -112,11 +111,11 @@ class Perfecty_Push_Admin_Notifications_Table extends WP_List_Table {
 		if ( in_array( $action, array( 'delete', 'cancel' ) ) ) {
 			$nonce = 'bulk-' . $this->_args['plural'];
 			if ( ! isset( $_REQUEST['_wpnonce'] ) || ! wp_verify_nonce( $_REQUEST['_wpnonce'], $nonce ) ) {
-				wp_die( esc_html( 'Could not verify the action', 'perfecty-push-notifications' ) );
+				wp_die( esc_html__( 'Could not verify the action', 'perfecty-push-notifications' ) );
 			}
 
 			if ( ! isset( $_REQUEST['id'] ) ) {
-				wp_die( esc_html( 'No params were specified', 'perfecty-push-notifications' ) );
+				wp_die( esc_html__( 'No params were specified', 'perfecty-push-notifications' ) );
 			}
 
 			// validate, sanitize and filter

@@ -7,7 +7,7 @@
 		<form>
 			<div>
 				<p>
-					<label for="payload"><?php printf( esc_html__( 'Payload: ', 'perfecty-push-notifications' ) ); ?></label>
+					<label for="payload"><?php printf( esc_html__( 'Payload:', 'perfecty-push-notifications' ) ); ?> </label>
 					<br>
 				<div class="perfecty-push-view-payload">
 					<?php $payload = $item->payload; ?>
@@ -22,7 +22,7 @@
 						<span><?php printf( esc_html__( 'Icon:', 'perfecty-push-notifications' ) ); ?></span>
 						<?php
 						if ( empty( $payload->icon ) ) {
-							printf( esc_html( 'No', 'perfecty-push-notifications' ) );
+							printf( esc_html__( 'No', 'perfecty-push-notifications' ) );
 						} else {
 							echo '<br/><img class="perfecty-push-view-payload-icon" src="' . $payload->icon . '" alt="icon"/>';
 						}
@@ -32,7 +32,7 @@
 						<span><?php printf( esc_html__( 'Image:', 'perfecty-push-notifications' ) ); ?></span>
 						<?php
 						if ( empty( $payload->image ) ) {
-							printf( esc_html( 'No', 'perfecty-push-notifications' ) );
+							printf( esc_html__( 'No', 'perfecty-push-notifications' ) );
 						} else {
 							echo '<br /><img class="perfecty-push-view-payload-image" src="' . $payload->image . '" alt="image"/>';
 						}
@@ -41,12 +41,12 @@
 				</div>
 				</p>
 				<p>
-					<label for="created_at"><?php printf( esc_html__( 'Date: ', 'perfecty-push-notifications' ) ); ?></label>
+					<label for="created_at"><?php printf( esc_html__( 'Date:', 'perfecty-push-notifications' ) ); ?> </label>
 					<br>
 				<div><?php echo $item->created_at; ?></div>
 				</p>
 				<p>
-					<label for="status"><?php printf( esc_html__( 'Status: ', 'perfecty-push-notifications' ) ); ?></label>
+					<label for="status"><?php printf( esc_html__( 'Status:', 'perfecty-push-notifications' ) ); ?> </label>
 					<br>
 				<div><?php echo $item->status; ?></div>
 				</p>
@@ -67,14 +67,14 @@
 				<div>
 					<?php
 					if ( $item->status == Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_RUNNING ) {
-						printf( esc_html( '$1%s sent out of $2%s', 'perfecty-push-notifications' ), $item->last_cursor, $item->total );
+						printf( esc_html__( '$1%s sent out of $2%s', 'perfecty-push-notifications' ), $item->last_cursor, $item->total );
 					} else {
 						printf( esc_html__( 'Finished', 'perfecty-push-notifications' ) );
 					}
 					?>
 				</div>
 				<div>
-					<?php echo 'Batch size: ' . $item->batch_size; ?>
+					<?php printf( esc_html__( 'Batch size: %s', 'perfecty-push-notifications' ), $item->batch_size ); ?>
 				</div>
 				<?php
 				try {
@@ -85,7 +85,7 @@
 						<div><?php printf( esc_html__( 'Duration: %s', 'perfecty-push-notifications' ), $diff->format( '%Hh:%Im:%Ss' ) ); ?></div>
 						<?php
 				} catch ( Exception $ex ) {
-					error_log( esc_html__( 'Could not calculate the duration: ', 'perfecty-push-notifications' ) . $ex->getMessage() );
+					error_log( esc_html__( 'Could not calculate the duration:', 'perfecty-push-notifications' ) . " " . $ex->getMessage() );
 				}
 				?>
 				</p>
