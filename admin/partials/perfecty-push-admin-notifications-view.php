@@ -67,7 +67,7 @@
 				<div>
 					<?php
 					if ( $item->status == Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_RUNNING ) {
-						printf( esc_html__( '$1%1$s sent out of $2%2$s', 'perfecty-push-notifications' ), $item->last_cursor, $item->total );
+						printf( esc_html__( '%1$s sent out of %2$s', 'perfecty-push-notifications' ), $item->last_cursor, $item->total );
 					} else {
 						printf( esc_html__( 'Finished', 'perfecty-push-notifications' ) );
 					}
