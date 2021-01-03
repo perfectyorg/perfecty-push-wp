@@ -1,6 +1,6 @@
 on: [push, pull_request]
 
-name: Automated tests
+name: Tests
 
 jobs:
   test:

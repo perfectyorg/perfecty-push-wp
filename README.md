@@ -1,7 +1,7 @@
 # Perfecty Push WP Plugin ⚡️
 
-[![tests](https://github.com/rwngallego/perfecty-push-wp/workflows/tests/badge.svg)](https://github.com/rwngallego/perfecty-push-wp/actions)
-![deployment](https://github.com/rwngallego/perfecty-push-wp/workflows/Deployment/badge.svg)
+[![tests](https://github.com/rwngallego/perfecty-push-wp/workflows/Tests/badge.svg)](https://github.com/rwngallego/perfecty-push-wp/actions?query=workflow%3ATests)
+[![deployment](https://github.com/rwngallego/perfecty-push-wp/workflows/Deployment/badge.svg)](https://github.com/rwngallego/perfecty-push-wp/actions?query=workflow%3ADeployment)
 [![License](https://img.shields.io/badge/license-GLPv2-blue.svg)](./LICENSE.txt)
 [![PHP compatibility](https://plugintests.com/plugins/wporg/perfecty-push-notifications/php-badge.svg)](https://plugintests.com/plugins/wporg/perfecty-push-notifications/latest)
 [![WP compatibility](https://plugintests.com/plugins/wporg/perfecty-push-notifications/wp-badge.svg)](https://plugintests.com/plugins/wporg/perfecty-push-notifications/latest)

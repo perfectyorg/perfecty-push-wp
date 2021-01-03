@@ -91,7 +91,7 @@
 		'<a href="' . site_url() . '">',
 		'</a>',
 		'<a href="' . admin_url( 'admin.php?page=perfecty-push-send-notification' ) . '">',
-		'</a>',
+		'</a>'
 	);
 	?>
 	</a>!</p></div>
