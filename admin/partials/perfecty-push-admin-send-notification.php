@@ -17,7 +17,7 @@
 			<div id="post-body">
 				<div id="post-body-content">
 					<?php do_meta_boxes( 'perfecty-push-send-notification', 'normal', $item ); ?>
-					<input type="submit" value="Send notification" id="submit" class="button-primary" name="submit">
+					<input type="submit" value="<?php printf( esc_html__( 'Send notification', 'perfecty-push-notifications' ) ); ?>" id="submit" class="button-primary" name="submit">
 				</div>
 			</div>
 		</div>
