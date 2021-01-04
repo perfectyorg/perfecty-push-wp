@@ -77,9 +77,9 @@ OUTPUT_PATH="$DIST_PATH/source"
 create_dist() {
   rm -rf $DIST_PATH
   mkdir -p $SVN_PATH $OUTPUT_PATH
-  rm -rf vendor && composer install --quiet --no-dev --optimize-autoloader
-  cp index.php vendor/
-  cp -Rp admin includes languages lib public vendor composer.json composer.lock index.php LICENSE.txt perfecty-push.php README.txt uninstall.php $OUTPUT_PATH
+  cp -Rp admin includes languages lib public composer.json composer.lock index.php LICENSE.txt perfecty-push.php README.txt uninstall.php $OUTPUT_PATH
+  (cd $OUTPUT_PATH && composer install --quiet --no-dev --optimize-autoloader)
+  cp index.php $OUTPUT_PATH/vendor/
 }
 
 bundle() {
@@ -89,7 +89,8 @@ bundle() {
   else
     OUTPUT_ZIP=$ZIP_NAME
   fi
-  (cd $OUTPUT_PATH && zip -v -r $OUTPUT_ZIP * && mv $OUTPUT_ZIP ./../)
+  echo "Zip: dist/$OUTPUT_ZIP"
+  (cd $OUTPUT_PATH && zip -q -r $OUTPUT_ZIP * && mv $OUTPUT_ZIP ./../)
 }
 
 svnsync() {

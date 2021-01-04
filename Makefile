@@ -8,7 +8,7 @@ default:
 	@echo "  test: Run the unit tests"
 	@echo "  format: Run the code beautifier"
 	@echo "  wordpress: Setup wordpress and plugins"
-	@echo "  composer: Install all the composer dependencies"
+	@echo "  deps: Install all the composer dependencies"
 	@echo "  phpunit: Setup Wordpress as a testing environment for phpunit"
 	@echo "  setup: Runs wordpress, composer and phpunit"
 	@echo "  bundle: Builds the vendor in production mode and generates the distributable zip file (perfecty-push-notifications.zip)"
@@ -34,8 +34,8 @@ console:
 wordpress:
 	@./bin/run.sh wordpress
 
-composer:
-	@./bin/run.sh composer
+deps:
+	@./bin/run.sh deps
 
 phpunit:
 	@./bin/run.sh phpunit

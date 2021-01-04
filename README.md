@@ -80,7 +80,7 @@ make setup
 make wordpress
 
 # install all the composer dependencies
-make composer
+make deps
 
 # setup wordpress as a testing environment for phpunit
 make phpunit
