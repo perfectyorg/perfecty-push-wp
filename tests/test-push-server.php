@@ -13,7 +13,7 @@ use Minishlink\WebPush\WebPush;
  */
 class PushServerTest extends WP_UnitTestCase {
 
-	private $mocked_vapid_callback = 'echo "mocked"';
+	private $mocked_vapid_callback = "md5";
 
 	public function setUp() {
 		parent::setUp();

@@ -377,7 +377,7 @@ class Perfecty_Push_Admin {
 			} else {
 				$notice = array(
 					'type'    => 'success',
-					'message' => '<strong>Perfecty Push</strong>' . esc_html__( 'has sent a notification for the recently published post:', 'perfecty-push-notifications' ) . $body,
+					'message' => '<strong>Perfecty Push</strong>' . esc_html__( 'has sent a notification for the recently published post:', 'perfecty-push-notifications' ) . ' ' . $body,
 				);
 				if ( isset( $_POST['perfecty_push_post_metabox_nonce'] ) ) {
 					// once we sent the notification, we reset the checkbox when the

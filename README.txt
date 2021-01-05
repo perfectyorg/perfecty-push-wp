@@ -4,29 +4,29 @@ Donate link: https://github.com/rwngallego
 Tags: Push Notifications, Web Push Notifications, Notifications, User engagement
 Requires at least: 5.0
 Tested up to: 5.6
-Stable tag: 1.0.4
+Stable tag: 1.0.5
 Requires PHP: 7.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 == Description ==
-Push Notifications that are self-hosted, you don't need API keys or integrate with external Push Notifications providers that will charge you later, send Push Notifications directly from your server for free!
+Push Notifications that are self-hosted, you don't need API keys to integrate with external Push Notifications providers that will charge you later. It's Open Source and the information is stored in WordPress, so that you can Send Push Notifications directly from your server for free!
 
-In a rush looking for alternatives now that you've exceeded the free-tier of your current Push Notifications provider? Loosing your users every time you change Push Notifications provider? Worried about where the Push Notifications information is stored? **With this plugin you don't worry about that**.
+In a rush looking for Push Notifications alternatives now that you've exceeded the free-tier of your current provider? Loosing your users every time you change your Push Notifications provider? Worried about where the Push Notifications information is stored? **With this plugin you don't worry about that**.
 
-The Push Notifications information is stored in your server. Migrate your users easily from other Push Notifications providers, send a custom Push Notification or when a post is published, and see the notifications/users stats in your Dashboard.
+ Easily migrate your users from other providers, send custom Push Notifications, or automatically when publishing a post, and see the stats in your Dashboard.
 
 Features:
 
-- Self hosted: Total control of your information, free forever, and no need of third-party integrations.
+- Self-hosted: total control of your information, and no need of third-party integrations.
 - Migrate users from other Push Notifications providers like OneSignal.
 - Free and Easy.
 - Send Push Notifications on posts publishing.
-- See the notifications and users stats in your Dashboard.
-- Customizable public widget.
 - Send custom Push Notifications: you can easily change the icon, the image or the URL to open.
-- The user authorization tokens stay in your push server when they subscribe to receive your Push Notifications.
-- Easily comply with GDPR.
+- See the stats in the Dashboard.
+- Customizable public widget.
+- The user authorization tokens stay in your server when they subscribe to receive your Push Notifications.
+- Easily comply with GDPR: all the Push Notifications information is processed and stored in your server.
 - Open Source Push Notifications: no hidden fees and you own your data.
 - Offline browser Push Notifications through [Push API](https://developer.mozilla.org/en-US/docs/Web/API/Push_API).
 
@@ -73,9 +73,9 @@ The `gmp` extension is optional in PHP >= 7.3. In PHP 7.2 you can't generate the
 
 It depends on the operating system, but in theory you install it as a regular PHP extension. More information: [Install the gmp extension](https://github.com/rwngallego/perfecty-push-wp/wiki/Troubleshooting#install-the-gmp-extension)
 
-= Is this tested in production? =
+= Is this working in production? =
 
-This plugin has been deployed in a real site with more than 800.000 monthly visits, however we recommend you to test it before deploying it to a production environment.
+This plugin has been deployed in a real site with more than 800.000 monthly visits and around 3.000 Push Notifications subscribers (~90.000 notifications/month), however we recommend you to test it before deploying it to a production environment.
 
 = How do I report a bug? =
 
@@ -96,7 +96,7 @@ You can create an issue in our Github repo:
 == Changelog ==
 
 = 1.0.5 =
-* Implement internationalization
+* Implement internationalization. Thanks to [@mociofiletto](https://profiles.wordpress.org/mociofiletto/)
 * Support older Wordpress versions
 
 = 1.0 =
