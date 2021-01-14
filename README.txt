@@ -10,11 +10,11 @@ License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 == Description ==
-Push Notifications that are self-hosted, you don't need API keys to integrate with external Push Notifications providers that will charge you later. It's Open Source and the information is stored in WordPress, so that you can Send Push Notifications directly from your server for free!
+Push Notifications that are self-hosted, you don't need API keys to integrate with external Push Notifications providers that will charge you later. It's Open Source and the information is stored in WordPress, so that you can send Push Notifications directly from your server for free!
 
 In a rush looking for Push Notifications alternatives now that you've exceeded the free-tier of your current provider? Loosing your users every time you change your Push Notifications provider? Worried about where the Push Notifications information is stored? **With this plugin you don't worry about that**.
 
- Easily migrate your users from other providers, send custom Push Notifications, or automatically when publishing a post, and see the stats in your Dashboard.
+Easily migrate your users from other providers, send custom Push Notifications, or automatically when publishing a post, and see the stats in your Dashboard.
 
 Features:
 

@@ -31,7 +31,8 @@ class Perfecty_Push_Users {
 		$remote_ip = $_SERVER['REMOTE_ADDR'];
 
 		// Validate the nonce
-		if ( check_ajax_referer( 'wp_rest', '_wpnonce', false ) == false ) {
+		$nonce = isset( $_SERVER['HTTP_X_WP_NONCE'] ) ? $_SERVER['HTTP_X_WP_NONCE'] : '';
+		if ( wp_verify_nonce( $nonce, 'wp_rest' ) === false ) {
 			$this->terminate();
 		}
 
@@ -91,7 +92,8 @@ class Perfecty_Push_Users {
 		$user_id   = $data['user_id'] ?? null;
 
 		// Validate the nonce
-		if ( check_ajax_referer( 'wp_rest', '_wpnonce', false ) == false ) {
+		$nonce = isset( $_SERVER['HTTP_X_WP_NONCE'] ) ? $_SERVER['HTTP_X_WP_NONCE'] : '';
+		if ( wp_verify_nonce( $nonce, 'wp_rest' ) === false ) {
 			$this->terminate();
 		}
 

@@ -20,7 +20,7 @@ function registerServiceWorker(path, siteUrl, vapidPublicKey64, nonce) {
         });
     }).then((user) => {
         // we send the registration details to the server
-        path = siteUrl + "/wp-json/perfecty-push/v1/register?_wpnonce=" + nonce
+        path = siteUrl + "/wp-json/perfecty-push/v1/register"
         const payload = {
             user: user
         }
@@ -28,7 +28,8 @@ function registerServiceWorker(path, siteUrl, vapidPublicKey64, nonce) {
         fetch(path, {
             method: 'put',
             headers: {
-                'Content-type': 'application/json'
+                'Content-type': 'application/json',
+                'X-WP-Nonce': nonce
             },
             body: JSON.stringify(payload)
         })
@@ -166,7 +167,7 @@ function showMessage(message) {
 }
 
 function setUserActive(nonce, siteUrl, userId, isActive) {
-    const path = siteUrl + "/wp-json/perfecty-push/v1/user/active?_wpnonce=" + nonce
+    const path = siteUrl + "/wp-json/perfecty-push/v1/user/active"
     const payload = {
         user_id: userId,
         is_active: isActive
@@ -175,7 +176,8 @@ function setUserActive(nonce, siteUrl, userId, isActive) {
     return fetch(path, {
         method: 'put',
         headers: {
-            'Content-type': 'application/json'
+            'Content-type': 'application/json',
+            'X-WP-Nonce': nonce
         },
         body: JSON.stringify(payload)
     })

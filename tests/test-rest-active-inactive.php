@@ -15,13 +15,13 @@ class RestActiveInactiveTest extends WP_UnitTestCase {
 	public function setUp() {
 		parent::setUp();
 		activate_perfecty_push();
-		$_REQUEST['_ajax_nonce'] = wp_create_nonce( 'wp_rest' );
+		$_SERVER['HTTP_X_WP_NONCE'] = wp_create_nonce( 'wp_rest' );
 	}
 
 	public function tearDown() {
 		\Mockery::close();
 		deactivate_perfecty_push();
-		unset( $_REQUEST['_ajax_nonce'] );
+		unset( $_SERVER['HTTP_X_WP_NONCE'] );
 		parent::tearDown();
 	}
 
@@ -132,7 +132,7 @@ class RestActiveInactiveTest extends WP_UnitTestCase {
 	 * Test setting active/inactive with invalid nonce
 	 */
 	public function test_active_inactive_invalid_nonce() {
-		unset( $_REQUEST['_ajax_nonce'] );
+		unset( $_SERVER['HTTP_X_WP_NONCE'] );
 		$mock = Mockery::mock( Perfecty_Push_Users::class )->makePartial();
 		$mock
 		->shouldReceive( 'terminate' )

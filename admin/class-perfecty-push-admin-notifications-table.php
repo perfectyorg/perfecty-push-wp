@@ -84,6 +84,7 @@ class Perfecty_Push_Admin_Notifications_Table extends WP_List_Table {
 			'payload'    => esc_html__( 'Payload', 'perfecty-push-notifications' ),
 			'status'     => esc_html__( 'Status', 'perfecty-push-notifications' ),
 			'total'      => esc_html__( 'Total', 'perfecty-push-notifications' ),
+			'succeeded'  => esc_html__( 'Succeeded', 'perfecty-push-notifications' ),
 		);
 		return $columns;
 	}
