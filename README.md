@@ -17,6 +17,8 @@ No hidden fees, no third-party dependencies and you own your data. 👏
 **Install it now:**
 [https://wordpress.org/plugins/perfecty-push-notifications/](https://wordpress.org/plugins/perfecty-push-notifications/)
 
+**More information about the project: **[https://perfecty.org/](https://perfecty.org/)
+
 ## Features ✨
 
 - **Open Source**, send Push Notifications **from your server for free!**
@@ -42,7 +44,7 @@ To see it in action in your local development environment, you need a set of
 services which Wordpress relies on. You start off by creating the docker image:
 
 ```
-docker build -t custom-wordpress:5.6.0-php7.2-apache .
+docker build -t custom-wordpress:beta-5.7-php7.3-apache .
 ```
 
 Then start all the services and run the setup:

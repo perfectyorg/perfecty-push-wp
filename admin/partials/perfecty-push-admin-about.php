@@ -19,7 +19,7 @@
 			// translators: %1$s is the opening a tag
 			// translators: %2$s is the closing a tag
 			esc_html__( '%1$sPerfecty Push WP%2$s is a WordPress plugin that allows you to send push notifications directly from your own server: No hidden fees, no third-party dependencies and you own your data.', 'perfecty-push-notifications' ),
-			'<a href="https://github.com/rwngallego/perfecty-push-wp" target="_blank">',
+			'<a href="https://perfecty.org/" target="_blank">',
 			'</a>'
 		);
 		?>

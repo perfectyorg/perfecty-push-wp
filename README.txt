@@ -1,10 +1,10 @@
 === Perfecty Push Notifications ===
-Contributors: rwngallego
+Contributors: rwngallego, mociofiletto
 Donate link: https://github.com/rwngallego
 Tags: Push Notifications, Web Push Notifications, Notifications, User engagement
 Requires at least: 5.0
-Tested up to: 5.6
-Stable tag: 1.0.5
+Tested up to: 5.7
+Stable tag: 1.0.6
 Requires PHP: 7.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -94,6 +94,9 @@ You can create an issue in our Github repo:
 8. Settings
 
 == Changelog ==
+
+= 1.0.6 =
+* Added WordPress 5.7 support
 
 = 1.0.5 =
 * Implement internationalization. Thanks to [@mociofiletto](https://profiles.wordpress.org/mociofiletto/)
