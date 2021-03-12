@@ -39,7 +39,7 @@ define( 'PERFECTY_PUSH_VERSION', '1.0.6' );
 /**
  * DB Version of the plugin
  */
-define( 'PERFECTY_PUSH_DB_VERSION', '1.0.0' );
+define( 'PERFECTY_PUSH_DB_VERSION', 2 );
 
 /**
  * The code that runs during plugin activation.
@@ -77,7 +77,7 @@ if ( version_compare( PHP_VERSION, '7.2.0', '>=' ) ) {
 	Class_Perfecty_Push_Lib_Utils::check_gmp();
 } else {
 	error_log( sprintf( 'Wrong PHP version: %s', PHP_VERSION ) );
-	Class_Perfecty_Push_Lib_Utils::show_message( 'Perfecty Push requires PHP >= 7.2.0' );
+	Class_Perfecty_Push_Lib_Utils::show_message( 'Perfecty Push requires PHP >= 7.2.0', 'error' );
 	Class_Perfecty_Push_Lib_Utils::disable();
 }
 

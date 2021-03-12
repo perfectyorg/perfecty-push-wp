@@ -17,7 +17,7 @@ No hidden fees, no third-party dependencies and you own your data. 👏
 **Install it now:**
 [https://wordpress.org/plugins/perfecty-push-notifications/](https://wordpress.org/plugins/perfecty-push-notifications/)
 
-**More information about the project: **[https://perfecty.org/](https://perfecty.org/)
+**More information about the project:** [https://perfecty.org/](https://perfecty.org/)
 
 ## Features ✨
 

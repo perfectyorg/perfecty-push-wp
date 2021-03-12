@@ -210,7 +210,7 @@ class Perfecty_Push {
 			);
 		} elseif ( $plugin_activated == 1 ) {
 			error_log( 'VAPID Keys are missing' );
-			Class_Perfecty_Push_Lib_Utils::show_message( "The VAPID keys are missing in Perfecty Push. Help: <a href='https://github.com/rwngallego/perfecty-push-wp/wiki/Troubleshooting#the-vapid-keys-are-missing-in-perfecty-push-generate-the-vapid-keys' target='_blank'>Generate the VAPID Keys</a>." );
+			Class_Perfecty_Push_Lib_Utils::show_message( "The VAPID keys are missing in Perfecty Push. Help: <a href='https://github.com/rwngallego/perfecty-push-wp/wiki/Troubleshooting#the-vapid-keys-are-missing-in-perfecty-push-generate-the-vapid-keys' target='_blank'>Generate the VAPID Keys</a>.", 'warning' );
 			Class_Perfecty_Push_Lib_Utils::disable();
 			return false;
 		}
@@ -232,7 +232,7 @@ class Perfecty_Push {
 			Perfecty_Push_Lib_Push_Server::bootstrap( $webpush, $vapid_generator );
 		} catch ( \Exception $ex ) {
 			error_log( 'Could not bootstrap the Push Server: ' . $ex->getMessage() . ', ' . $ex->getTraceAsString() );
-			Class_Perfecty_Push_Lib_Utils::show_message( 'Could not bootstrap Perfecty Push, check the php error logs for more information.' );
+			Class_Perfecty_Push_Lib_Utils::show_message( 'Could not bootstrap Perfecty Push, check the php error logs for more information.', 'warning' );
 			Class_Perfecty_Push_Lib_Utils::disable();
 		}
 		restore_error_handler();

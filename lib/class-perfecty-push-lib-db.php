@@ -20,11 +20,11 @@ class Perfecty_Push_Lib_Db {
 		return $wpdb->prefix . $table;
 	}
 
-	private static function users_table() {
+	public static function users_table() {
 		return self::with_prefix( 'perfecty_push_users' );
 	}
 
-	private static function notifications_table() {
+	public static function notifications_table() {
 		return self::with_prefix( 'perfecty_push_notifications' );
 	}
 
@@ -34,7 +34,7 @@ class Perfecty_Push_Lib_Db {
 	public static function db_create() {
 		global $wpdb;
 
-		$installed_version = get_option( 'perfecty_push_db_version' );
+		$db_version = get_option( 'perfecty_push_db_version' );
 
 		// We need this for dbDelta() to work
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
@@ -44,7 +44,7 @@ class Perfecty_Push_Lib_Db {
 		$notifications_table = self::notifications_table();
 
 		// We execute the queries per table
-		$sql = "CREATE TABLE IF NOT EXISTS $user_table (
+		$sql = "CREATE TABLE $user_table (
           id int(11) NOT NULL AUTO_INCREMENT,
           uuid char(36) NOT NULL,
           remote_ip varchar(46) DEFAULT '',
@@ -55,12 +55,11 @@ class Perfecty_Push_Lib_Db {
           disabled tinyint(1) DEFAULT 0 NOT NULL,
           created_at datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
           PRIMARY KEY  (id),
-          UNIQUE KEY users_uuid_uk (uuid),
-          UNIQUE KEY users_endpoint_uk (endpoint)
+          UNIQUE KEY users_uuid_uk (uuid)
         ) $charset;";
 		dbDelta( $sql );
 
-		$sql = "CREATE TABLE IF NOT EXISTS $notifications_table (
+		$sql = "CREATE TABLE $notifications_table (
           id int(11) NOT NULL AUTO_INCREMENT,
           payload varchar(500) NOT NULL,
           total int(11) DEFAULT 0 NOT NULL,
@@ -75,8 +74,14 @@ class Perfecty_Push_Lib_Db {
         ) $charset;";
 		dbDelta( $sql );
 
-		if ( $installed_version != PERFECTY_PUSH_DB_VERSION ) {
-			// perform update according to https://codex.wordpress.org/Creating_Tables_with_Plugins
+        if ( $db_version != PERFECTY_PUSH_DB_VERSION ) {
+            if ($db_version == 1) {
+                //manual: dbDelta doesn't drop indexes
+                if ($wpdb->get_var("SHOW INDEX FROM $user_table WHERE Key_name='users_endpoint_uk'") !== null) {
+                    $wpdb->query("ALTER TABLE $user_table DROP INDEX users_endpoint_uk");
+                }
+            }
+
 			update_option( 'perfecty_push_db_version', PERFECTY_PUSH_DB_VERSION );
 		}
 	}
