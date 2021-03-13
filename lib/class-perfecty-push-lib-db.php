@@ -74,13 +74,13 @@ class Perfecty_Push_Lib_Db {
         ) $charset;";
 		dbDelta( $sql );
 
-        if ( $db_version != PERFECTY_PUSH_DB_VERSION ) {
-            if ($db_version == 1) {
-                //manual: dbDelta doesn't drop indexes
-                if ($wpdb->get_var("SHOW INDEX FROM $user_table WHERE Key_name='users_endpoint_uk'") !== null) {
-                    $wpdb->query("ALTER TABLE $user_table DROP INDEX users_endpoint_uk");
-                }
-            }
+		if ( $db_version != PERFECTY_PUSH_DB_VERSION ) {
+			if ( $db_version == 1 ) {
+				// manual: dbDelta doesn't drop indexes
+				if ( $wpdb->get_var( "SHOW INDEX FROM $user_table WHERE Key_name='users_endpoint_uk'" ) !== null ) {
+					$wpdb->query( "ALTER TABLE $user_table DROP INDEX users_endpoint_uk" );
+				}
+			}
 
 			update_option( 'perfecty_push_db_version', PERFECTY_PUSH_DB_VERSION );
 		}
@@ -239,28 +239,14 @@ class Perfecty_Push_Lib_Db {
 	public static function get_user_by_uuid( $uuid ) {
 		global $wpdb;
 
+		if ( ! $uuid ) {
+			return null;
+		}
+
 		$sql    = $wpdb->prepare(
 			'SELECT ' . self::$allowed_users_fields .
 			' FROM ' . self::users_table() . ' WHERE uuid=%s',
 			$uuid
-		);
-		$result = $wpdb->get_row( $sql );
-		return $result;
-	}
-
-	/**
-	 * Get the user by endpoint
-	 *
-	 * @param $endpoint string User endpoint
-	 * @return object|null User or null
-	 */
-	public static function get_user_by_endpoint( $endpoint ) {
-		global $wpdb;
-
-		$sql    = $wpdb->prepare(
-			'SELECT ' . self::$allowed_users_fields .
-			' FROM ' . self::users_table() . ' WHERE endpoint=%s',
-			$endpoint
 		);
 		$result = $wpdb->get_row( $sql );
 		return $result;

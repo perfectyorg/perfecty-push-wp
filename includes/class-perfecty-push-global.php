@@ -35,11 +35,11 @@ class Perfecty_Push_Global {
 	 * @access   private
 	 */
 	public function db_upgrade_check() {
-        $plugin_activated = get_option( 'perfecty_push_activated', 0 );
+		$plugin_activated = get_option( 'perfecty_push_activated', 0 );
 
-	    if ( $plugin_activated == 1) {
-            Class_Perfecty_Push_Lib_Utils::check_database();
-        }
+		if ( $plugin_activated == 1 ) {
+			Class_Perfecty_Push_Lib_Utils::check_database();
+		}
 
 		if ( get_option( 'perfecty_push_db_version' ) != PERFECTY_PUSH_DB_VERSION ) {
 			Perfecty_Push_Lib_Db::db_create();

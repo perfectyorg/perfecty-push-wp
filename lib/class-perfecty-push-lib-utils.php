@@ -39,7 +39,7 @@ class Class_Perfecty_Push_Lib_Utils {
 	 * Displays a message
 	 *
 	 * @param $message
-     * @param $type Default: success, values: success, warning, error
+	 * @param $type Default: success, values: success, warning, error
 	 */
 	public static function show_message( $message, $type = 'success' ) {
 		$notice = array(
@@ -74,18 +74,18 @@ class Class_Perfecty_Push_Lib_Utils {
 		}
 	}
 
-    /**
-     * Check that the tables have been created
-     */
+	/**
+	 * Check that the tables have been created
+	 */
 	public static function check_database() {
-        global $wpdb;
+		global $wpdb;
 
-        $user_table = Perfecty_Push_Lib_Db::users_table();
-	    $notifications_table = Perfecty_Push_Lib_Db::notifications_table();
+		$user_table          = Perfecty_Push_Lib_Db::users_table();
+		$notifications_table = Perfecty_Push_Lib_Db::notifications_table();
 
-        if (!$wpdb->get_var("SHOW TABLES LIKE '$user_table'") ||
-            !$wpdb->get_var("SHOW TABLES LIKE '$notifications_table'")) {
-            self::show_message("The tables for Perfecty Push are missing, check the error logs and reactivate the plugin again.", 'error');
-        }
-    }
+		if ( ! $wpdb->get_var( "SHOW TABLES LIKE '$user_table'" ) ||
+			! $wpdb->get_var( "SHOW TABLES LIKE '$notifications_table'" ) ) {
+			self::show_message( 'The tables for Perfecty Push are missing, check the error logs and reactivate the plugin again.', 'error' );
+		}
+	}
 }

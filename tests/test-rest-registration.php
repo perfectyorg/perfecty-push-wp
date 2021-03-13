@@ -79,6 +79,7 @@ class RestRegistrationTest extends WP_UnitTestCase {
                     'p256dh' => 'updated_my_p256dh_key',
                 ),
             ),
+            'user_id' => $user->uuid
         );
 
         $res           = $registration->register( $data );
@@ -189,6 +190,7 @@ class RestRegistrationTest extends WP_UnitTestCase {
      */
     public function test_registration_existing_user_db_error() {
         $id = Perfecty_Push_Lib_Db::create_user( 'http://my_endpoint', 'my_key_auth', 'my_p256dh_key', '192.168.0.1' );
+        $user = Perfecty_Push_Lib_Db::get_user($id);
         $registrations = new Perfecty_Push_Users();
         $data        = array(
             'user' => array(
@@ -198,6 +200,7 @@ class RestRegistrationTest extends WP_UnitTestCase {
                     'p256dh' => 'my_p256dh_key',
                 ),
             ),
+            'user_id' => $user->uuid
         );
 
         $res = $registrations->register( $data );
