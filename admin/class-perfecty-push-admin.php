@@ -370,24 +370,17 @@ class Perfecty_Push_Admin {
 
 			if ( $result === false ) {
 				error_log( esc_html__( 'Could not schedule the broadcast async, check the logs', 'perfecty-push-notifications' ) );
-				$notice = array(
-					'type'    => 'error',
-					'message' => esc_html__( 'Could not send the notification', 'perfecty-push-notifications' ),
-				);
+				Class_Perfecty_Push_Lib_Utils::show_message( esc_html__( 'Could not send the notification', 'perfecty-push-notifications' ), 'error' );
 			} else {
-				$notice = array(
-					'type'    => 'success',
-					'message' => '<strong>Perfecty Push</strong> ' . esc_html__( 'has sent a notification for the recently published post:', 'perfecty-push-notifications' ) . ' ' . $body,
-				);
 				if ( isset( $_POST['perfecty_push_post_metabox_nonce'] ) ) {
 					// once we sent the notification, we reset the checkbox when the
 					// hook was triggered after clicking the save button
 					unset( $_POST['perfecty_push_send_on_publish'] );
 				}
 				update_post_meta( $post->ID, '_perfecty_push_send_on_publish', false );
-			}
 
-			set_transient( 'perfecty_push_admin_notice', $notice );
+				Class_Perfecty_Push_Lib_Utils::show_message( '<strong>Perfecty Push</strong> ' . esc_html__( 'has sent a notification for the recently published post:', 'perfecty-push-notifications' ) . ' ' . $body );
+			}
 		}
 	}
 
@@ -403,8 +396,10 @@ class Perfecty_Push_Admin {
 			$type    = $notice['type'];
 			$message = $notice['message'];
 
-			if ( $type === 'error' ) {
+			if ( $type === 'warning' ) {
 				printf( '<div class="notice notice-warning is-dismissible"><p>%s</p></div>', $message );
+			} elseif ( $type === 'error' ) {
+				printf( '<div class="notice notice-error is-dismissible"><p>%s</p></div>', $message );
 			} else {
 				printf( '<div class="notice notice-success is-dismissible"><p>%s</p></div>', $message );
 			}

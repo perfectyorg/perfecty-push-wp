@@ -17,7 +17,7 @@ No hidden fees, no third-party dependencies and you own your data. 👏
 **Install it now:**
 [https://wordpress.org/plugins/perfecty-push-notifications/](https://wordpress.org/plugins/perfecty-push-notifications/)
 
-**More information about the project: **[https://perfecty.org/](https://perfecty.org/)
+**More information about the project:** [https://perfecty.org/](https://perfecty.org/)
 
 ## Features ✨
 
@@ -136,11 +136,18 @@ The bell icon is a Font Awesome icon, a [CC BY 4.0 License](https://creativecomm
 
 <span>Banner photo by <a href="https://unsplash.com/@nasa?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">NASA</a> on <a href="https://unsplash.com/s/photos/world?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">Unsplash</a></span>
 
+## Contributing
+
+If you're interesting on contributing to this project, feel free to submit your
+suggestions as a PR or an issue directly to any of the projects repos.
+Remember to read the [Code of Conduct](./CONDUCT) and the license information
+of each project, which in general use the MIT license, except the WordPress plugin (GPL v2).
+
 ## Collaborators 🔥
 
-[<img alt="rwngallego" src="https://avatars3.githubusercontent.com/u/691521?s=460&u=ceab22655f55101b66f8e79ed08007e2f8034f34&v=4" width="117">](https://github.com/rwngallego) |
-:---: |
-[Rowinson Gallego](https://www.linkedin.com/in/rwngallego/) |
+[<img src="https://avatars3.githubusercontent.com/u/691521?s=460&u=ceab22655f55101b66f8e79ed08007e2f8034f34&v=4" width="117">](https://github.com/rwngallego) | [<img src="https://avatars.githubusercontent.com/u/26635356?s=460&v=4" width="117">](https://github.com/MocioF) |
+:---: | :---: |
+[Rowinson Gallego](https://github.com/rwngallego) | [MocioF](https://github.com/MocioF) |
 
 ## Special Thanks
 

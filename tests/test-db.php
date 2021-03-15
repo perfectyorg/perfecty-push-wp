@@ -34,7 +34,6 @@ class DbTest extends WP_UnitTestCase {
 		$result = $wpdb->get_row( $sql, ARRAY_A );
 
 		$expected = array(
-			'id'         => 1,
 			'endpoint'   => 'my_endpoint_url',
 			'key_auth'   => 'my_key_auth',
 			'key_p256dh' => 'my_p256dh_key',
@@ -198,22 +197,6 @@ class DbTest extends WP_UnitTestCase {
 	}
 
     /**
-     * Test get user by endpoint
-     */
-    public function test_get_user_by_endpoint() {
-        $id              = Perfecty_Push_Lib_Db::create_user( 'my_existing_endpoint_url', 'my_key_auth', 'my_p256dh_key', '127.0.0.1' );
-        $expected        = array(
-            'endpoint'   => 'my_existing_endpoint_url',
-            'key_auth'   => 'my_key_auth',
-            'key_p256dh' => 'my_p256dh_key',
-            'remote_ip'  => '127.0.0.1',
-        );
-
-        $user = Perfecty_Push_Lib_Db::get_user_by_endpoint( "my_existing_endpoint_url" );
-        $this->assertArraySubset( $expected, (array) $user );
-    }
-
-    /**
      * Test update user
      */
     public function test_update_user() {
@@ -330,7 +313,6 @@ class DbTest extends WP_UnitTestCase {
 		$result = $wpdb->get_row( $sql, ARRAY_A );
 
 		$expected = array(
-			'id'          => 1,
 			'payload'     => 'my_payload',
 			'total'       => 35,
 			'succeeded'   => 0,

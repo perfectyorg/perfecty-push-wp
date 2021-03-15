@@ -28,6 +28,7 @@ class Perfecty_Push_Users {
 	public function register( $data ) {
 		// Request
 		$user      = $data['user'] ?? null;
+		$user_id   = $data['user_id'] ?? null;
 		$remote_ip = $_SERVER['REMOTE_ADDR'];
 
 		// Validate the nonce
@@ -43,15 +44,16 @@ class Perfecty_Push_Users {
 		$key_p256dh = $res[2];
 
 		// Process request
-		$validation = $this->validate( $endpoint, $key_auth, $key_p256dh, $remote_ip );
+		$validation = $this->validate( $endpoint, $key_auth, $key_p256dh, $remote_ip, $user_id );
 		if ( $validation === true ) {
 			// filter data
 			$endpoint   = esc_url( $endpoint );
 			$key_auth   = sanitize_text_field( $key_auth );
 			$key_p256dh = sanitize_text_field( $key_p256dh );
 			$remote_ip  = sanitize_text_field( $remote_ip );
+			$user_id    = sanitize_text_field( $user_id );
 
-			$user = Perfecty_Push_Lib_Db::get_user_by_endpoint( $endpoint );
+			$user = Perfecty_Push_Lib_Db::get_user_by_uuid( $user_id );
 			if ( $user ) {
 				$user->key_auth   = $key_auth;
 				$user->key_p256dh = $key_p256dh;
@@ -134,7 +136,7 @@ class Perfecty_Push_Users {
 		return array( $endpoint, $key_auth, $key_p256dh );
 	}
 
-	private function validate( $endpoint, $key_auth, $key_p256dh, $remote_ip ) {
+	private function validate( $endpoint, $key_auth, $key_p256dh, $remote_ip, $user_id ) {
 		if ( ! $endpoint ) {
 			return 'No endpoint was provided in the request';
 		}
@@ -146,6 +148,9 @@ class Perfecty_Push_Users {
 		}
 		if ( ! $remote_ip ) {
 			return 'Unknown Ip address';
+		}
+		if ( $user_id && ! Uuid::isValid( $user_id ) ) {
+			return 'The user id is not a valid uuid';
 		}
 
 		// At this point everything is valid

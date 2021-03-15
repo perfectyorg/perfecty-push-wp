@@ -27,7 +27,7 @@
 class Perfecty_Push_Global {
 
 	/**
-	 * Performs a check of the DB version to run DB upgrades.
+	 * Performs a check of the DB structure and the version to run DB upgrades.
 	 * This is particularly helpful when the plugin is updated
 	 * because the register_activation_hook is not called.
 	 *
@@ -35,6 +35,12 @@ class Perfecty_Push_Global {
 	 * @access   private
 	 */
 	public function db_upgrade_check() {
+		$plugin_activated = get_option( 'perfecty_push_activated', 0 );
+
+		if ( $plugin_activated == 1 ) {
+			Class_Perfecty_Push_Lib_Utils::check_database();
+		}
+
 		if ( get_option( 'perfecty_push_db_version' ) != PERFECTY_PUSH_DB_VERSION ) {
 			Perfecty_Push_Lib_Db::db_create();
 		}

@@ -21,8 +21,10 @@ function registerServiceWorker(path, siteUrl, vapidPublicKey64, nonce) {
     }).then((user) => {
         // we send the registration details to the server
         path = siteUrl + "/wp-json/perfecty-push/v1/register"
+        const userId = localStorage.getItem("perfecty_user_id")
         const payload = {
-            user: user
+            user: user,
+            user_id: userId
         }
 
         fetch(path, {
