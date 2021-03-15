@@ -20,11 +20,11 @@ class Perfecty_Push_Lib_Db {
 		return $wpdb->prefix . $table;
 	}
 
-	public static function users_table() {
+	private static function users_table() {
 		return self::with_prefix( 'perfecty_push_users' );
 	}
 
-	public static function notifications_table() {
+	private static function notifications_table() {
 		return self::with_prefix( 'perfecty_push_notifications' );
 	}
 
@@ -84,6 +84,18 @@ class Perfecty_Push_Lib_Db {
 
 			update_option( 'perfecty_push_db_version', PERFECTY_PUSH_DB_VERSION );
 		}
+	}
+
+	/**
+	 * Check that the database tables exist
+	 *
+	 * @return bool
+	 */
+	public static function has_tables() {
+		global $wpdb;
+
+		return $wpdb->get_var( "SHOW TABLES LIKE '" . self::users_table() . "'" ) &&
+			$wpdb->get_var( "SHOW TABLES LIKE '" . self::notifications_table() . "'" );
 	}
 
 	/**

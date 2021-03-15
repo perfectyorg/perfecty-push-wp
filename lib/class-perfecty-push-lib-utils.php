@@ -75,16 +75,10 @@ class Class_Perfecty_Push_Lib_Utils {
 	}
 
 	/**
-	 * Check that the tables have been created
+	 * Check that the database structure was created
 	 */
 	public static function check_database() {
-		global $wpdb;
-
-		$user_table          = Perfecty_Push_Lib_Db::users_table();
-		$notifications_table = Perfecty_Push_Lib_Db::notifications_table();
-
-		if ( ! $wpdb->get_var( "SHOW TABLES LIKE '$user_table'" ) ||
-			! $wpdb->get_var( "SHOW TABLES LIKE '$notifications_table'" ) ) {
+		if ( ! Perfecty_Push_Lib_Db::has_tables() ) {
 			self::show_message( 'The tables for Perfecty Push are missing, check the error logs and reactivate the plugin again.', 'error' );
 		}
 	}
