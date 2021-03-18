@@ -4,14 +4,14 @@
 
 	<div class="notice notice-notice"><p><?php printf( esc_html__( 'You can also send notifications when publishing a post, edit the post > Perfecty Push > Send notifications on publish', 'perfecty-push-notifications' ) ); ?></p></div>
 	<?php if ( ! empty( $notice ) ) : ?>
-	<div id="notice" class="notice notice-warning"><p><?php echo $notice; ?></p></div>
+	<div id="notice" class="notice notice-warning"><p><?php echo esc_html( $notice ); ?></p></div>
 	<?php endif; ?>
 	<?php if ( ! empty( $message ) ) : ?>
-	<div id="message" class="notice notice-success"><p><?php echo $message; ?></p></div>
+	<div id="message" class="notice notice-success"><p><?php echo esc_html( $message ); ?></p></div>
 	<?php endif; ?>
 
 	<form id="form" method="POST">
-		<input type="hidden" name="nonce" value="<?php echo wp_create_nonce( 'perfecty_push_send_notification' ); ?>"/>
+		<input type="hidden" name="nonce" value="<?php echo esc_html( wp_create_nonce( 'perfecty_push_send_notification' ) ); ?>"/>
 
 		<div class="metabox-holder" id="poststuff">
 			<div id="post-body">

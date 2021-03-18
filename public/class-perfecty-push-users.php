@@ -61,13 +61,13 @@ class Perfecty_Push_Users {
 				$result           = Perfecty_Push_Lib_Db::update_user( $user );
 				if ( $result === false ) {
 					// Could not update the user
-					return new WP_Error( 'failed_update', 'Could not update the user', array( 'status' => 500 ) );
+					return new WP_Error( 'failed_update', __('Could not update the user', 'perfecty-push-notifications' ), array( 'status' => 500 ) );
 				}
 			} else {
 				$result = Perfecty_Push_Lib_Db::create_user( $endpoint, $key_auth, $key_p256dh, $remote_ip );
 				if ( $result === false ) {
 					// Could not subscribe
-					return new WP_Error( 'failed_create', 'Could not subscribe the user', array( 'status' => 500 ) );
+					return new WP_Error( 'failed_create', __('Could not subscribe the user', 'perfecty-push-notifications' ), array( 'status' => 500 ) );
 				}
 				$user = Perfecty_Push_Lib_Db::get_user( $result );
 			}
@@ -106,12 +106,12 @@ class Perfecty_Push_Users {
 
 		$user = Perfecty_Push_Lib_Db::get_user_by_uuid( $user_id );
 		if ( $user == null ) {
-			return new WP_Error( 'bad_request', 'user id not found', array( 'status' => 404 ) );
+			return new WP_Error( 'bad_request', __('user id not found', 'perfecty-push-notifications' ), array( 'status' => 404 ) );
 		}
 		$result = Perfecty_Push_Lib_Db::set_user_active( $user->id, $is_active );
 
 		if ( $result === false ) {
-			return new WP_Error( 'failed_update', 'Could not change the user', array( 'status' => 500 ) );
+			return new WP_Error( 'failed_update', __('Could not change the user', 'perfecty-push-notifications' ), array( 'status' => 500 ) );
 		} else {
 			$response = array(
 				'success'   => true,
@@ -138,19 +138,19 @@ class Perfecty_Push_Users {
 
 	private function validate( $endpoint, $key_auth, $key_p256dh, $remote_ip, $user_id ) {
 		if ( ! $endpoint ) {
-			return 'No endpoint was provided in the request';
+			return __('No endpoint was provided in the request', 'perfecty-push-notifications' );
 		}
 		if ( ! $key_auth ) {
-			return 'Missing the auth key';
+			return __('Missing the auth key', 'perfecty-push-notifications' );
 		}
 		if ( ! $key_p256dh ) {
-			return 'Missing the public p256dh key';
+			return __('Missing the public p256dh key', 'perfecty-push-notifications' );
 		}
 		if ( ! $remote_ip ) {
-			return 'Unknown Ip address';
+			return __('Unknown Ip address', 'perfecty-push-notifications' );
 		}
 		if ( $user_id && ! Uuid::isValid( $user_id ) ) {
-			return 'The user id is not a valid uuid';
+			return __('The user id is not a valid uuid', 'perfecty-push-notifications' );
 		}
 
 		// At this point everything is valid
@@ -166,13 +166,13 @@ class Perfecty_Push_Users {
 
 	private function validate_set_user_active( $is_active, $user_id ) {
 		if ( $is_active === null || $user_id === null ) {
-			return 'Missing parameters';
+			return __('Missing parameters', 'perfecty-push-notifications' );
 		}
 		if ( $is_active != false && $is_active != true ) {
-			return 'is_active must be a boolean';
+			return __('is_active must be a boolean', 'perfecty-push-notifications' );
 		}
 		if ( ! Uuid::isValid( $user_id ) ) {
-			return 'Invalid player ID';
+			return __('Invalid player ID', 'perfecty-push-notifications' );
 		}
 
 		return true;

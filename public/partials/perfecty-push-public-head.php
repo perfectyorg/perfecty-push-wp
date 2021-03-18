@@ -1,9 +1,9 @@
 <?php
-$perfecty_push_dialog_title    = ! empty( $options['dialog_title'] ) ? $options['dialog_title'] : 'Do you want to receive notifications?';
-$perfecty_push_dialog_submit   = ! empty( $options['dialog_submit'] ) ? $options['dialog_submit'] : 'Continue';
-$perfecty_push_dialog_cancel   = ! empty( $options['dialog_cancel'] ) ? $options['dialog_cancel'] : 'Not now';
-$perfecty_push_settings_title  = ! empty( $options['settings_title'] ) ? $options['settings_title'] : 'Notifications preferences';
-$perfecty_push_settings_opt_in = ! empty( $options['settings_opt_in'] ) ? $options['settings_opt_in'] : 'I want to receive notifications';
+$perfecty_push_dialog_title    = ! empty( $options['dialog_title'] ) ? $options['dialog_title'] : esc_html__( 'Do you want to receive notifications?', 'perfecty-push-notifications' );
+$perfecty_push_dialog_submit   = ! empty( $options['dialog_submit'] ) ? $options['dialog_submit'] : esc_html__( 'Continue', 'perfecty-push-notifications' );
+$perfecty_push_dialog_cancel   = ! empty( $options['dialog_cancel'] ) ? $options['dialog_cancel'] : esc_html__( 'Not now', 'perfecty-push-notifications' );
+$perfecty_push_settings_title  = ! empty( $options['settings_title'] ) ? $options['settings_title'] : esc_html__( 'Notifications preferences', 'perfecty-push-notifications' );
+$perfecty_push_settings_opt_in = ! empty( $options['settings_opt_in'] ) ? $options['settings_opt_in'] : esc_html__( 'I want to receive notifications', 'perfecty-push-notifications' );
 $perfecty_push_nonce           = wp_create_nonce( 'wp_rest' );
 
 if ( Class_Perfecty_Push_Lib_Utils::is_disabled() ||

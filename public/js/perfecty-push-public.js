@@ -1,5 +1,6 @@
 'use strict';
-
+// i18n support
+const { __, _x, _n, _nx } = wp.i18n;
 function checkFeatures() {
     return ('serviceWorker' in navigator) && ('PushManager' in window);
 }
@@ -41,14 +42,14 @@ function registerServiceWorker(path, siteUrl, vapidPublicKey64, nonce) {
                     localStorage.setItem("perfecty_user_id", data.uuid);
                     setUIUserActive(true);
                 } else {
-                    return Promise.reject("Unable to save the registration details")
+                    return Promise.reject(__('Unable to save the registration details', 'perfecty-push-notifications' ))
                 }
             })
             .catch(err => {
-                console.log("Error when sending the registration details", err)
+                console.log(__('Error when sending the registration details', 'perfecty-push-notifications' ), err)
             })
     }).catch(err => {
-        console.log('Unable to register the service worker', err)
+        console.log(__('Unable to register the service worker', 'perfecty-push-notifications' ), err)
     })
 }
 
@@ -205,7 +206,7 @@ function detectConflictInstallations(unregisterConflicts) {
                 conflictDetected = true
 
                 if (unregisterConflicts === true) {
-                    console.log("Unregistering conflict installation: " + registration.active.scriptURL)
+                    console.log(__('Unregistering conflict installation: ', 'perfecty-push-notifications' ) + registration.active.scriptURL)
                     promises.push(registration.unregister())
                 }
             }
@@ -247,7 +248,7 @@ async function perfectyStart(options) {
                 // when the user has granted us permissions or if there's already existing installs
                 registerServiceWorker(options.path, options.siteUrl, options.vapidPublicKey, options.nonce);
             } else {
-                console.log('Notification permission not granted')
+                console.log(__('Notification permission not granted', 'perfecty-push-notifications' ))
             }
         };
 
@@ -266,7 +267,7 @@ async function perfectyStart(options) {
             if (checked == true && permission === 'default') {
                 showDialogControl();
             } else if (checked === true && permission === 'denied') {
-                showMessage("You need to allow notifications for this website");
+                showMessage(__('You need to allow notifications for this website', 'perfecty-push-notifications' ));
             } else if (checked === true && permission === 'granted') {
                 // Activate the user
                 const userId = localStorage.getItem("perfecty_user_id");
@@ -275,7 +276,7 @@ async function perfectyStart(options) {
                         if (success === true) {
                             setUIUserActive(true);
                         } else {
-                            showMessage("Could not change the preference, try again");
+                            showMessage(__('Could not change the preference, try again', 'perfecty-push-notifications' ));
                         }
                     })
             } else {
@@ -286,13 +287,13 @@ async function perfectyStart(options) {
                         if (success === true) {
                             setUIUserActive(false);
                         } else {
-                            showMessage("Could not change the preference, try again");
+                            showMessage(__('Could not change the preference, try again', 'perfecty-push-notifications' ));
                         }
                     });
             }
         }
     } else {
-        console.log('Browser doesn\'t support notifications or the widget is disabled');
+        console.log(__('Browser doesn\'t support notifications or the widget is disabled', 'perfecty-push-notifications' ));
     }
 }
 

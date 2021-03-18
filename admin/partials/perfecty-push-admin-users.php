@@ -5,11 +5,11 @@
 
 	<?php
 	if ( ! empty( $message ) ) {
-		echo $message;}
+		echo esc_html( $message );}
 	?>
 
 	<form method="POST">
-		<input type="hidden" name="page" value="<?php echo $page; ?>"/>
+		<input type="hidden" name="page" value="<?php echo esc_html( $page ); ?>"/>
 		<?php $table->display(); ?>
 	</form>
 
