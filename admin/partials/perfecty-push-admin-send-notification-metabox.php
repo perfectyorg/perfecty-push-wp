@@ -25,7 +25,7 @@
 	<div>
 		<p>
 			<label for="perfecty-push-send-notification-url-to-open-custom"><?php printf( esc_html__( 'Url to open', 'perfecty-push-notifications' ) ); ?> <i>
-			  <?php printf( esc_html__( '(default: %s)', 'perfecty-push-notifications' ), site_url() ); ?></i></label>
+			  <?php printf( esc_html__( '(default: %s)', 'perfecty-push-notifications' ), esc_html( site_url() ) ); ?></i></label>
 			<br>
 			<input id="perfecty-push-send-notification-url-to-open-custom" name="perfecty-push-send-notification-url-to-open-custom" type="checkbox"/>
 			<input id="perfecty-push-send-notification-url-to-open" name="perfecty-push-send-notification-url-to-open" type="text" value="<?php echo esc_attr( $item['perfecty-push-send-notification-url-to-open'] ); ?>" disabled="disabled">
@@ -38,7 +38,7 @@
 		if ( empty( $icon_url ) ) {
 			echo '<i>' . esc_html__( 'Add a website icon in Appearance > Customize > Site Identity', 'perfecty-push-notifications' ) . '</i>';
 		} else {
-			echo '<br/><img class="perfecty-push-send-notification-icon" src="' . $icon_url . '" alt="icon"/>';
+			echo '<br/><img class="perfecty-push-send-notification-icon" src="' . esc_html( $icon_url ) . '" alt="icon"/>';
 		}
 		?>
 	</div>

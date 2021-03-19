@@ -88,9 +88,9 @@
 		// translators: %3$s is the opening a tag
 		// translators: %4$s is the closing a tag
 		esc_html__( 'Welcome to Perfecty Push. Start off by subscribing from the %1$s front page %2$s and send your first %3$s notification %4$s', 'perfecty-push-notifications' ),
-		'<a href="' . site_url() . '">',
+		'<a href="' . esc_html( site_url() ) . '">',
 		'</a>',
-		'<a href="' . admin_url( 'admin.php?page=perfecty-push-send-notification' ) . '">',
+		'<a href="' . esc_html( admin_url( 'admin.php?page=perfecty-push-send-notification' ) ) . '">',
 		'</a>'
 	);
 	?>
@@ -102,40 +102,40 @@
 		<div>
 			<h3><?php printf( esc_html__( 'Users', 'perfecty-push-notifications' ) ); ?></h3>
 			<div class="perfecty-push-stats-text">
-				<span><?php printf( esc_html__( 'Total users:', 'perfecty-push-notifications' ) ); ?> </span><span><?php echo $users_stats['total']; ?></span>
+				<span><?php printf( esc_html__( 'Total users:', 'perfecty-push-notifications' ) ); ?> </span><span><?php echo esc_html( $users_stats['total'] ); ?></span>
 			</div>
 			<div class="perfecty-push-stats-text">
-				<span><?php printf( esc_html__( 'Active:', 'perfecty-push-notifications' ) ); ?> </span><span><?php echo $users_stats['active']; ?></span>
+				<span><?php printf( esc_html__( 'Active:', 'perfecty-push-notifications' ) ); ?> </span><span><?php echo esc_html( $users_stats['active'] ); ?></span>
 			</div>
 			<div class="perfecty-push-stats-text">
-				<span><?php printf( esc_html__( 'Inactive:', 'perfecty-push-notifications' ) ); ?> </span><span><?php echo $users_stats['inactive']; ?></span>
+				<span><?php printf( esc_html__( 'Inactive:', 'perfecty-push-notifications' ) ); ?> </span><span><?php echo esc_html( $users_stats['inactive'] ); ?></span>
 			</div>
 		</div>
 		<div>
 			<h3><?php printf( esc_html__( 'Notifications', 'perfecty-push-notifications' ) ); ?></h3>
 			<div class="perfecty-push-stats-text">
-				<span><?php printf( esc_html__( 'Total notifications:', 'perfecty-push-notifications' ) ); ?> </span><span><?php echo $notifications_stats['total']; ?></span>
+				<span><?php printf( esc_html__( 'Total notifications:', 'perfecty-push-notifications' ) ); ?> </span><span><?php echo esc_html( $notifications_stats['total'] ); ?></span>
 			</div>
 			<div class="perfecty-push-stats-text">
-				<span><?php printf( esc_html__( 'Succeeded:', 'perfecty-push-notifications' ) ); ?> </span><span><?php echo $notifications_stats['succeeded']; ?></span>
+				<span><?php printf( esc_html__( 'Succeeded:', 'perfecty-push-notifications' ) ); ?> </span><span><?php echo esc_html( $notifications_stats['succeeded'] ); ?></span>
 			</div>
 			<div class="perfecty-push-stats-text">
-				<span><?php printf( esc_html__( 'Failed:', 'perfecty-push-notifications' ) ); ?> </span><span><?php echo $notifications_stats['failed']; ?></span>
+				<span><?php printf( esc_html__( 'Failed:', 'perfecty-push-notifications' ) ); ?> </span><span><?php echo esc_html( $notifications_stats['failed'] ); ?></span>
 			</div>
 		</div>
 		<div>
 			<h3><?php printf( esc_html__( 'Jobs', 'perfecty-push-notifications' ) ); ?></h3>
 			<div class="perfecty-push-stats-text">
-				<span><?php printf( esc_html__( 'Completed:', 'perfecty-push-notifications' ) ); ?> </span><span><?php echo $jobs_stats['completed']; ?></span>
+				<span><?php printf( esc_html__( 'Completed:', 'perfecty-push-notifications' ) ); ?> </span><span><?php echo esc_html( $jobs_stats['completed'] ); ?></span>
 			</div>
 			<div class="perfecty-push-stats-text">
-				<span><?php printf( esc_html__( 'Running:', 'perfecty-push-notifications' ) ); ?> </span><span><?php echo $jobs_stats['running']; ?></span>
+				<span><?php printf( esc_html__( 'Running:', 'perfecty-push-notifications' ) ); ?> </span><span><?php echo esc_html( $jobs_stats['running'] ); ?></span>
 			</div>
 			<div class="perfecty-push-stats-text">
-				<span><?php printf( esc_html__( 'Scheduled:', 'perfecty-push-notifications' ) ); ?> </span><span><?php echo $jobs_stats['scheduled']; ?></span>
+				<span><?php printf( esc_html__( 'Scheduled:', 'perfecty-push-notifications' ) ); ?> </span><span><?php echo esc_html( $jobs_stats['scheduled'] ); ?></span>
 			</div>
 			<div class="perfecty-push-stats-text">
-				<span><?php printf( esc_html__( 'Failed:', 'perfecty-push-notifications' ) ); ?> </span><span><?php echo $jobs_stats['failed']; ?></span>
+				<span><?php printf( esc_html__( 'Failed:', 'perfecty-push-notifications' ) ); ?> </span><span><?php echo esc_html( $jobs_stats['failed'] ); ?></span>
 			</div>
 		</div>
 	</div>

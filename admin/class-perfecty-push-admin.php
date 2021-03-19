@@ -397,11 +397,11 @@ class Perfecty_Push_Admin {
 			$message = $notice['message'];
 
 			if ( $type === 'warning' ) {
-				printf( '<div class="notice notice-warning is-dismissible"><p>%s</p></div>', $message );
+				printf( '<div class="notice notice-warning is-dismissible"><p>%s</p></div>', esc_html( $message ) );
 			} elseif ( $type === 'error' ) {
-				printf( '<div class="notice notice-error is-dismissible"><p>%s</p></div>', $message );
+				printf( '<div class="notice notice-error is-dismissible"><p>%s</p></div>', esc_html( $message ) );
 			} else {
-				printf( '<div class="notice notice-success is-dismissible"><p>%s</p></div>', $message );
+				printf( '<div class="notice notice-success is-dismissible"><p>%s</p></div>', esc_html( $message ) );
 			}
 
 			delete_transient( 'perfecty_push_admin_notice' );
@@ -667,7 +667,7 @@ class Perfecty_Push_Admin {
 		printf(
 			'<input type="text" id="perfecty_push[vapid_public_key]"' .
 			'name="perfecty_push[vapid_public_key]" value="%s"/>',
-			$value
+			esc_html( $value )
 		);
 	}
 
@@ -683,7 +683,7 @@ class Perfecty_Push_Admin {
 		printf(
 			'<input type="text" id="perfecty_push[vapid_private_key]"' .
 			'name="perfecty_push[vapid_private_key]" value="%s"/>',
-			$value
+			esc_html( $value )
 		);
 	}
 
@@ -699,7 +699,7 @@ class Perfecty_Push_Admin {
 		printf(
 			'<input type="text" id="perfecty_push[server_url]"' .
 			'name="perfecty_push[server_url]" value="%s" placeholder="127.0.0.1:8777"/>',
-			$value
+			esc_html( $value )
 		);
 	}
 
@@ -715,7 +715,7 @@ class Perfecty_Push_Admin {
 		printf(
 			'<input type="text" id="perfecty_push[batch_size]"' .
 			'name="perfecty_push[batch_size]" value="%s"/>',
-			$value
+			esc_html( $value )
 		);
 	}
 
@@ -733,7 +733,7 @@ class Perfecty_Push_Admin {
 		printf(
 			'<input type="checkbox" id="perfecty_push[widget_enabled]"' .
 			'name="perfecty_push[widget_enabled]" %s />',
-			$enabled
+			esc_html( $enabled )
 		);
 	}
 
@@ -751,7 +751,7 @@ class Perfecty_Push_Admin {
 		printf(
 			'<input type="checkbox" id="perfecty_push[unregister_conflicts]"' .
 			'name="perfecty_push[unregister_conflicts]" %s />',
-			$enabled
+			esc_html( $enabled )
 		);
 	}
 
@@ -767,7 +767,7 @@ class Perfecty_Push_Admin {
 		printf(
 			'<input type="text" id="perfecty_push[dialog_title]"' .
 			'name="perfecty_push[dialog_title]" value="%s" />',
-			$value
+			esc_html( $value )
 		);
 	}
 
@@ -783,7 +783,7 @@ class Perfecty_Push_Admin {
 		printf(
 			'<input type="text" id="perfecty_push[dialog_submit]"' .
 			'name="perfecty_push[dialog_submit]" value="%s" />',
-			$value
+			esc_html( $value )
 		);
 	}
 
@@ -799,7 +799,7 @@ class Perfecty_Push_Admin {
 		printf(
 			'<input type="text" id="perfecty_push[dialog_cancel]"' .
 			'name="perfecty_push[dialog_cancel]" value="%s" />',
-			$value
+			esc_html( $value )
 		);
 	}
 
@@ -815,7 +815,7 @@ class Perfecty_Push_Admin {
 		printf(
 			'<input type="text" id="perfecty_push[settings_title]"' .
 			'name="perfecty_push[settings_title]" value="%s" />',
-			$value
+			esc_html( $value )
 		);
 	}
 
@@ -831,7 +831,7 @@ class Perfecty_Push_Admin {
 		printf(
 			'<input type="text" id="perfecty_push[settings_opt_in]"' .
 			'name="perfecty_push[settings_opt_in]" value="%s" />',
-			$value
+			esc_html( $value )
 		);
 	}
 }

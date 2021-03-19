@@ -12,7 +12,7 @@
 ?>
 <div class="wrap">
 	<h1><?php printf( esc_html__( 'About Perfecty Push', 'perfecty-push-notifications' ) ); ?></h1>
-	<img src="<?php echo plugin_dir_url( __DIR__ ) . 'img/logo.png'; ?>"/>
+	<img src="<?php echo esc_html( plugin_dir_url( __DIR__ ) ) . 'img/logo.png'; ?>"/>
 	<p>
 		<?php
 		printf(
