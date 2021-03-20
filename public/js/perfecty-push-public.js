@@ -29,7 +29,7 @@ function registerServiceWorker(path, siteUrl, vapidPublicKey64, nonce) {
         }
 
         fetch(path, {
-            method: 'put',
+            method: 'post',
             headers: {
                 'Content-type': 'application/json',
                 'X-WP-Nonce': nonce
@@ -177,7 +177,7 @@ function setUserActive(nonce, siteUrl, userId, isActive) {
     }
 
     return fetch(path, {
-        method: 'put',
+        method: 'post',
         headers: {
             'Content-type': 'application/json',
             'X-WP-Nonce': nonce
