@@ -773,7 +773,7 @@ class Perfecty_Push_Admin {
 	 */
 	public function print_service_worker_scope() {
 		$options = get_option( 'perfecty_push' );
-		$value   = isset( $options['service_worker_scope'] ) ? esc_attr( $options['service_worker_scope'] ) : '/perfecty/push';
+		$value   = isset( $options['service_worker_scope'] ) ? esc_attr( $options['service_worker_scope'] ) : '';
 
 		printf(
 			'<input type="text" id="perfecty_push[service_worker_scope]"' .
