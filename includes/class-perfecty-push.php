@@ -252,7 +252,7 @@ class Perfecty_Push {
 	 */
 	private function define_global_hooks() {
 		$global = new Perfecty_Push_Global();
-		$this->loader->add_action( 'plugins_loaded', $global, 'db_upgrade_check' );
+		$this->loader->add_action( 'plugins_loaded', $global, 'upgrade_check' );
 	}
 
 	/**
