@@ -55,9 +55,11 @@ class Perfecty_Push_Users {
 
 			$user = Perfecty_Push_Lib_Db::get_user_by_uuid( $user_id );
 			if ( $user ) {
+				$user->endpoint   = $endpoint;
 				$user->key_auth   = $key_auth;
 				$user->key_p256dh = $key_p256dh;
 				$user->remote_ip  = $remote_ip;
+				$user->disabled   = false;
 				$result           = Perfecty_Push_Lib_Db::update_user( $user );
 				if ( $result === false ) {
 					// Could not update the user

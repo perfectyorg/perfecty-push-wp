@@ -43,12 +43,14 @@ class Perfecty_Push_Global {
 
 		if ( get_option( 'perfecty_push_version' ) != PERFECTY_PUSH_VERSION ) {
 			// upgrade options
-			$options = get_option( 'perfecty_push', array() );
-			if ( $plugin_activated == 1 && ! isset( $options['service_worker_scope'] ) ) {
-				// this is before 1.0.7
-				$options['service_worker_scope'] = '/';
+			if ( $plugin_activated == 1 ) {
+				$options = get_option( 'perfecty_push', array() );
+				if ( ! isset( $options['service_worker_scope'] ) ) {
+					// this is before 1.0.7
+					$options['service_worker_scope'] = '/';
+					update_option( 'perfecty_push', $options );
+				}
 			}
-			update_option( 'perfecty_push', $options );
 			update_option( 'perfecty_push_version', PERFECTY_PUSH_VERSION );
 		}
 		if ( get_option( 'perfecty_push_db_version' ) != PERFECTY_PUSH_DB_VERSION ) {
