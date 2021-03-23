@@ -405,11 +405,11 @@ class Perfecty_Push_Admin {
 			$message = $notice['message'];
 
 			if ( $type === 'warning' ) {
-				printf( '<div class="notice notice-warning is-dismissible"><p>%s</p></div>', esc_html( $message ) );
+				printf( '<div class="notice notice-warning is-dismissible"><p>%s</p></div>', $message );
 			} elseif ( $type === 'error' ) {
-				printf( '<div class="notice notice-error is-dismissible"><p>%s</p></div>', esc_html( $message ) );
+				printf( '<div class="notice notice-error is-dismissible"><p>%s</p></div>', $message );
 			} else {
-				printf( '<div class="notice notice-success is-dismissible"><p>%s</p></div>', esc_html( $message ) );
+				printf( '<div class="notice notice-success is-dismissible"><p>%s</p></div>', $message );
 			}
 
 			delete_transient( 'perfecty_push_admin_notice' );
