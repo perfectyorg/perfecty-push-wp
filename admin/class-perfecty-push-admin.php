@@ -203,6 +203,14 @@ class Perfecty_Push_Admin {
 		);
 
 		add_settings_field(
+			'service_worker_scope', // id
+			esc_html__( 'Service Worker Scope', 'perfecty-push-notifications' ), // title
+			array( $this, 'print_service_worker_scope' ), // callback
+			'perfecty-push-options', // page
+			'perfecty_push_widget_settings' // section
+		);
+
+		add_settings_field(
 			'dialog_title', // id
 			esc_html__( 'Subscribe text', 'perfecty-push-notifications' ), // title
 			array( $this, 'print_dialog_title' ), // callback
@@ -397,11 +405,11 @@ class Perfecty_Push_Admin {
 			$message = $notice['message'];
 
 			if ( $type === 'warning' ) {
-				printf( '<div class="notice notice-warning is-dismissible"><p>%s</p></div>', esc_html( $message ) );
+				printf( '<div class="notice notice-warning is-dismissible"><p>%s</p></div>', $message );
 			} elseif ( $type === 'error' ) {
-				printf( '<div class="notice notice-error is-dismissible"><p>%s</p></div>', esc_html( $message ) );
+				printf( '<div class="notice notice-error is-dismissible"><p>%s</p></div>', $message );
 			} else {
-				printf( '<div class="notice notice-success is-dismissible"><p>%s</p></div>', esc_html( $message ) );
+				printf( '<div class="notice notice-success is-dismissible"><p>%s</p></div>', $message );
 			}
 
 			delete_transient( 'perfecty_push_admin_notice' );
@@ -602,6 +610,9 @@ class Perfecty_Push_Admin {
 		}
 
 		// text
+		if ( isset( $input['service_worker_scope'] ) ) {
+			$new_input['service_worker_scope'] = sanitize_text_field( $input['service_worker_scope'] );
+		}
 		if ( isset( $input['dialog_title'] ) ) {
 			$new_input['dialog_title'] = sanitize_text_field( $input['dialog_title'] );
 		}
@@ -752,6 +763,22 @@ class Perfecty_Push_Admin {
 			'<input type="checkbox" id="perfecty_push[unregister_conflicts]"' .
 			'name="perfecty_push[unregister_conflicts]" %s />',
 			esc_html( $enabled )
+		);
+	}
+
+	/**
+	 * Print the service_worker_scope option
+	 *
+	 * @since 1.0.7
+	 */
+	public function print_service_worker_scope() {
+		$options = get_option( 'perfecty_push' );
+		$value   = isset( $options['service_worker_scope'] ) ? esc_attr( $options['service_worker_scope'] ) : '';
+
+		printf(
+			'<input type="text" id="perfecty_push[service_worker_scope]"' .
+			'name="perfecty_push[service_worker_scope]" value="%s" />',
+			esc_html( $value )
 		);
 	}
 

@@ -71,8 +71,20 @@
 		printf(
 			// translators: %1$s is the opening a tag
 			// translators: %2$s is the closing a tag
-			esc_html__( 'Optionally you can %1$s send me %2$s a message.', 'perfecty-push-notifications' ),
+			esc_html__( 'Optionally you can %1$s send me%2$s a message.', 'perfecty-push-notifications' ),
 			'<a href="https://rowinson.netlify.app/contact/" target="_blank">',
+			'</a>'
+		);
+		?>
+	</p>
+	<h2><?php printf( esc_html__( 'Follow us', 'perfecty-push-notifications' ) ); ?></h2>
+	<p>
+		<?php
+		printf(
+		// translators: %1$s is the opening a tag
+		// translators: %2$s is the closing a tag
+			esc_html__( 'Follow us on %1$s Facebook %2$s', 'perfecty-push-notifications' ),
+			'<a href="https://www.facebook.com/Perfecty-Push-109168991261513" target="_blank">',
 			'</a>'
 		);
 		?>

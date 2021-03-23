@@ -5,10 +5,8 @@ function checkFeatures() {
     return ('serviceWorker' in navigator) && ('PushManager' in window);
 }
 
-function registerServiceWorker(path, siteUrl, vapidPublicKey64, nonce) {
-    navigator.serviceWorker.register(path + '/service-worker-loader.js.php', {scope: '/'}).then(() => {
-        return navigator.serviceWorker.ready
-    }).then(async (registration) => {
+function registerServiceWorker(path, scope, siteUrl, vapidPublicKey64, nonce) {
+    navigator.serviceWorker.register(path + '/service-worker-loader.js.php', {scope: scope}).then(async (registration) => {
         // we get the push user
         const user = await registration.pushManager.getSubscription();
         if (user) {
@@ -194,25 +192,35 @@ function setUserActive(nonce, siteUrl, userId, isActive) {
         });
 }
 
-function detectConflictInstallations(unregisterConflicts) {
+function detectConflictInstallations(scope, unregisterConflicts) {
     let conflictDetected = false
     let perfectyPushFound = false
-    return navigator.serviceWorker.getRegistration("/").then(function (registration) {
+    let oldInstall = false
+    return navigator.serviceWorker.getRegistrations().then(function (registrations) {
+        const fullScope = window.location.origin + scope
         let promises = []
-        if (typeof registration !== "undefined" && registration.active != null && registration.active.scriptURL != null) {
-            if (/perfecty/i.test(registration.active.scriptURL)) {
-                perfectyPushFound = true
-            } else {
-                conflictDetected = true
+        for (let registration of registrations) {
+            if (typeof registration !== "undefined" && registration.active != null && registration.active.scriptURL != null) {
+                if (/perfecty\-push/i.test(registration.active.scriptURL)) {
+                    perfectyPushFound = true
 
-                if (unregisterConflicts === true) {
-                    console.log(__('Unregistering conflict installation: ', 'perfecty-push-notifications' ) + registration.active.scriptURL)
-                    promises.push(registration.unregister())
+                    if (registration.scope !== fullScope) {
+                        oldInstall = true
+                        console.log(__('Unregistering old installation: ', 'perfecty-push-notifications') + registration.scope)
+                        promises.push(registration.unregister())
+                    }
+                } else {
+                    conflictDetected = true
+
+                    if (unregisterConflicts === true) {
+                        console.log(__('Unregistering conflict installation: ', 'perfecty-push-notifications') + registration.active.scriptURL)
+                        promises.push(registration.unregister())
+                    }
                 }
             }
         }
         return Promise.all(promises).then(() => {
-            return Promise.resolve([conflictDetected, perfectyPushFound])
+            return Promise.resolve([conflictDetected, perfectyPushFound, oldInstall])
         })
     });
 }
@@ -230,11 +238,11 @@ async function perfectyStart(options) {
             showDialogControl();
         } else if (permission === 'granted') {
             // as we already have 'granted' permissions, we check if it was an external worker
-            detectConflictInstallations(options.unregisterConflicts).then(([conflictDetected, perfectyPushFound]) => {
-                if ((conflictDetected && options.unregisterConflicts) || !perfectyPushFound) {
-                    // we didn't find our worker or we removed an external worker
+            detectConflictInstallations(options.serviceWorkerScope, options.unregisterConflicts).then(([conflictDetected, perfectyPushFound, oldInstall]) => {
+                if ((conflictDetected && options.unregisterConflicts) || !perfectyPushFound || oldInstall) {
+                    // we didn't find our worker, it was an old install, or we removed an external worker
                     // so we register ours again
-                    registerServiceWorker(options.path, options.siteUrl, options.vapidPublicKey, options.nonce);
+                    registerServiceWorker(options.path, options.serviceWorkerScope, options.siteUrl, options.vapidPublicKey, options.nonce);
                 }
             })
         }
@@ -246,7 +254,7 @@ async function perfectyStart(options) {
             if (permission === 'granted') {
                 // We only register the service worker and the push manager
                 // when the user has granted us permissions or if there's already existing installs
-                registerServiceWorker(options.path, options.siteUrl, options.vapidPublicKey, options.nonce);
+                registerServiceWorker(options.path, options.serviceWorkerScope, options.siteUrl, options.vapidPublicKey, options.nonce);
             } else {
                 console.log(__('Notification permission not granted', 'perfecty-push-notifications' ))
             }
