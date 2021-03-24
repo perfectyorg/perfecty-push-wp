@@ -6,7 +6,8 @@ function checkFeatures() {
 }
 
 function registerServiceWorker(path, scope, siteUrl, vapidPublicKey64, nonce) {
-    navigator.serviceWorker.register(path + '/service-worker-loader.js.php', {scope: scope}).then(async (registration) => {
+    navigator.serviceWorker.register(path + '/service-worker-loader.js.php', {scope: scope}).then(async (swRegistration) => {
+        const registration = await navigator.serviceWorker.getRegistration(scope);
         // we get the push user
         const user = await registration.pushManager.getSubscription();
         if (user) {

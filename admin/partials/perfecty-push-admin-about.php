@@ -58,7 +58,7 @@
 			// translators: %2$s is the closing a tag
 			// translators: %3$s is the opening a tag
 			// translators: %4$s is the closing a tag
-			esc_html__( 'Please let me know, give it some stars in the %1$s Github %2$s repo or leave a review in the %3$s WordPress marketplace %4$s.', 'perfecty-push-notifications' ),
+			esc_html__( 'Please let us know, give it some stars in the %1$s Github %2$s repo or leave a review in the %3$s WordPress marketplace %4$s.', 'perfecty-push-notifications' ),
 			'<a href="https://github.com/rwngallego/perfecty-push-wp">',
 			'</a>',
 			'<a href="https://wordpress.org/plugins/perfecty-push-notifications/#reviews">',
@@ -71,8 +71,8 @@
 		printf(
 			// translators: %1$s is the opening a tag
 			// translators: %2$s is the closing a tag
-			esc_html__( 'Optionally you can %1$s send me%2$s a message.', 'perfecty-push-notifications' ),
-			'<a href="https://rowinson.netlify.app/contact/" target="_blank">',
+			esc_html__( 'Optionally you can %1$s send us%2$s a message.', 'perfecty-push-notifications' ),
+			'<a href="https://perfecty.org/contact/" target="_blank">',
 			'</a>'
 		);
 		?>
