@@ -3,10 +3,11 @@ version: '3.1'
 services:
 
   wordpress:
-    image: custom-wordpress:beta-5.7-php7.3-apache
+    image: custom-wordpress:5.7-php7.3-apache
     restart: always
     ports:
       - 80:80
+      - 443:443
     networks:
       - perfecty-net
     volumes:

@@ -22,6 +22,7 @@ No hidden fees, no third-party dependencies and you own your data. 👏
 ## Features ✨
 
 - **Open Source**, send Push Notifications **from your server for free!**
+- PWA & AMP compatible
 - No third-party dependencies
 - Migrate users from other push services like OneSignal
 - Send push notifications on posts publishing
@@ -44,7 +45,7 @@ To see it in action in your local development environment, you need a set of
 services which Wordpress relies on. You start off by creating the docker image:
 
 ```
-docker build -t custom-wordpress:beta-5.7-php7.3-apache .
+docker build -t custom-wordpress:5.7-php7.3-apache .
 ```
 
 Then start all the services and run the setup:
@@ -54,7 +55,7 @@ make up
 make setup
 ```
 
-You can now go to http://localhost/wp-login.php > Plugins > Activate the
+You can now go to https://localhost/wp-login.php > Plugins > Activate the
 **Perfecty Push** plugin.
 
 ## Available commands 👾

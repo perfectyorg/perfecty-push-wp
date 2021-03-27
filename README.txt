@@ -20,7 +20,7 @@ Features:
 
 - Self-hosted: total control of your information, and no need of third-party integrations.
 - Migrate users from other Push Notifications providers like OneSignal.
-- PWA & AMP Friendly.
+- PWA & AMP Friendly (Tested with Super PWA and AMP for WP plugins).
 - Free and Easy.
 - Send Push Notifications on posts publishing.
 - Send custom Push Notifications: you can easily change the icon, the image or the URL to open.
@@ -62,7 +62,7 @@ Note: Check the FAQ if you miss the `gmp` extension.
 
 Absolutely, Perfecty Push can override the previous service worker from your user's browser. Once they visit your site, the worker is automatically replaced and you can start sending Push Notifications directly. For that you need to first remove your provider's JS SDK, and then enable the `Remove conflicting workers` option in Perfecty Push. Go to Perfecty Push > Settings > Public Widget.
 
-Use this option carefully (specially if you have a PWA website). It will deregister all the existing service workers from the root scope '/'.
+After v1.0.7 Perfecty Push uses the `/perfecty/push` scope (you can also customize it), so it's friendly with any PWA/AMP plugin that uses the root scope (e.g. Super PWA plugin). However, if you use the `Remove conflicting workers` option, it will deregister any existing worker, so be careful with this option.
 
 = Why do I need the `gmp` extension? =
 
