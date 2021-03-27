@@ -306,7 +306,8 @@ class Perfecty_Push_Admin {
 	public function display_post_metabox( $post ) {
 		wp_nonce_field( 'perfecty_push_post_metabox', 'perfecty_push_post_metabox_nonce' );
 		$send_notification = ! empty( get_post_meta( $post->ID, '_perfecty_push_send_on_publish', true ) );
-
+		$send_featured_img = ! empty( get_post_meta( $post->ID, '_perfecty_push_send_featured_img', true ) );
+		$notification_title = get_post_meta( $post->ID, '_perfecty_push_notification_custom_title', true );
 		require_once plugin_dir_path( __FILE__ ) . 'partials/perfecty-push-admin-post-metabox.php';
 	}
 
@@ -338,6 +339,12 @@ class Perfecty_Push_Admin {
 
 		$send_notification = ! empty( $_POST['perfecty_push_send_on_publish'] );
 		update_post_meta( $post_id, '_perfecty_push_send_on_publish', $send_notification );
+
+		$send_featured_img = ! empty( $_POST['perfecty_push_send_featured_img'] );
+		update_post_meta( $post_id, '_perfecty_push_send_featured_img', $send_featured_img );
+
+		$notification_title = $_POST['perfecty_push_notification_custom_title'];
+		update_post_meta( $post_id, '_perfecty_push_notification_custom_title', esc_html( $notification_title ) );
 	}
 
 	/**
@@ -362,10 +369,32 @@ class Perfecty_Push_Admin {
 			$send_notification = ! empty( get_post_meta( $post->ID, '_perfecty_push_send_on_publish', true ) );
 		}
 
+		$send_featured_img = false;
+		if ( isset( $_POST['perfecty_push_post_metabox_nonce'] ) &&
+			wp_verify_nonce( $_POST['perfecty_push_post_metabox_nonce'], 'perfecty_push_post_metabox' ) ) {
+			// we do this because on_transition_post_status is triggered before on_save_post by WordPress
+			$send_featured_img = ! empty( $_POST['perfecty_push_send_featured_img'] );
+		} else {
+			$send_featured_img = ! empty( get_post_meta( $post->ID, '_perfecty_push_send_featured_img', true ) );
+		}
+
+		$notification_title = '';
+		if ( isset( $_POST['perfecty_push_notification_custom_title'] ) &&
+			wp_verify_nonce( $_POST['perfecty_push_post_metabox_nonce'], 'perfecty_push_post_metabox' ) ) {
+			// we do this because on_transition_post_status is triggered before on_save_post by WordPress
+			$notification_title =  $_POST['perfecty_push_notification_custom_title'];
+		} else {
+			$notification_title = get_post_meta( $post->ID, '_perfecty_push_notification_custom_title', true );
+		}
+
+
 		if ( 'publish' == $new_status && $send_notification ) {
 			$body        = get_the_title( $post );
 			$url_to_open = get_the_permalink( $post );
-			$payload     = Perfecty_Push_Lib_Payload::build( $body, '', '', $url_to_open );
+			$post_thumbnail = has_post_thumbnail( $post->ID ) ? get_the_post_thumbnail_url( $post->ID ) : '';
+			$post_thumbnail = $send_featured_img ? $post_thumbnail : '';
+			$notification_title =   $notification_title ? $notification_title : '';
+			$payload     = Perfecty_Push_Lib_Payload::build( $body, $notification_title, $post_thumbnail, $url_to_open );
 			$result      = Perfecty_Push_Lib_Push_Server::schedule_broadcast_async( $payload );
 
 			if ( $result === false ) {
