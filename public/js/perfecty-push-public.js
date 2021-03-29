@@ -1,11 +1,11 @@
 'use strict';
-// i18n support
-const { __, _x, _n, _nx } = wp.i18n;
+
 function checkFeatures() {
     return ('serviceWorker' in navigator) && ('PushManager' in window);
 }
 
 function registerServiceWorker(path, siteUrl, vapidPublicKey64, nonce) {
+	const { __ } = wp.i18n;
     navigator.serviceWorker.register(path + '/service-worker-loader.js.php', {scope: '/'}).then(() => {
         return navigator.serviceWorker.ready
     }).then(async (registration) => {
@@ -195,6 +195,7 @@ function setUserActive(nonce, siteUrl, userId, isActive) {
 }
 
 function detectConflictInstallations(unregisterConflicts) {
+	const { __ } = wp.i18n;
     let conflictDetected = false
     let perfectyPushFound = false
     return navigator.serviceWorker.getRegistration("/").then(function (registration) {
@@ -218,6 +219,7 @@ function detectConflictInstallations(unregisterConflicts) {
 }
 
 async function perfectyStart(options) {
+	const { __ } = wp.i18n;
     if (checkFeatures() && !options.disabled) {
         // Draw dialog
         drawDialogControl(options.dialogControl);
