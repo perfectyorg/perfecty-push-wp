@@ -48,7 +48,7 @@ class Perfecty_Push_Lib_Db {
           id int(11) NOT NULL AUTO_INCREMENT,
           uuid char(36) NOT NULL,
           remote_ip varchar(46) DEFAULT '',
-          endpoint varchar(500) NOT NULL UNIQUE,
+          endpoint varchar(500) NOT NULL,
           key_auth varchar(100) NOT NULL UNIQUE,
           key_p256dh varchar(100) NOT NULL UNIQUE,
           is_active tinyint(1) DEFAULT 1 NOT NULL,
@@ -79,6 +79,9 @@ class Perfecty_Push_Lib_Db {
 				// manual: dbDelta doesn't drop indexes
 				if ( $wpdb->get_var( "SHOW INDEX FROM $user_table WHERE Key_name='users_endpoint_uk'" ) !== null ) {
 					$wpdb->query( "ALTER TABLE $user_table DROP INDEX users_endpoint_uk" );
+				}
+				if ( $wpdb->get_var( "SHOW INDEX FROM $user_table WHERE Key_name='endpoint'" ) !== null ) {
+					$wpdb->query( "ALTER TABLE $user_table DROP INDEX endpoint" );
 				}
 			}
 

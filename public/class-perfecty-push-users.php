@@ -1,7 +1,4 @@
 <?php
-
-use Ramsey\Uuid\Uuid;
-
 /**
  * The public-facing functionality of the plugin.
  *
@@ -19,6 +16,9 @@ use Ramsey\Uuid\Uuid;
  * @subpackage Perfecty_Push/public
  * @author     Rowinson Gallego <rwn.gallego@gmail.com>
  */
+
+use Ramsey\Uuid\Uuid;
+
 class Perfecty_Push_Users {
 	/**
 	 * Register the user
@@ -29,10 +29,10 @@ class Perfecty_Push_Users {
 		// Request
 		$user      = $data['user'] ?? null;
 		$user_id   = $data['user_id'] ?? null;
-		$remote_ip = $_SERVER['REMOTE_ADDR'];
+		$remote_ip = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '';
 
 		// Validate the nonce
-		$nonce = isset( $_SERVER['HTTP_X_WP_NONCE'] ) ? $_SERVER['HTTP_X_WP_NONCE'] : '';
+		$nonce = isset( $_SERVER['HTTP_X_WP_NONCE'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_WP_NONCE'] ) ) : '';
 		if ( wp_verify_nonce( $nonce, 'wp_rest' ) === false ) {
 			$this->terminate();
 		}
@@ -55,9 +55,11 @@ class Perfecty_Push_Users {
 
 			$user = Perfecty_Push_Lib_Db::get_user_by_uuid( $user_id );
 			if ( $user ) {
+				$user->endpoint   = $endpoint;
 				$user->key_auth   = $key_auth;
 				$user->key_p256dh = $key_p256dh;
 				$user->remote_ip  = $remote_ip;
+				$user->disabled   = false;
 				$result           = Perfecty_Push_Lib_Db::update_user( $user );
 				if ( $result === false ) {
 					// Could not update the user
@@ -93,8 +95,8 @@ class Perfecty_Push_Users {
 		$is_active = $data['is_active'] ?? null;
 		$user_id   = $data['user_id'] ?? null;
 
-		// Validate the nonce
-		$nonce = isset( $_SERVER['HTTP_X_WP_NONCE'] ) ? $_SERVER['HTTP_X_WP_NONCE'] : '';
+		// Validate the nonce.
+		$nonce = isset( $_SERVER['HTTP_X_WP_NONCE'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_WP_NONCE'] ) ) : '';
 		if ( wp_verify_nonce( $nonce, 'wp_rest' ) === false ) {
 			$this->terminate();
 		}
@@ -165,10 +167,10 @@ class Perfecty_Push_Users {
 	}
 
 	private function validate_set_user_active( $is_active, $user_id ) {
-		if ( $is_active === null || $user_id === null ) {
+		if ( null === $is_active || null === $user_id ) {
 			return __( 'Missing parameters', 'perfecty-push-notifications' );
 		}
-		if ( $is_active != false && $is_active != true ) {
+		if ( false !== $is_active && true !== $is_active ) {
 			return __( 'is_active must be a boolean', 'perfecty-push-notifications' );
 		}
 		if ( ! Uuid::isValid( $user_id ) ) {

@@ -38,5 +38,6 @@ if ( isset( $options['unregister_conflicts'] ) && $options['unregister_conflicts
 		nonce: "<?php echo $perfecty_push_nonce; ?>",
 		disabled: <?php echo $perfecty_push_disabled; ?>,
 		unregisterConflicts: <?php echo $perfecty_push_unregister_conflicts; ?>,
+		serviceWorkerScope: "<?php echo PERFECTY_PUSH_SERVICE_WORKER_SCOPE; ?>",
 	}
 </script>

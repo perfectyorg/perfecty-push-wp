@@ -91,14 +91,18 @@ class Perfecty_Push {
 	 * Define the constants that will be needed later
 	 */
 	public function define_constants() {
-		$options           = get_option( 'perfecty_push', array() );
-		$vapid_public_key  = isset( $options['vapid_public_key'] ) ? $options['vapid_public_key'] : '';
-		$vapid_private_key = isset( $options['vapid_private_key'] ) ? $options['vapid_private_key'] : '';
-		$server_url        = isset( $options['server_url'] ) ? $options['server_url'] : get_site_url();
+		$options              = get_option( 'perfecty_push', array() );
+		$vapid_public_key     = isset( $options['vapid_public_key'] ) ? $options['vapid_public_key'] : '';
+		$vapid_private_key    = isset( $options['vapid_private_key'] ) ? $options['vapid_private_key'] : '';
+		$server_url           = isset( $options['server_url'] ) ? $options['server_url'] : get_site_url();
+		$service_worker_scope = isset( $options['service_worker_scope'] ) && ! empty( $options['service_worker_scope'] ) ? $options['service_worker_scope'] : '/perfecty/push';
 
 		if ( ! defined( 'PERFECTY_PUSH_JS_DIR' ) ) {
 			$path = plugin_dir_url( __DIR__ ) . 'public/js';
 			define( 'PERFECTY_PUSH_JS_DIR', $path );
+		}
+		if ( ! defined( 'PERFECTY_PUSH_SERVICE_WORKER_SCOPE' ) ) {
+			define( 'PERFECTY_PUSH_SERVICE_WORKER_SCOPE', $service_worker_scope );
 		}
 		if ( ! defined( 'PERFECTY_PUSH_SERVER_URL' ) ) {
 			define( 'PERFECTY_PUSH_SERVER_URL', $server_url );
@@ -248,7 +252,7 @@ class Perfecty_Push {
 	 */
 	private function define_global_hooks() {
 		$global = new Perfecty_Push_Global();
-		$this->loader->add_action( 'plugins_loaded', $global, 'db_upgrade_check' );
+		$this->loader->add_action( 'plugins_loaded', $global, 'upgrade_check' );
 	}
 
 	/**

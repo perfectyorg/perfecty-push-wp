@@ -49,10 +49,12 @@ class Perfecty_Push_Activator {
 		if ( empty( $options['batch_size'] ) ) {
 			$options['batch_size'] = Perfecty_Push_Lib_Push_Server::DEFAULT_BATCH_SIZE;
 		}
+		if ( empty( $options['service_worker_scope'] ) ) {
+			$options['service_worker_scope'] = '/perfecty/push';
+		}
 		if ( ! isset( $options['widget_enabled'] ) ) {
 			$options['widget_enabled'] = 1;
 		}
-
 		if ( get_option( 'perfecty_push' ) == false ) {
 			if ( ! add_option( 'perfecty_push', $options ) ) {
 				error_log( 'Could not set the default options' );

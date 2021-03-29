@@ -4,7 +4,7 @@ Donate link: https://github.com/rwngallego
 Tags: Push Notifications, Web Push Notifications, Notifications, User engagement
 Requires at least: 5.0
 Tested up to: 5.7
-Stable tag: 1.0.6
+Stable tag: 1.0.7
 Requires PHP: 7.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -20,6 +20,7 @@ Features:
 
 - Self-hosted: total control of your information, and no need of third-party integrations.
 - Migrate users from other Push Notifications providers like OneSignal.
+- PWA & AMP Friendly (Tested with Super PWA and AMP for WP plugins).
 - Free and Easy.
 - Send Push Notifications on posts publishing.
 - Send custom Push Notifications: you can easily change the icon, the image or the URL to open.
@@ -61,7 +62,7 @@ Note: Check the FAQ if you miss the `gmp` extension.
 
 Absolutely, Perfecty Push can override the previous service worker from your user's browser. Once they visit your site, the worker is automatically replaced and you can start sending Push Notifications directly. For that you need to first remove your provider's JS SDK, and then enable the `Remove conflicting workers` option in Perfecty Push. Go to Perfecty Push > Settings > Public Widget.
 
-Use this option carefully (specially if you have a PWA website). It will deregister all the existing service workers from the root scope '/'.
+After v1.0.7 Perfecty Push uses the `/perfecty/push` scope (you can also customize it), so it's friendly with any PWA/AMP plugin that uses the root scope (e.g. Super PWA plugin). However, if you use the `Remove conflicting workers` option, it will deregister any existing worker, so be careful with this option.
 
 = Why do I need the `gmp` extension? =
 
@@ -94,6 +95,12 @@ You can create an issue in our Github repo:
 8. Settings
 
 == Changelog ==
+
+= 1.0.7 =
+* PWA and AMP Friendly (Tested with Super PWA and AMP for WP plugins)
+* Support MySQL < 5.6 (max index key=767)
+* Improving Internationalization
+* Apache mod_security, Nginx default configuration and WAF friendly
 
 = 1.0.6 =
 * Added WordPress 5.7 support
