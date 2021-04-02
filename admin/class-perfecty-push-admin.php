@@ -902,12 +902,11 @@ class Perfecty_Push_Admin {
 		$post_img_id = $this->get_attachment_id( $img_url );
 
 		if ($post_img_id !== 0 ) {
-			// this is an array related to the thumbnail of the first image.
-			$img_thumb_url = wp_get_attachment_image_src( $post_img_id, $size = 'thumbnail', $icon = false );
+			// this is an array related to the thumbnail of the first image. If post-thumbnail size is not set, it returns original image.
+			$img_thumb_url = wp_get_attachment_image_src( $post_img_id, $size = 'post-thumbnail', $icon = false );
 		} else {
-			$img_thumb_url = '';
+			$img_thumb_url[0] = '';
 		}
-
 		// we return the URL of the thumbnail.
 		return $img_thumb_url[0];
 	}
