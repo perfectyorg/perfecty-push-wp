@@ -314,7 +314,8 @@ class Perfecty_Push_Admin {
 	public function display_post_metabox( $post ) {
 		wp_nonce_field( 'perfecty_push_post_metabox', 'perfecty_push_post_metabox_nonce' );
 		$send_notification = ! empty( get_post_meta( $post->ID, '_perfecty_push_send_on_publish', true ) );
-
+		$send_featured_img = ! empty( get_post_meta( $post->ID, '_perfecty_push_send_featured_img', true ) );
+		$notification_title = get_post_meta( $post->ID, '_perfecty_push_notification_custom_title', true );
 		require_once plugin_dir_path( __FILE__ ) . 'partials/perfecty-push-admin-post-metabox.php';
 	}
 
@@ -346,6 +347,12 @@ class Perfecty_Push_Admin {
 
 		$send_notification = ! empty( $_POST['perfecty_push_send_on_publish'] );
 		update_post_meta( $post_id, '_perfecty_push_send_on_publish', $send_notification );
+
+		$send_featured_img = ! empty( $_POST['perfecty_push_send_featured_img'] );
+		update_post_meta( $post_id, '_perfecty_push_send_featured_img', $send_featured_img );
+
+		$notification_title = $_POST['perfecty_push_notification_custom_title'];
+		update_post_meta( $post_id, '_perfecty_push_notification_custom_title', esc_html( $notification_title ) );
 	}
 
 	/**
@@ -362,18 +369,31 @@ class Perfecty_Push_Admin {
 		}
 
 		$send_notification = false;
+		$send_featured_img = false;
 		if ( isset( $_POST['perfecty_push_post_metabox_nonce'] ) &&
 			wp_verify_nonce( $_POST['perfecty_push_post_metabox_nonce'], 'perfecty_push_post_metabox' ) ) {
 			// we do this because on_transition_post_status is triggered before on_save_post by WordPress
 			$send_notification = ! empty( $_POST['perfecty_push_send_on_publish'] );
+			$send_featured_img = ! empty( $_POST['perfecty_push_send_featured_img'] );
+			$notification_title =  $_POST['perfecty_push_notification_custom_title'];
 		} else {
 			$send_notification = ! empty( get_post_meta( $post->ID, '_perfecty_push_send_on_publish', true ) );
+			$send_featured_img = ! empty( get_post_meta( $post->ID, '_perfecty_push_send_featured_img', true ) );
+			$notification_title = get_post_meta( $post->ID, '_perfecty_push_notification_custom_title', true );
 		}
 
 		if ( 'publish' == $new_status && $send_notification ) {
 			$body        = get_the_title( $post );
 			$url_to_open = get_the_permalink( $post );
-			$payload     = Perfecty_Push_Lib_Payload::build( $body, '', '', $url_to_open );
+			if ( has_post_thumbnail( $post->ID ) ) {
+				$post_thumbnail = get_the_post_thumbnail_url( $post->ID );
+			} else {
+				$post_thumbnail = $this->get_first_image_url( $post );
+			}
+
+			$post_thumbnail     = $send_featured_img ? $post_thumbnail : '';
+			$notification_title = ( $notification_title !== '' ) ? $notification_title : false;
+			$payload     = Perfecty_Push_Lib_Payload::build( $body, $notification_title, $post_thumbnail, $url_to_open );
 			$result      = Perfecty_Push_Lib_Push_Server::schedule_broadcast_async( $payload );
 
 			if ( $result === false ) {
@@ -860,5 +880,77 @@ class Perfecty_Push_Admin {
 			'name="perfecty_push[settings_opt_in]" value="%s" />',
 			esc_html( $value )
 		);
+	}
+
+	/**
+	 * Get first image URL in post content
+	 *
+	 * @since 1.0.8
+	 *
+	 * @return string $thumbnail_url on success, '' on failure
+	 */
+	public function get_first_image_url( $post )
+	{
+		$content = $post->post_content;
+		$regex = '/src="([^"]*)"/';
+		preg_match_all( $regex, $content, $matches );
+		$matches = array_reverse( $matches );
+		// this is the image url of the first img embedded in content.
+		$img_url = $matches[0][0];
+
+		// this is the image post id.
+		$post_img_id = $this->get_attachment_id( $img_url );
+
+		if ($post_img_id !== 0 ) {
+			// this is an array related to the thumbnail of the first image. If post-thumbnail size is not set, it returns original image.
+			$img_thumb_url = wp_get_attachment_image_src( $post_img_id, $size = 'post-thumbnail', $icon = false );
+		} else {
+			$img_thumb_url[0] = '';
+		}
+		// we return the URL of the thumbnail.
+		return $img_thumb_url[0];
+	}
+
+	/**
+	 * Get an attachment ID given a URL.
+	 * https://wordpress.stackexchange.com/questions/6645/turn-a-url-into-an-attachment-post-id/7094#7094
+	 *
+	 * @param string $url
+	 *
+	 * @return int Attachment ID on success, 0 on failure
+	 */
+	function get_attachment_id( $url )
+	{
+		$attachment_id = 0;
+		$dir = wp_upload_dir();
+		if ( false !== strpos( $url, $dir['baseurl'] . '/' ) ) { // Is URL in uploads directory?
+			$file = basename( $url );
+			$query_args = array(
+			'post_type'   => 'attachment',
+			'post_status' => 'inherit',
+			'fields'      => 'ids',
+			'meta_query'  => array(
+			array(
+			'value'   => $file,
+			'compare' => 'LIKE',
+			'key'     => '_wp_attachment_metadata',
+			),
+			)
+			);
+
+			$query = new WP_Query( $query_args );
+			if ( $query->have_posts() ) {
+				foreach ( $query->posts as $post_id ) {
+					$meta = wp_get_attachment_metadata( $post_id );
+					$original_file = basename( $meta['file']);
+					$cropped_image_files = wp_list_pluck( $meta['sizes'], 'file' );
+					if ( $original_file === $file || in_array( $file, $cropped_image_files ) ) {
+						$attachment_id = $post_id;
+						break;
+					}
+				}
+			}
+		}
+		return $attachment_id;
 	}
 }

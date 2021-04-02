@@ -1,7 +1,6 @@
-const { __, _x, _n, _nx } = wp.i18n;
 (function( $ ) {
 	'use strict';
-
+	const { __ } = wp.i18n;
 	$( window ).load(
 		function(){
 			$( ".perfecty-push-confirm-action" ).click(
