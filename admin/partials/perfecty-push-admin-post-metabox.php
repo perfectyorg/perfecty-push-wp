@@ -14,5 +14,5 @@
 <p><label for="perfecty_push_notification_custom_title"><?php printf( esc_html__( 'Custom title (default: website name)', 'perfecty-push-notifications' ) ); ?></label>
 <input type="text" id="perfecty_push_notification_custom_title" name="perfecty_push_notification_custom_title" value="<?php
 if ( $notification_title !== '' ) {
-	printf( esc_html( $notification_title ) );
+	printf( esc_attr( $notification_title ) );
 }?>"></p>
