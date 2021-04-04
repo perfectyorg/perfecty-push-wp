@@ -27,8 +27,8 @@ class Perfecty_Push_Lib_Payload {
 		}
 
 		return array(
-			'title' => $title,
-			'body'  => $body,
+			'title' => stripslashes( $title ),
+			'body'  => stripslashes( $body ),
 			'icon'  => $icon,
 			'image' => $image,
 			'extra' => array(
