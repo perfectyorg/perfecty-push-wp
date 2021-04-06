@@ -383,9 +383,11 @@ class Perfecty_Push_Admin {
 		}
 
 		if ( 'publish' == $new_status && $send_notification ) {
-			$body        = get_the_title( $post );
+			$body        = html_entity_decode( get_the_title( $post ) );
 			$url_to_open = get_the_permalink( $post );
-			if ( has_post_thumbnail( $post->ID ) ) {
+			// we use this to check if the post has a thumbnail because has_post_thumbnail could return true even if no post thumbnail is set
+			$featured_image_url = wp_get_attachment_url( get_post_thumbnail_id( $post->ID ) );
+			if  ( ! empty( $featured_image_url ) ) {
 				$post_thumbnail = get_the_post_thumbnail_url( $post->ID );
 			} else {
 				$post_thumbnail = $this->get_first_image_url( $post );
