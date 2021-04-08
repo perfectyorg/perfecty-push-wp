@@ -4,7 +4,7 @@ Donate link: https://github.com/rwngallego
 Tags: Push Notifications, Web Push Notifications, Notifications, User engagement
 Requires at least: 5.0
 Tested up to: 5.7
-Stable tag: 1.0.7
+Stable tag: 1.0.8
 Requires PHP: 7.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -95,6 +95,10 @@ You can create an issue in our Github repo:
 8. Settings
 
 == Changelog ==
+
+= 1.0.8 =
+* Add options to send featured image and customize notification title in notifications sent on post publishing. Thanks to [@mociofiletto](https://profiles.wordpress.org/mociofiletto/)
+* Removing wp-i18n variable definitions in JS from the global scope. Thanks to [@mociofiletto](https://profiles.wordpress.org/mociofiletto/)
 
 = 1.0.7 =
 * PWA and AMP Friendly (Tested with Super PWA and AMP for WP plugins)
