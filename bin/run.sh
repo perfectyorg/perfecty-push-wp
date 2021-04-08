@@ -4,7 +4,7 @@ if [ $# -lt 1 ]; then
   echo "Run utilities"
   echo "----------------------"
 	echo "  usage: $0 <command> [options]"
-  echo "    <command> can be any of: up, down, console, setup, wordpress, deps, phpunit, test, format, bundle, svnsync"
+  echo "    <command> can be any of: up, down, console, setup, wordpress, deps, phpunit, sdk, test, format, bundle, svnsync"
   echo " .  [options]: --verbose"
 	exit 1
 fi
@@ -30,6 +30,7 @@ setup() {
   wordpress
   deps
   phpunit
+  sdk
 }
 
 up() {
@@ -45,7 +46,7 @@ console() {
 }
 
 wordpress() {
-  CMD='wp core install --url=localhost --title="Perfecty WP" --admin_user=admin --admin_password=admin --admin_email=info@perfecty.co --allow-root &&
+  CMD='wp core install --url=https://localhost --title="Perfecty WP" --admin_user=admin --admin_password=admin --admin_email=info@perfecty.co --allow-root &&
        wp plugin update --all --allow-root'
   compose_exec "$CMD"
 }
@@ -58,6 +59,10 @@ deps() {
 phpunit() {
   CMD=$(plugin_cmd './bin/install-wp-tests.sh $WORDPRESS_DB_NAME $WORDPRESS_DB_USER $WORDPRESS_DB_PASSWORD $WORDPRESS_DB_HOST latest true')
   compose_exec "$CMD"
+}
+
+sdk() {
+  git submodule update --init
 }
 
 test() {

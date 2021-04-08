@@ -4,3 +4,4 @@
 .gradle
 out/
 dist/
+public/js/perfecty-push-sdk/

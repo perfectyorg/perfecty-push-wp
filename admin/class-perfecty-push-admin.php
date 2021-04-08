@@ -250,6 +250,14 @@ class Perfecty_Push_Admin {
 			'perfecty_push_widget_settings' // section
 		);
 
+		add_settings_field(
+			'settings_update_error', // id
+			esc_html__( 'Message on update error', 'perfecty-push-notifications' ), // title
+			array( $this, 'print_settings_update_error' ), // callback
+			'perfecty-push-options', // page
+			'perfecty_push_widget_settings' // section
+		);
+
 		add_settings_section(
 			'perfecty_push_self_hosted_settings', // id
 			esc_html__( 'Self-hosted server', 'perfecty-push-notifications' ), // title
@@ -650,6 +658,9 @@ class Perfecty_Push_Admin {
 		if ( isset( $input['settings_opt_in'] ) ) {
 			$new_input['settings_opt_in'] = sanitize_text_field( $input['settings_opt_in'] );
 		}
+		if ( isset( $input['settings_update_error'] ) ) {
+			$new_input['settings_update_error'] = sanitize_text_field( $input['settings_update_error'] );
+		}
 		if ( isset( $input['vapid_public_key'] ) ) {
 			$new_input['vapid_public_key'] = sanitize_text_field( $input['vapid_public_key'] );
 		}
@@ -952,5 +963,21 @@ class Perfecty_Push_Admin {
 			}
 		}
 		return $attachment_id;
+	}
+
+	/**
+	 * Print the settings_update_error option
+	 *
+	 * @since 1.0.0
+	 */
+	public function print_settings_update_error() {
+		$options = get_option( 'perfecty_push' );
+		$value   = isset( $options['settings_update_error'] ) ? esc_attr( $options['settings_update_error'] ) : '';
+
+		printf(
+			'<input type="text" id="perfecty_push[settings_update_error]"' .
+			'name="perfecty_push[settings_update_error]" value="%s" />',
+			esc_html( $value )
+		);
 	}
 }

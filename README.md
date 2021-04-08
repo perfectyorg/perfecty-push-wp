@@ -76,7 +76,7 @@ make test
 # run the formatter
 make format
 
-# setup all: make wordpress, make composer, make phpunit
+# setup all: make wordpress, make composer, make phpunit and make sdk
 make setup
 
 # setup wordpress and plugins
