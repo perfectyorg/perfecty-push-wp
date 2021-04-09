@@ -202,6 +202,14 @@ class Perfecty_Push_Admin {
 			'perfecty_push_widget_settings' // section
 		);
 
+        add_settings_field(
+            'widget_debugging_enabled', // id
+            esc_html__( 'Enable debugging', 'perfecty-push-notifications' ), // title
+            array( $this, 'print_widget_debugging_enabled' ), // callback
+            'perfecty-push-options', // page
+            'perfecty_push_widget_settings' // section
+        );
+
 		add_settings_field(
 			'service_worker_scope', // id
 			esc_html__( 'Service Worker Scope', 'perfecty-push-notifications' ), // title
@@ -282,7 +290,7 @@ class Perfecty_Push_Admin {
 
 		add_settings_field(
 			'server_url', // id
-			esc_html__( 'Server Url', 'perfecty-push-notifications' ), // title
+			esc_html__( 'Custom REST Url', 'perfecty-push-notifications' ), // title
 			array( $this, 'print_server_url' ), // callback
 			'perfecty-push-options', // page
 			'perfecty_push_self_hosted_settings' // section
@@ -627,7 +635,7 @@ class Perfecty_Push_Admin {
 		$new_input = array();
 		$options   = get_option( 'perfecty_push' );
 
-		// checkbox
+		// checkboxes
 		if ( isset( $input['widget_enabled'] ) ) {
 			$new_input['widget_enabled'] = 1;
 		} else {
@@ -638,6 +646,11 @@ class Perfecty_Push_Admin {
 		} else {
 			$new_input['unregister_conflicts'] = 0;
 		}
+        if ( isset( $input['widget_debugging_enabled'] ) ) {
+            $new_input['widget_debugging_enabled'] = 1;
+        } else {
+            $new_input['widget_debugging_enabled'] = 0;
+        }
 
 		// text
 		if ( isset( $input['service_worker_scope'] ) ) {
@@ -742,8 +755,9 @@ class Perfecty_Push_Admin {
 
 		printf(
 			'<input type="text" id="perfecty_push[server_url]"' .
-			'name="perfecty_push[server_url]" value="%s" placeholder="127.0.0.1:8777"/>',
-			esc_html( $value )
+			'name="perfecty_push[server_url]" value="%s" placeholder="%s"/>',
+			esc_html( $value ),
+            get_rest_url()
 		);
 	}
 
@@ -780,6 +794,24 @@ class Perfecty_Push_Admin {
 			esc_html( $enabled )
 		);
 	}
+
+    /**
+     * Print the debugging public enabled option
+     *
+     * @since 1.0.0
+     */
+    public function print_widget_debugging_enabled() {
+        $options = get_option( 'perfecty_push' );
+        $value   = isset( $options['widget_debugging_enabled'] ) ? esc_attr( $options['widget_debugging_enabled'] ) : 0;
+
+        $enabled = $value == 1 ? 'checked="checked"' : '';
+
+        printf(
+            '<input type="checkbox" id="perfecty_push[widget_debugging_enabled]"' .
+            'name="perfecty_push[widget_debugging_enabled]" %s />',
+            esc_html( $enabled )
+        );
+    }
 
 	/**
 	 * Print the unregister_conflicts option

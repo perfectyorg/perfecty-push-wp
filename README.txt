@@ -4,7 +4,7 @@ Donate link: https://github.com/rwngallego
 Tags: Push Notifications, Web Push Notifications, Notifications, User engagement
 Requires at least: 5.0
 Tested up to: 5.7
-Stable tag: 1.0.8
+Stable tag: 1.1.0
 Requires PHP: 7.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -95,6 +95,14 @@ You can create an issue in our Github repo:
 8. Settings
 
 == Changelog ==
+
+= 1.1.0 =
+* Integrate the Perfecty Push JS SDK: This is backwards compatible but upgrade to this version with caution.
+* Upgrade the PHP Push Server Lib to the latest version
+* Performance improvements
+* Debugging mode
+* The server_url now defaults to get_rest_url(), so the preference value is reset to an empty value in order to use it
+* Fix various issues
 
 = 1.0.8 =
 * Add options to send featured image and customize notification title in notifications sent on post publishing. Thanks to [@mociofiletto](https://profiles.wordpress.org/mociofiletto/)
