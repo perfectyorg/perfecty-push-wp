@@ -77,7 +77,7 @@ if ( version_compare( PHP_VERSION, '7.2.0', '>=' ) ) {
 	Class_Perfecty_Push_Lib_Utils::check_gmp();
 } else {
 	error_log( sprintf( 'Wrong PHP version: %s', PHP_VERSION ) );
-	Class_Perfecty_Push_Lib_Utils::show_message( 'Perfecty Push requires PHP >= 7.2.0', 'error' );
+	Class_Perfecty_Push_Lib_Utils::show_message( esc_html( 'Perfecty Push requires PHP >= 7.2.0', 'perfecty-push-notifications' ), 'error' );
 	Class_Perfecty_Push_Lib_Utils::disable();
 }
 

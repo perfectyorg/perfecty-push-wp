@@ -1,6 +1,7 @@
 <?php
 
 use Minishlink\WebPush\Subscription;
+use Minishlink\WebPush\WebPush;
 
 /***
  * Perfecty Push server.
@@ -11,22 +12,60 @@ class Perfecty_Push_Lib_Push_Server {
 
 	public const DEFAULT_BATCH_SIZE = 30;
 
+	private static $auth;
 	private static $webpush;
 	private static $vapid_generator;
 
 	/**
 	 * Bootstraps the Push Server.
 	 *
-	 * @param $webpush object Web push server
+	 * @param $auth array Vapid Keys
 	 * @param $vapid_generator Callable Method that generates the vapid keys
+	 * @param $webpush object Web push server
 	 */
-	public static function bootstrap( $webpush, $vapid_generator ) {
+	public static function bootstrap( $auth, $vapid_generator, $webpush = null ) {
 		if ( ! is_callable( $vapid_generator ) ) {
 			error_log( "$vapid_generator must be a callable function" );
 		}
 
-		self::$webpush         = $webpush;
+		self::$auth            = $auth;
 		self::$vapid_generator = $vapid_generator;
+		self::$webpush         = $webpush;
+	}
+
+	/**
+	 * Get the Push Server instance
+	 *
+	 * @return object Web push server
+	 */
+	public static function getPushServer() {
+		if ( ! self::$auth ) {
+			error_log( 'The VAPID auth keys were not found' );
+			return null;
+		}
+
+		set_error_handler(
+			function ( $errno, $errstr, $errfile, $errline ) {
+				if ( strpos( $errstr, 'gmp extension is not loaded' ) !== false ) {
+					// we know this, however we capture the E_WARNING because we have previously
+					// informed the user about this in a nicer way
+					return true;
+				}
+				return false; // we raise it to the next handler otherwise
+			}
+		);
+		try {
+			$webpush = new WebPush( self::$auth );
+			$webpush->setReuseVAPIDHeaders( true );
+		} catch ( \Exception $ex ) {
+			error_log( 'Could not start the Push Server: ' . $ex->getMessage() . ', ' . $ex->getTraceAsString() );
+			Class_Perfecty_Push_Lib_Utils::show_message( esc_html( 'Could not start the Push Server, check the PHP error logs for more information.', 'perfecty-push-notifications' ), 'warning' );
+			Class_Perfecty_Push_Lib_Utils::disable();
+			throw $ex;
+		}
+		restore_error_handler();
+
+		return $webpush;
 	}
 	/**
 	 * Creates the VAPI keys
@@ -169,8 +208,7 @@ class Perfecty_Push_Lib_Push_Server {
 			$payload = json_encode( $payload );
 		}
 		if ( ! self::$webpush ) {
-			error_log( 'The Push Server was not bootstrapped.' );
-			return false;
+			self::$webpush = self::getPushServer();
 		}
 
 		foreach ( $users as $item ) {
