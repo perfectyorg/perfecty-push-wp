@@ -38,7 +38,7 @@ class PushServerTest extends WP_UnitTestCase {
         restore_error_handler();
 
 		$vapid_generator = array( 'Minishlink\WebPush\VAPID', 'createVapidKeys' );
-		Perfecty_Push_Lib_Push_Server::bootstrap( $webpush, $vapid_generator );
+		Perfecty_Push_Lib_Push_Server::bootstrap( array(), $vapid_generator, $webpush );
 
 		\Mockery::close();
 		deactivate_perfecty_push();
@@ -63,7 +63,7 @@ class PushServerTest extends WP_UnitTestCase {
 		->once();
 		$mocked_vapid_callback = array( $mocked_vapid_generator, 'createVapidKeys' );
 
-		Perfecty_Push_Lib_Push_Server::bootstrap( $mocked_server, $mocked_vapid_callback );
+		Perfecty_Push_Lib_Push_Server::bootstrap( array(), $mocked_vapid_callback, $mocked_server );
 
 		$result = Perfecty_Push_Lib_Push_Server::create_vapid_keys();
 
@@ -94,7 +94,7 @@ class PushServerTest extends WP_UnitTestCase {
 		)
 		->once();
 
-		Perfecty_Push_Lib_Push_Server::bootstrap( $mocked_server, $this->mocked_vapid_callback );
+		Perfecty_Push_Lib_Push_Server::bootstrap( array(), $this->mocked_vapid_callback, $mocked_server );
 
 		$id            = Perfecty_Push_Lib_Db::create_user( 'my_endpoint_url', 'my_key_auth', 'my_p256dh_key', '127.0.0.1' );
 		$users = array(
@@ -140,7 +140,7 @@ class PushServerTest extends WP_UnitTestCase {
             )
             ->once();
 
-        Perfecty_Push_Lib_Push_Server::bootstrap( $mocked_server, $this->mocked_vapid_callback );
+        Perfecty_Push_Lib_Push_Server::bootstrap( array(), $this->mocked_vapid_callback, $mocked_server );
 
         $id            = Perfecty_Push_Lib_Db::create_user( 'my_endpoint_url', 'my_key_auth', 'my_p256dh_key', '127.0.0.1' );
         $users = array(
@@ -187,7 +187,7 @@ class PushServerTest extends WP_UnitTestCase {
 		)
 		->once();
 
-		Perfecty_Push_Lib_Push_Server::bootstrap( $mocked_server, $this->mocked_vapid_callback );
+		Perfecty_Push_Lib_Push_Server::bootstrap( array(), $this->mocked_vapid_callback, $mocked_server );
 
 		$id            = Perfecty_Push_Lib_Db::create_user( 'my_endpoint_url', 'my_key_auth', 'my_p256dh_key', '127.0.0.1' );
         $user_before = Perfecty_Push_Lib_Db::get_user($id);
@@ -229,7 +229,7 @@ class PushServerTest extends WP_UnitTestCase {
             )
             ->once();
 
-        Perfecty_Push_Lib_Push_Server::bootstrap( $mocked_server, $this->mocked_vapid_callback );
+        Perfecty_Push_Lib_Push_Server::bootstrap( array(), $this->mocked_vapid_callback, $mocked_server );
 
         $id            = Perfecty_Push_Lib_Db::create_user( 'my_endpoint_url', 'my_key_auth', 'my_p256dh_key', '127.0.0.1' );
         $user_before = Perfecty_Push_Lib_Db::get_user($id);
@@ -300,7 +300,7 @@ class PushServerTest extends WP_UnitTestCase {
 		->twice();
 
 		// base data
-		Perfecty_Push_Lib_Push_Server::bootstrap( $mocked_server, $this->mocked_vapid_callback );
+		Perfecty_Push_Lib_Push_Server::bootstrap( array(), $this->mocked_vapid_callback, $mocked_server );
 		Perfecty_Push_Lib_Db::create_user( 'my_endpoint_url', 'my_key_auth', 'my_p256dh_key', '127.0.0.1' );
 		Perfecty_Push_Lib_Db::create_user( 'my_endpoint_url2', 'my_key_auth2', 'my_p256dh_key2', '127.0.0.1' );
 		$notification_id = Perfecty_Push_Lib_Push_Server::schedule_broadcast_async( $payload );
@@ -373,7 +373,7 @@ class PushServerTest extends WP_UnitTestCase {
 		$options               = get_option( 'perfecty_push' );
 		$options['batch_size'] = 2;
 		update_option( 'perfecty_push', $options );
-		Perfecty_Push_Lib_Push_Server::bootstrap( $mocked_server, $this->mocked_vapid_callback );
+		Perfecty_Push_Lib_Push_Server::bootstrap( array(), $this->mocked_vapid_callback, $mocked_server );
 		Perfecty_Push_Lib_Db::create_user( 'my_endpoint_url', 'my_key_auth', 'my_p256dh_key', '127.0.0.1' );
 		Perfecty_Push_Lib_Db::create_user( 'my_endpoint_url2', 'my_key_auth2', 'my_p256dh_key2', '127.0.0.1' );
 		Perfecty_Push_Lib_Db::create_user( 'my_endpoint_url3', 'my_key_auth3', 'my_p256dh_key3', '127.0.0.1' );

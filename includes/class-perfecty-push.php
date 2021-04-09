@@ -1,7 +1,5 @@
 <?php
 
-use Minishlink\WebPush\WebPush;
-
 /**
  * The file that defines the core plugin class
  *
@@ -214,33 +212,13 @@ class Perfecty_Push {
 			);
 		} elseif ( $plugin_activated == 1 ) {
 			error_log( 'VAPID Keys are missing' );
-			Class_Perfecty_Push_Lib_Utils::show_message( "The VAPID keys are missing in Perfecty Push. Help: <a href='https://github.com/rwngallego/perfecty-push-wp/wiki/Troubleshooting#the-vapid-keys-are-missing-in-perfecty-push-generate-the-vapid-keys' target='_blank'>Generate the VAPID Keys</a>.", 'warning' );
+			Class_Perfecty_Push_Lib_Utils::show_message( sprintf( esc_html( 'The VAPID keys are missing in Perfecty Push. Help: %1$s Generate the VAPID Keys. %2$s', 'perfecty-push-notifications' ), "<a href='https://github.com/rwngallego/perfecty-push-wp/wiki/Troubleshooting#the-vapid-keys-are-missing-in-perfecty-push-generate-the-vapid-keys' target='_blank'>", '</a>' ), 'warning' );
 			Class_Perfecty_Push_Lib_Utils::disable();
 			return false;
 		}
+		$vapid_generator = array( 'Minishlink\WebPush\VAPID', 'createVapidKeys' );
 
-		set_error_handler(
-			function ( $errno, $errstr, $errfile, $errline ) {
-				if ( strpos( $errstr, 'gmp extension is not loaded' ) !== false ) {
-					// we know this, however we capture the E_WARNING because we have previously
-					// informed the user about this in a nicer way
-					return true;
-				}
-				return false; // we raise it to the next handler otherwise
-			}
-		);
-		try {
-			$webpush = new WebPush( $auth );
-			$webpush->setReuseVAPIDHeaders( true );
-			$vapid_generator = array( 'Minishlink\WebPush\VAPID', 'createVapidKeys' );
-			Perfecty_Push_Lib_Push_Server::bootstrap( $webpush, $vapid_generator );
-		} catch ( \Exception $ex ) {
-			error_log( 'Could not bootstrap the Push Server: ' . $ex->getMessage() . ', ' . $ex->getTraceAsString() );
-			Class_Perfecty_Push_Lib_Utils::show_message( 'Could not bootstrap Perfecty Push, check the php error logs for more information.', 'warning' );
-			Class_Perfecty_Push_Lib_Utils::disable();
-		}
-		restore_error_handler();
-
+		Perfecty_Push_Lib_Push_Server::bootstrap( $auth, $vapid_generator );
 		return true;
 	}
 
