@@ -132,8 +132,8 @@ class Perfecty_Push_Admin {
 
 		add_submenu_page(
 			'perfecty-push',
-			esc_html__( 'Notifications', 'perfecty-push-notifications' ),
-			esc_html__( 'Notifications', 'perfecty-push-notifications' ),
+			esc_html__( 'Notification jobs', 'perfecty-push-notifications' ),
+			esc_html__( 'Notification jobs', 'perfecty-push-notifications' ),
 			'manage_options',
 			'perfecty-push-notifications',
 			array( $this, 'print_notifications_page' )
