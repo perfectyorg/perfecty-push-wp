@@ -37,8 +37,8 @@ class RestGetUserTest extends WP_UnitTestCase {
 		$res         = $users->get_user( $data );
 
 		$this->assertSame(
-			$res,
-			array(
+            (array) $res,
+            array(
 				'uuid'   => $user->uuid,
 				'is_active' => true,
                 'disabled' => false
@@ -57,7 +57,7 @@ class RestGetUserTest extends WP_UnitTestCase {
 		$users = new Perfecty_Push_Users();
 		$res         = $users->get_user( $data );
 
-		$this->assertNull($res);
+		$this->assertSame((array) $res, array());
 	}
 
 	/**

@@ -19,10 +19,10 @@ if ( isset( $options['unregister_conflicts'] ) && $options['unregister_conflicts
 } else {
 	$perfecty_push_unregister_conflicts = false;
 }
-if ( isset( $options['widget_debugging_enabled'] ) || $options['widget_debugging_enabled'] == 0 ) {
-    $perfecty_push_widget_debugging_enabled = false;
+if ( isset( $options['widget_debugging_enabled'] ) || $options['widget_debugging_enabled'] == 1 ) {
+	$perfecty_push_widget_debugging_enabled = true;
 } else {
-    $perfecty_push_widget_debugging_enabled = true;
+	$perfecty_push_widget_debugging_enabled = false;
 }
 
 ?>

@@ -107,7 +107,7 @@ class Perfecty_Push_Users {
 		}
 
 		$user   = Perfecty_Push_Lib_Db::get_user_by_uuid( $user_id );
-		$result = null;
+		$result = array();
 		if ( $user !== null ) {
 			$result = array(
 				'uuid'      => $user->uuid,
@@ -115,7 +115,7 @@ class Perfecty_Push_Users {
 				'disabled'  => (bool) $user->disabled,
 			);
 		}
-		return $result;
+		return (object) $result;
 	}
 
 	/**
