@@ -41,6 +41,9 @@ deps:
 phpunit:
 	@./bin/run.sh phpunit
 
+sdk:
+	@./bin/run.sh sdk
+
 setup:
 	@./bin/run.sh setup
 

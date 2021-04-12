@@ -59,7 +59,6 @@ class Perfecty_Push_Users {
 				$user->key_auth   = $key_auth;
 				$user->key_p256dh = $key_p256dh;
 				$user->remote_ip  = $remote_ip;
-				$user->disabled   = false;
 				$result           = Perfecty_Push_Lib_Db::update_user( $user );
 				if ( $result === false ) {
 					// Could not update the user
@@ -76,7 +75,6 @@ class Perfecty_Push_Users {
 
 			// The user was registered
 			$response = array(
-				'success'   => true,
 				'uuid'      => $user->uuid,
 				'is_active' => (bool) $user->is_active,
 			);
@@ -112,7 +110,6 @@ class Perfecty_Push_Users {
 			$result = array(
 				'uuid'      => $user->uuid,
 				'is_active' => (bool) $user->is_active,
-				'disabled'  => (bool) $user->disabled,
 			);
 		}
 		return (object) $result;
@@ -148,7 +145,6 @@ class Perfecty_Push_Users {
 			return new WP_Error( 'failed_update', __( 'Could not change the user', 'perfecty-push-notifications' ), array( 'status' => 500 ) );
 		} else {
 			$response = array(
-				'success'   => true,
 				'is_active' => $is_active,
 			);
 			return (object) $response;

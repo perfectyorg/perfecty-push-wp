@@ -41,7 +41,6 @@ class RestUpdatePreferencesTest extends WP_UnitTestCase {
 		$this->assertSame(
 			(array) $res,
 			array(
-				'success'   => true,
 				'is_active' => false,
 			)
 		);
@@ -69,7 +68,6 @@ class RestUpdatePreferencesTest extends WP_UnitTestCase {
 		$this->assertSame(
 			(array) $res,
 			array(
-				'success'   => true,
 				'is_active' => true,
 			)
 		);

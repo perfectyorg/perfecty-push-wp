@@ -199,8 +199,8 @@ class PushServerTest extends WP_UnitTestCase {
         $user_after = Perfecty_Push_Lib_Db::get_user($id);
 
         $this->assertSame( array( 1, 0 ), $result );
-        $this->assertEquals(0, $user_before->disabled);
-        $this->assertEquals(1, $user_after->disabled);
+        $this->assertNotSame(null, $user_before);
+        $this->assertSame(null, $user_after);
 	}
 
     /**
@@ -241,8 +241,8 @@ class PushServerTest extends WP_UnitTestCase {
         $user_after = Perfecty_Push_Lib_Db::get_user($id);
 
         $this->assertSame( array( 1, 0 ), $result );
-        $this->assertEquals(0, $user_before->disabled);
-        $this->assertEquals(1, $user_after->disabled);
+        $this->assertNotSame(null, $user_before);
+        $this->assertEquals(null, $user_after);
     }
 
 	/**

@@ -55,7 +55,6 @@ class DbTest extends WP_UnitTestCase {
 
 		$this->assertNotEmpty( $result );
 		$this->assertSame( '1', $result->is_active );
-		$this->assertSame( '0', $result->disabled );
 	}
 
 	/**
@@ -86,13 +85,13 @@ class DbTest extends WP_UnitTestCase {
         $id2 = Perfecty_Push_Lib_Db::create_user( 'my_endpoint_url_2', 'my_key_auth_2', 'my_p256dh_key_2', '127.0.0.1' );
         $id3 = Perfecty_Push_Lib_Db::create_user( 'my_endpoint_url_3', 'my_key_auth_3', 'my_p256dh_key_3', '127.0.0.1' );
         Perfecty_Push_Lib_Db::set_user_active($id2,false);
-        Perfecty_Push_Lib_Db::set_user_disabled($id3, true);
+        Perfecty_Push_Lib_Db::delete_users(array($id3));
 
 		$total_all = Perfecty_Push_Lib_Db::get_total_users();
         $total_only_active = Perfecty_Push_Lib_Db::get_total_users(true);
 
 		$this->assertSame( $initial, 0 );
-        $this->assertSame( $total_all, 3 );
+        $this->assertSame( $total_all, 2 );
         $this->assertSame( $total_only_active, 1 );
 	}
 
@@ -114,38 +113,20 @@ class DbTest extends WP_UnitTestCase {
         $this->assertSame(2, $result['inactive']);
     }
 
-	/**
-	 * Test set user as disabled
-	 */
-	public function test_set_user_disabled() {
-		$id = Perfecty_Push_Lib_Db::create_user( 'my_endpoint_url', 'my_key_auth', 'my_p256dh_key', '127.0.0.1' );
-		Perfecty_Push_Lib_Db::set_user_disabled( $id, true);
-		$userDisabled = Perfecty_Push_Lib_Db::get_user( $id );
-		Perfecty_Push_Lib_Db::set_user_disabled( $id, false );
-		$userEnabled = Perfecty_Push_Lib_Db::get_user( $id );
-
-		// TODO: AssertSame with booleans instead!
-		$this->assertEquals( 1, $userDisabled->disabled);
-		$this->assertEquals( 0, $userEnabled->disabled);
-	}
-
     /**
-     * Test set user as disabled
+     * Test delete user by endpoint
      */
-    public function test_set_user_disabled_with_endpoint() {
+    public function test_delete_user_by_endpoint() {
         $id1 = Perfecty_Push_Lib_Db::create_user( 'my_endpoint_url_1', 'my_key_auth_1', 'my_p256dh_key_1', '127.0.0.1' );
         $id2 = Perfecty_Push_Lib_Db::create_user( 'my_endpoint_url_2', 'my_key_auth_2', 'my_p256dh_key_2', '127.0.0.1' );
-        Perfecty_Push_Lib_Db::set_user_disabled_with_endpoint( 'my_endpoint_url_2', true);
-        $userDisabled = Perfecty_Push_Lib_Db::get_user( $id2 );
-        Perfecty_Push_Lib_Db::set_user_disabled( $id2, false );
-        $userEnabled = Perfecty_Push_Lib_Db::get_user( $id2 );
+        Perfecty_Push_Lib_Db::delete_user_by_endpoint( 'my_endpoint_url_2');
+        $deletedUser = Perfecty_Push_Lib_Db::get_user( $id2 );
 
         $userNotTouched = Perfecty_Push_Lib_Db::get_user( $id1 );
 
         // TODO: AssertSame with booleans instead!
-        $this->assertEquals( 1, $userDisabled->disabled);
-        $this->assertEquals( 0, $userEnabled->disabled);
-        $this->assertEquals( 0, $userNotTouched->disabled);
+        $this->assertEquals( null, $deletedUser);
+        $this->assertNotEquals( null, $userNotTouched);
     }
 
 	/**
@@ -208,7 +189,6 @@ class DbTest extends WP_UnitTestCase {
         $user->key_p256dh = 'updated_my_p256dh_key';
         $user->remote_ip  = '192.168.0.1';
         $user->is_active  = 0;
-        $user->disabled   = 1;
 
         Perfecty_Push_Lib_Db::update_user( $user );
         $updated_user = Perfecty_Push_Lib_Db::get_user( $id );
@@ -219,7 +199,6 @@ class DbTest extends WP_UnitTestCase {
             'key_p256dh' => 'updated_my_p256dh_key',
             'remote_ip'  => '192.168.0.1',
             'is_active'  => 0,
-            'disabled'   => 1,
         );
 
         $this->assertArraySubset( $expected, (array) $updated_user);

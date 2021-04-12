@@ -40,8 +40,7 @@ class RestGetUserTest extends WP_UnitTestCase {
             (array) $res,
             array(
 				'uuid'   => $user->uuid,
-				'is_active' => true,
-                'disabled' => false
+				'is_active' => true
 			)
 		);
 	}

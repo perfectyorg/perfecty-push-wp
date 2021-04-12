@@ -63,6 +63,8 @@ phpunit() {
 
 sdk() {
   git submodule update --init
+  (cd public/js/perfecty-push-sdk/ && npm install)
+  (cd public/js/perfecty-push-sdk/ && npm run build)
 }
 
 test() {
@@ -79,7 +81,16 @@ DIST_PATH="dist"
 SVN_PATH="$DIST_PATH/svn"
 OUTPUT_PATH="$DIST_PATH/source"
 
+create_sdk_dist() {
+  sdk
+  mv public/js/perfecty-push-sdk/dist /tmp/
+  rm -rf public/js/perfecty-push-sdk
+  mkdir -p public/js/perfecty-push-sdk
+  mv /tmp/dist/ public/js/perfecty-push-sdk
+}
+
 create_dist() {
+  create_sdk_dist
   rm -rf $DIST_PATH
   mkdir -p $SVN_PATH $OUTPUT_PATH
   cp -Rp admin includes languages lib public composer.json composer.lock index.php LICENSE.txt perfecty-push.php README.txt uninstall.php $OUTPUT_PATH
@@ -120,11 +131,6 @@ svnpush() {
     exit 1
   fi
 
-  if [ -z "$SVN_TAG" ]; then
-    echo "You need to provide the tag version as SVN_TAG=1.0.1"
-    exit 1
-  fi
-
   if [ -z "$SVN_USERNAME" ]; then
     echo "You need to provide the username as SVN_USERNAME=myname"
     exit 1
@@ -140,18 +146,22 @@ svnpush() {
     exit 1
   fi
 
-  if [ -d "$SVN_PATH/tags/$SVN_TAG" ]; then
+  if [ ! -z "$SVN_TAG" ] && [ -d "$SVN_PATH/tags/$SVN_TAG" ]; then
     echo "The tag $SVN_TAG already exists"
     exit 1
   fi
 
-  cd $SVN_PATH && svn cp trunk tags/$SVN_TAG && svn ci -m "Version $SVN_TAG" --username $SVN_USERNAME --password $SVN_PASSWORD
+  if [ ! -z "$SVN_TAG" ]; then
+    cd $SVN_PATH && svn cp trunk tags/$SVN_TAG && svn ci -m "Version $SVN_TAG" --username $SVN_USERNAME --password $SVN_PASSWORD
+  else
+    cd $SVN_PATH && svn ci -m "Sync trunk" --username $SVN_USERNAME --password $SVN_PASSWORD
+  fi
 }
 
 #----------------------------------------------
 
 case $COMMAND in
-  "up" | "down" | "setup" | "wordpress" | "deps" | "phpunit" | "test" | "format" | "console" | "bundle" | "svnsync" | "svnpush")
+  "up" | "down" | "setup" | "wordpress" | "deps" | "phpunit" | "sdk" | "test" | "format" | "console" | "bundle" | "svnsync" | "svnpush")
     if [[ $VERBOSE == '--verbose' ]]; then
       set -ex
     else
