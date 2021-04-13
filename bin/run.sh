@@ -115,7 +115,9 @@ svnsync() {
   cp assets/* "$SVN_PATH/assets/"
 
   # we don't sync vendor if the lock file is the same
-  if [[ $(shasum composer.lock | head -c 40) == $(shasum "$OUTPUT_PATH/composer.lock" | head -c 40) ]]; then
+  shasum "$SVN_PATH/trunk/composer.lock"
+  shasum "$OUTPUT_PATH/composer.lock"
+  if [[ $(shasum "$SVN_PATH/trunk/composer.lock" | head -c 40) == $(shasum "$OUTPUT_PATH/composer.lock" | head -c 40) ]]; then
     rsync -q -av $OUTPUT_PATH/* $SVN_PATH/trunk --exclude vendor
     echo "## no differences in /vendor, similar lock files ##"
   else
