@@ -126,7 +126,7 @@ class Perfecty_Push_Public {
 				'methods'             => array( 'POST' ),
 				'callback'            => array( $users, 'update_preferences' ),
 				'permission_callback' => '__return_true',
-				'args'                => array( 'user_id' ),
+				'args'                => array( 'user_id' => array() ),
 			)
 		);
 		register_rest_route(
@@ -136,7 +136,7 @@ class Perfecty_Push_Public {
 				'methods'             => array( 'GET' ),
 				'callback'            => array( $users, 'get_user' ),
 				'permission_callback' => '__return_true',
-				'args'                => array( 'user_id' ),
+				'args'                => array( 'user_id' => array() ),
 			)
 		);
 	}
