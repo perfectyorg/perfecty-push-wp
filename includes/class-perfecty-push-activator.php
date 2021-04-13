@@ -43,9 +43,6 @@ class Perfecty_Push_Activator {
 			$options['vapid_public_key']  = $vapidKeys['publicKey'];
 			$options['vapid_private_key'] = $vapidKeys['privateKey'];
 		}
-		if ( empty( $options['server_url'] ) ) {
-			$options['server_url'] = get_site_url();
-		}
 		if ( empty( $options['batch_size'] ) ) {
 			$options['batch_size'] = Perfecty_Push_Lib_Push_Server::DEFAULT_BATCH_SIZE;
 		}

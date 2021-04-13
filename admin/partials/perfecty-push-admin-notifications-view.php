@@ -1,6 +1,6 @@
 <div class="wrap">
 	<div class="icon32 icon32-posts-post" id="icon-edit"><br></div>
-	<h1><?php printf( esc_html__( 'Notification details', 'perfecty-push-notifications' ) ); ?></h1>
+	<h1><?php printf( esc_html__( 'Notification job details', 'perfecty-push-notifications' ) ); ?></h1>
 
 	<tbody>
 	<div class="formdata perfecty-push-view-form">

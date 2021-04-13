@@ -231,14 +231,14 @@ class Perfecty_Push_Lib_Push_Server {
 
 				$endpoint = $report->getEndpoint();
 				if ( $report->isSubscriptionExpired() ) {
-					error_log( "User subscription has expired, disabling it: $endpoint" );
-					Perfecty_Push_Lib_Db::set_user_disabled_with_endpoint( $endpoint, true );
+					error_log( "User subscription has expired, removing it: $endpoint" );
+					Perfecty_Push_Lib_Db::delete_user_by_endpoint( $endpoint );
 					continue;
 				}
 				$response = $report->getResponse();
 				if ( $response != null && $response->getStatusCode() == 403 ) {
-					error_log( "The endpoint should not be tried again, disabling it: $endpoint" );
-					Perfecty_Push_Lib_Db::set_user_disabled_with_endpoint( $endpoint, true );
+					error_log( "The endpoint should not be tried again, removing it: $endpoint" );
+					Perfecty_Push_Lib_Db::delete_user_by_endpoint( $endpoint );
 					continue;
 				}
 			}

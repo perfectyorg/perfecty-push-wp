@@ -56,8 +56,8 @@ class RestRegistrationTest extends WP_UnitTestCase {
 		$this->assertSame(
 			(array) $res,
 			array(
-				'success' => true,
 				'uuid'    => $users[0]->uuid,
+                'is_active' => (bool)$users[0]->is_active
 			)
 		);
 		$this->assertArraySubset( $expected, (array) $users[0] );
@@ -96,8 +96,8 @@ class RestRegistrationTest extends WP_UnitTestCase {
         $this->assertSame(
             (array) $res,
             array(
-                'success' => true,
                 'uuid'    => $users[0]->uuid,
+                'is_active' => (bool)$users[0]->is_active
             )
         );
         $this->assertArraySubset( $expected, (array) $users[0] );

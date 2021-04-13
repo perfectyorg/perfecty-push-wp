@@ -7,7 +7,7 @@ use Ramsey\Uuid\Uuid;
  */
 class Perfecty_Push_Lib_Db {
 
-	private static $allowed_users_fields         = 'id,uuid,endpoint,key_auth,key_p256dh,remote_ip,is_active,disabled,created_at';
+	private static $allowed_users_fields         = 'id,uuid,endpoint,key_auth,key_p256dh,remote_ip,is_active,created_at';
 	private static $allowed_notifications_fields = 'id,payload,total,succeeded,last_cursor,batch_size,status,is_taken,created_at,finished_at';
 
 	public const NOTIFICATIONS_STATUS_SCHEDULED = 'scheduled';
@@ -147,7 +147,7 @@ class Perfecty_Push_Lib_Db {
 
 		$where = '';
 		if ( $only_active === true ) {
-			$where = ' WHERE is_active=1 and disabled=0';
+			$where = ' WHERE is_active=1';
 		}
 		$total = $wpdb->get_var( 'SELECT COUNT(*) FROM ' . self::users_table() . $where );
 		return $total != null ? intval( $total ) : 0;
@@ -165,7 +165,7 @@ class Perfecty_Push_Lib_Db {
 		global $wpdb;
 
 		$total  = intval( $wpdb->get_var( 'SELECT COUNT(*) FROM ' . self::users_table() ) );
-		$active = intval( $wpdb->get_var( 'SELECT COUNT(*) FROM ' . self::users_table() . ' WHERE is_active=1 AND disabled=0' ) );
+		$active = intval( $wpdb->get_var( 'SELECT COUNT(*) FROM ' . self::users_table() . ' WHERE is_active=1' ) );
 
 		return array(
 			'total'    => $total,
@@ -193,39 +193,17 @@ class Perfecty_Push_Lib_Db {
 	}
 
 	/**
-	 * Changes the disabled property for the subcription
-	 *
-	 * @param $user_id int id
-	 * @param $disabled bool True to disable or false to enable
-	 *
-	 * @return int|bool Number of rows updated or false
-	 */
-	public static function set_user_disabled( $user_id, $disabled ) {
-		global $wpdb;
-
-		return $wpdb->update(
-			self::users_table(),
-			array( 'disabled' => $disabled ),
-			array( 'id' => $user_id )
-		);
-	}
-
-	/**
-	 * Changes the disabled property for the subscription using the endpoint as key
+	 * Delete the user by the endpoint
 	 *
 	 * @param $endpoint string Endpoint (unique)
-	 * @param $disabled bool True to disable or false to enable
 	 *
 	 * @return int|bool Number of rows updated or false
 	 */
-	public static function set_user_disabled_with_endpoint( $endpoint, $disabled ) {
+	public static function delete_user_by_endpoint( $endpoint ) {
 		global $wpdb;
 
-		return $wpdb->update(
-			self::users_table(),
-			array( 'disabled' => $disabled ),
-			array( 'endpoint' => $endpoint )
-		);
+		$sql = $wpdb->prepare( 'DELETE FROM ' . self::users_table() . ' WHERE endpoint=%s', $endpoint );
+		return $wpdb->query( $sql );
 	}
 
 	/**
@@ -284,7 +262,6 @@ class Perfecty_Push_Lib_Db {
 				'key_auth'   => $user->key_auth,
 				'key_p256dh' => $user->key_p256dh,
 				'is_active'  => $user->is_active,
-				'disabled'   => $user->disabled,
 			),
 			array( 'id' => $user->id )
 		);
@@ -324,7 +301,7 @@ class Perfecty_Push_Lib_Db {
 			throw new Exception( "The order by [$order_by] field is not allowed" );
 		}
 		$order_asc        = $order_asc === 'asc' ? 'asc' : 'desc';
-		$where_conditions = $only_active === false ? '' : ' WHERE is_active=1 AND disabled=false';
+		$where_conditions = $only_active === false ? '' : ' WHERE is_active=1';
 
 		$sql     = $wpdb->prepare(
 			'SELECT ' . self::$allowed_users_fields .

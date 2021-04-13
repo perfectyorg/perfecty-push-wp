@@ -4,7 +4,7 @@ Donate link: https://github.com/rwngallego
 Tags: Push Notifications, Web Push Notifications, Notifications, User engagement
 Requires at least: 5.0
 Tested up to: 5.7
-Stable tag: 1.0.8
+Stable tag: 1.1.0
 Requires PHP: 7.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -21,14 +21,13 @@ Features:
 - Self-hosted: total control of your information, and no need of third-party integrations.
 - Migrate users from other Push Notifications providers like OneSignal.
 - PWA & AMP Friendly (Tested with Super PWA and AMP for WP plugins).
-- Free and Easy.
-- Send Push Notifications on posts publishing.
+- Send Push Notifications on posts publishing. You can use the feature image of the post or customize the title.
 - Send custom Push Notifications: you can easily change the icon, the image or the URL to open.
 - See the stats in the Dashboard.
 - Customizable public widget.
 - The user authorization tokens stay in your server when they subscribe to receive your Push Notifications.
 - Easily comply with GDPR: all the Push Notifications information is processed and stored in your server.
-- Open Source Push Notifications: no hidden fees and you own your data.
+- Open Source: no hidden fees, and open transparency.
 - Offline browser Push Notifications through [Push API](https://developer.mozilla.org/en-US/docs/Web/API/Push_API).
 
 Requirements:
@@ -76,7 +75,7 @@ It depends on the operating system, but in theory you install it as a regular PH
 
 = Is this working in production? =
 
-This plugin has been deployed in a real site with more than 800.000 monthly visits and around 3.000 Push Notifications subscribers (~90.000 notifications/month), however we recommend you to test it before deploying it to a production environment.
+This plugin has been deployed in a real site with more than 800.000 monthly visits and around 8.000 Push Notifications subscribers (~240.000 notifications/month), however we recommend you to test it before deploying it to a production environment.
 
 = How do I report a bug? =
 
@@ -95,6 +94,14 @@ You can create an issue in our Github repo:
 8. Settings
 
 == Changelog ==
+
+= 1.1.0 =
+* Integrate the Perfecty Push JS SDK: This is backwards compatible but upgrade to this version with caution.
+* Upgrade the PHP Push Server Lib to the latest version
+* Performance improvements
+* Debugging mode
+* The server_url now defaults to get_rest_url(), so the preference value is reset to an empty value in order to use it
+* Fix various issues
 
 = 1.0.8 =
 * Add options to send featured image and customize notification title in notifications sent on post publishing. Thanks to [@mociofiletto](https://profiles.wordpress.org/mociofiletto/)
