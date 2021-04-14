@@ -4,7 +4,7 @@ Donate link: https://github.com/rwngallego
 Tags: Push Notifications, Web Push Notifications, Notifications, User engagement
 Requires at least: 5.0
 Tested up to: 5.7
-Stable tag: 1.0.8
+Stable tag: 1.1.1
 Requires PHP: 7.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -95,7 +95,7 @@ You can create an issue in our Github repo:
 
 == Changelog ==
 
-= 1.1.0 =
+= 1.1.1 =
 * Integrate the Perfecty Push JS SDK: This is backwards compatible but upgrade to this version with caution.
 * Upgrade the PHP Push Server Lib to the latest version
 * Performance improvements
