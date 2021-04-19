@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "31eb8c80ddc3ce6cbebf0ffdda4c09d9",
+    "content-hash": "dabd5bdf863d61f0c6efb5bf4bad6ea0",
     "packages": [
         {
             "name": "brick/math",
@@ -371,16 +371,16 @@
         },
         {
             "name": "minishlink/web-push",
-            "version": "v6.0.3",
+            "version": "v6.0.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/web-push-libs/web-push-php.git",
-                "reference": "8911bad58026db19ab5e39d19341ea9925cb1edb"
+                "reference": "d87e9e3034ca2b95b1822b1b335e7761c14b89f6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/web-push-libs/web-push-php/zipball/8911bad58026db19ab5e39d19341ea9925cb1edb",
-                "reference": "8911bad58026db19ab5e39d19341ea9925cb1edb",
+                "url": "https://api.github.com/repos/web-push-libs/web-push-php/zipball/d87e9e3034ca2b95b1822b1b335e7761c14b89f6",
+                "reference": "d87e9e3034ca2b95b1822b1b335e7761c14b89f6",
                 "shasum": ""
             },
             "require": {
@@ -428,9 +428,9 @@
             ],
             "support": {
                 "issues": "https://github.com/web-push-libs/web-push-php/issues",
-                "source": "https://github.com/web-push-libs/web-push-php/tree/v6.0.3"
+                "source": "https://github.com/web-push-libs/web-push-php/tree/v6.0.5"
             },
-            "time": "2020-11-06T10:06:32+00:00"
+            "time": "2021-04-08T15:22:50+00:00"
         },
         {
             "name": "psr/http-client",

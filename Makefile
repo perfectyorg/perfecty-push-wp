@@ -10,7 +10,8 @@ default:
 	@echo "  wordpress: Setup wordpress and plugins"
 	@echo "  deps: Install all the composer dependencies"
 	@echo "  phpunit: Setup Wordpress as a testing environment for phpunit"
-	@echo "  setup: Runs wordpress, composer and phpunit"
+	@echo "  sdk: Setup the JS SDK"
+	@echo "  setup: Runs wordpress, composer, phpunit and sdk"
 	@echo "  bundle: Builds the vendor in production mode and generates the distributable zip file (perfecty-push-notifications.zip)"
 	@echo "  svnsync: Sync the current code with the SVN upstream repository"
 	@echo "  svnpush: Creates a tag and push it to the SVN repository"
@@ -39,6 +40,9 @@ deps:
 
 phpunit:
 	@./bin/run.sh phpunit
+
+sdk:
+	@./bin/run.sh sdk
 
 setup:
 	@./bin/run.sh setup

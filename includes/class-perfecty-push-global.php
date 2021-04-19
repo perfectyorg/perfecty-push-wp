@@ -50,6 +50,12 @@ class Perfecty_Push_Global {
 					$options['service_worker_scope'] = '/';
 					update_option( 'perfecty_push', $options );
 				}
+				if ( version_compare( get_option( 'perfecty_push_version' ), '1.1.0', '<' ) ) {
+					// this is before 1.1.0
+					// we reset the value because now we're using a different approach
+					$options['server_url'] = '';
+					update_option( 'perfecty_push', $options );
+				}
 			}
 			update_option( 'perfecty_push_version', PERFECTY_PUSH_VERSION );
 		}

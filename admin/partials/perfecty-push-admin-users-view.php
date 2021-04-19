@@ -41,11 +41,6 @@
 					<br>
 				<div><?php echo $item->is_active == 1 ? esc_html__( 'Yes', 'perfecty-push-notifications' ) : esc_html__( 'No', 'perfecty-push-notifications' ); ?></div>					
 				</p>
-				<p>
-					<label for="disabled"><?php printf( esc_html__( 'Disabled: ', 'perfecty-push-notifications' ) ); ?></label>
-					<br>
-				<div><?php echo $item->disabled == 1 ? esc_html__( 'Yes', 'perfecty-push-notifications' ) : esc_html__( 'No', 'perfecty-push-notifications' ); ?></div>
-				</p>
 			</div>
 		</form>
 	</div>

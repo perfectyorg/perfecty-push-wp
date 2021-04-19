@@ -132,8 +132,8 @@ class Perfecty_Push_Admin {
 
 		add_submenu_page(
 			'perfecty-push',
-			esc_html__( 'Notifications', 'perfecty-push-notifications' ),
-			esc_html__( 'Notifications', 'perfecty-push-notifications' ),
+			esc_html__( 'Notification jobs', 'perfecty-push-notifications' ),
+			esc_html__( 'Notification jobs', 'perfecty-push-notifications' ),
 			'manage_options',
 			'perfecty-push-notifications',
 			array( $this, 'print_notifications_page' )
@@ -203,6 +203,14 @@ class Perfecty_Push_Admin {
 		);
 
 		add_settings_field(
+			'widget_debugging_enabled', // id
+			esc_html__( 'Enable debugging', 'perfecty-push-notifications' ), // title
+			array( $this, 'print_widget_debugging_enabled' ), // callback
+			'perfecty-push-options', // page
+			'perfecty_push_widget_settings' // section
+		);
+
+		add_settings_field(
 			'service_worker_scope', // id
 			esc_html__( 'Service Worker Scope', 'perfecty-push-notifications' ), // title
 			array( $this, 'print_service_worker_scope' ), // callback
@@ -250,6 +258,14 @@ class Perfecty_Push_Admin {
 			'perfecty_push_widget_settings' // section
 		);
 
+		add_settings_field(
+			'settings_update_error', // id
+			esc_html__( 'Message on update error', 'perfecty-push-notifications' ), // title
+			array( $this, 'print_settings_update_error' ), // callback
+			'perfecty-push-options', // page
+			'perfecty_push_widget_settings' // section
+		);
+
 		add_settings_section(
 			'perfecty_push_self_hosted_settings', // id
 			esc_html__( 'Self-hosted server', 'perfecty-push-notifications' ), // title
@@ -274,7 +290,7 @@ class Perfecty_Push_Admin {
 
 		add_settings_field(
 			'server_url', // id
-			esc_html__( 'Server Url', 'perfecty-push-notifications' ), // title
+			esc_html__( 'Custom REST Url', 'perfecty-push-notifications' ), // title
 			array( $this, 'print_server_url' ), // callback
 			'perfecty-push-options', // page
 			'perfecty_push_self_hosted_settings' // section
@@ -313,8 +329,8 @@ class Perfecty_Push_Admin {
 	 */
 	public function display_post_metabox( $post ) {
 		wp_nonce_field( 'perfecty_push_post_metabox', 'perfecty_push_post_metabox_nonce' );
-		$send_notification = ! empty( get_post_meta( $post->ID, '_perfecty_push_send_on_publish', true ) );
-		$send_featured_img = ! empty( get_post_meta( $post->ID, '_perfecty_push_send_featured_img', true ) );
+		$send_notification  = ! empty( get_post_meta( $post->ID, '_perfecty_push_send_on_publish', true ) );
+		$send_featured_img  = ! empty( get_post_meta( $post->ID, '_perfecty_push_send_featured_img', true ) );
 		$notification_title = get_post_meta( $post->ID, '_perfecty_push_notification_custom_title', true );
 		require_once plugin_dir_path( __FILE__ ) . 'partials/perfecty-push-admin-post-metabox.php';
 	}
@@ -373,12 +389,12 @@ class Perfecty_Push_Admin {
 		if ( isset( $_POST['perfecty_push_post_metabox_nonce'] ) &&
 			wp_verify_nonce( $_POST['perfecty_push_post_metabox_nonce'], 'perfecty_push_post_metabox' ) ) {
 			// we do this because on_transition_post_status is triggered before on_save_post by WordPress
-			$send_notification = ! empty( $_POST['perfecty_push_send_on_publish'] );
-			$send_featured_img = ! empty( $_POST['perfecty_push_send_featured_img'] );
-			$notification_title =  $_POST['perfecty_push_notification_custom_title'];
+			$send_notification  = ! empty( $_POST['perfecty_push_send_on_publish'] );
+			$send_featured_img  = ! empty( $_POST['perfecty_push_send_featured_img'] );
+			$notification_title = $_POST['perfecty_push_notification_custom_title'];
 		} else {
-			$send_notification = ! empty( get_post_meta( $post->ID, '_perfecty_push_send_on_publish', true ) );
-			$send_featured_img = ! empty( get_post_meta( $post->ID, '_perfecty_push_send_featured_img', true ) );
+			$send_notification  = ! empty( get_post_meta( $post->ID, '_perfecty_push_send_on_publish', true ) );
+			$send_featured_img  = ! empty( get_post_meta( $post->ID, '_perfecty_push_send_featured_img', true ) );
 			$notification_title = get_post_meta( $post->ID, '_perfecty_push_notification_custom_title', true );
 		}
 
@@ -387,7 +403,7 @@ class Perfecty_Push_Admin {
 			$url_to_open = get_the_permalink( $post );
 			// we use this to check if the post has a thumbnail because has_post_thumbnail could return true even if no post thumbnail is set
 			$featured_image_url = wp_get_attachment_url( get_post_thumbnail_id( $post->ID ) );
-			if  ( ! empty( $featured_image_url ) ) {
+			if ( ! empty( $featured_image_url ) ) {
 				$post_thumbnail = get_the_post_thumbnail_url( $post->ID );
 			} else {
 				$post_thumbnail = $this->get_first_image_url( $post );
@@ -395,8 +411,8 @@ class Perfecty_Push_Admin {
 
 			$post_thumbnail     = $send_featured_img ? $post_thumbnail : '';
 			$notification_title = ( $notification_title !== '' ) ? $notification_title : false;
-			$payload     = Perfecty_Push_Lib_Payload::build( $body, $notification_title, $post_thumbnail, $url_to_open );
-			$result      = Perfecty_Push_Lib_Push_Server::schedule_broadcast_async( $payload );
+			$payload            = Perfecty_Push_Lib_Payload::build( $body, $notification_title, $post_thumbnail, $url_to_open );
+			$result             = Perfecty_Push_Lib_Push_Server::schedule_broadcast_async( $payload );
 
 			if ( $result === false ) {
 				error_log( esc_html__( 'Could not schedule the broadcast async, check the logs', 'perfecty-push-notifications' ) );
@@ -619,7 +635,7 @@ class Perfecty_Push_Admin {
 		$new_input = array();
 		$options   = get_option( 'perfecty_push' );
 
-		// checkbox
+		// checkboxes
 		if ( isset( $input['widget_enabled'] ) ) {
 			$new_input['widget_enabled'] = 1;
 		} else {
@@ -629,6 +645,11 @@ class Perfecty_Push_Admin {
 			$new_input['unregister_conflicts'] = 1;
 		} else {
 			$new_input['unregister_conflicts'] = 0;
+		}
+		if ( isset( $input['widget_debugging_enabled'] ) ) {
+			$new_input['widget_debugging_enabled'] = 1;
+		} else {
+			$new_input['widget_debugging_enabled'] = 0;
 		}
 
 		// text
@@ -649,6 +670,9 @@ class Perfecty_Push_Admin {
 		}
 		if ( isset( $input['settings_opt_in'] ) ) {
 			$new_input['settings_opt_in'] = sanitize_text_field( $input['settings_opt_in'] );
+		}
+		if ( isset( $input['settings_update_error'] ) ) {
+			$new_input['settings_update_error'] = sanitize_text_field( $input['settings_update_error'] );
 		}
 		if ( isset( $input['vapid_public_key'] ) ) {
 			$new_input['vapid_public_key'] = sanitize_text_field( $input['vapid_public_key'] );
@@ -731,8 +755,9 @@ class Perfecty_Push_Admin {
 
 		printf(
 			'<input type="text" id="perfecty_push[server_url]"' .
-			'name="perfecty_push[server_url]" value="%s" placeholder="127.0.0.1:8777"/>',
-			esc_html( $value )
+			'name="perfecty_push[server_url]" value="%s" placeholder="%s"/>',
+			esc_html( $value ),
+			get_rest_url()
 		);
 	}
 
@@ -766,6 +791,24 @@ class Perfecty_Push_Admin {
 		printf(
 			'<input type="checkbox" id="perfecty_push[widget_enabled]"' .
 			'name="perfecty_push[widget_enabled]" %s />',
+			esc_html( $enabled )
+		);
+	}
+
+	/**
+	 * Print the debugging public enabled option
+	 *
+	 * @since 1.0.0
+	 */
+	public function print_widget_debugging_enabled() {
+		$options = get_option( 'perfecty_push' );
+		$value   = isset( $options['widget_debugging_enabled'] ) ? esc_attr( $options['widget_debugging_enabled'] ) : 0;
+
+		$enabled = $value == 1 ? 'checked="checked"' : '';
+
+		printf(
+			'<input type="checkbox" id="perfecty_push[widget_debugging_enabled]"' .
+			'name="perfecty_push[widget_debugging_enabled]" %s />',
 			esc_html( $enabled )
 		);
 	}
@@ -891,10 +934,9 @@ class Perfecty_Push_Admin {
 	 *
 	 * @return string $thumbnail_url on success, '' on failure
 	 */
-	public function get_first_image_url( $post )
-	{
+	public function get_first_image_url( $post ) {
 		$content = $post->post_content;
-		$regex = '/src="([^"]*)"/';
+		$regex   = '/src="([^"]*)"/';
 		preg_match_all( $regex, $content, $matches );
 		$matches = array_reverse( $matches );
 		// this is the image url of the first img embedded in content.
@@ -903,7 +945,7 @@ class Perfecty_Push_Admin {
 		// this is the image post id.
 		$post_img_id = $this->get_attachment_id( $img_url );
 
-		if ($post_img_id !== 0 ) {
+		if ( $post_img_id !== 0 ) {
 			// this is an array related to the thumbnail of the first image. If post-thumbnail size is not set, it returns original image.
 			$img_thumb_url = wp_get_attachment_image_src( $post_img_id, $size = 'post-thumbnail', $icon = false );
 		} else {
@@ -921,30 +963,29 @@ class Perfecty_Push_Admin {
 	 *
 	 * @return int Attachment ID on success, 0 on failure
 	 */
-	function get_attachment_id( $url )
-	{
+	function get_attachment_id( $url ) {
 		$attachment_id = 0;
-		$dir = wp_upload_dir();
+		$dir           = wp_upload_dir();
 		if ( false !== strpos( $url, $dir['baseurl'] . '/' ) ) { // Is URL in uploads directory?
-			$file = basename( $url );
+			$file       = basename( $url );
 			$query_args = array(
-			'post_type'   => 'attachment',
-			'post_status' => 'inherit',
-			'fields'      => 'ids',
-			'meta_query'  => array(
-			array(
-			'value'   => $file,
-			'compare' => 'LIKE',
-			'key'     => '_wp_attachment_metadata',
-			),
-			)
+				'post_type'   => 'attachment',
+				'post_status' => 'inherit',
+				'fields'      => 'ids',
+				'meta_query'  => array(
+					array(
+						'value'   => $file,
+						'compare' => 'LIKE',
+						'key'     => '_wp_attachment_metadata',
+					),
+				),
 			);
 
 			$query = new WP_Query( $query_args );
 			if ( $query->have_posts() ) {
 				foreach ( $query->posts as $post_id ) {
-					$meta = wp_get_attachment_metadata( $post_id );
-					$original_file = basename( $meta['file']);
+					$meta                = wp_get_attachment_metadata( $post_id );
+					$original_file       = basename( $meta['file'] );
 					$cropped_image_files = wp_list_pluck( $meta['sizes'], 'file' );
 					if ( $original_file === $file || in_array( $file, $cropped_image_files ) ) {
 						$attachment_id = $post_id;
@@ -954,5 +995,21 @@ class Perfecty_Push_Admin {
 			}
 		}
 		return $attachment_id;
+	}
+
+	/**
+	 * Print the settings_update_error option
+	 *
+	 * @since 1.0.0
+	 */
+	public function print_settings_update_error() {
+		$options = get_option( 'perfecty_push' );
+		$value   = isset( $options['settings_update_error'] ) ? esc_attr( $options['settings_update_error'] ) : '';
+
+		printf(
+			'<input type="text" id="perfecty_push[settings_update_error]"' .
+			'name="perfecty_push[settings_update_error]" value="%s" />',
+			esc_html( $value )
+		);
 	}
 }

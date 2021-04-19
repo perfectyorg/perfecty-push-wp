@@ -55,10 +55,6 @@ class Perfecty_Push_Admin_Users_Table extends WP_List_Table {
 		return $item['is_active'] == 1 ? esc_html__( 'Yes', 'perfecty-push-notifications' ) : esc_html__( 'No', 'perfecty-push-notifications' );
 	}
 
-	function column_disabled( $item ) {
-		return $item['disabled'] == 1 ? esc_html__( 'Yes', 'perfecty-push-notifications' ) : esc_html__( 'No', 'perfecty-push-notifications' );
-	}
-
 	function get_columns() {
 		$columns = array(
 			'cb'         => '<input type="checkbox" />',
@@ -66,7 +62,6 @@ class Perfecty_Push_Admin_Users_Table extends WP_List_Table {
 			'remote_ip'  => esc_html__( 'IP', 'perfecty-push-notifications' ),
 			'endpoint'   => esc_html__( 'Endpoint', 'perfecty-push-notifications' ),
 			'is_active'  => esc_html__( 'Active', 'perfecty-push-notifications' ),
-			'disabled'   => esc_html__( 'Disabled', 'perfecty-push-notifications' ),
 			'created_at' => esc_html__( 'Registered at', 'perfecty-push-notifications' ),
 		);
 		return $columns;
@@ -75,7 +70,6 @@ class Perfecty_Push_Admin_Users_Table extends WP_List_Table {
 	function get_sortable_columns() {
 		$sortable_columns = array(
 			'created_at' => array( 'created_at', true ),
-			'disabled'   => array( 'disabled', true ),
 			'is_active'  => array( 'is_active', true ),
 		);
 		return $sortable_columns;

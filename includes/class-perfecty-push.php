@@ -1,7 +1,5 @@
 <?php
 
-use Minishlink\WebPush\WebPush;
-
 /**
  * The file that defines the core plugin class
  *
@@ -94,7 +92,6 @@ class Perfecty_Push {
 		$options              = get_option( 'perfecty_push', array() );
 		$vapid_public_key     = isset( $options['vapid_public_key'] ) ? $options['vapid_public_key'] : '';
 		$vapid_private_key    = isset( $options['vapid_private_key'] ) ? $options['vapid_private_key'] : '';
-		$server_url           = isset( $options['server_url'] ) ? $options['server_url'] : get_site_url();
 		$service_worker_scope = isset( $options['service_worker_scope'] ) && ! empty( $options['service_worker_scope'] ) ? $options['service_worker_scope'] : '/perfecty/push';
 
 		if ( ! defined( 'PERFECTY_PUSH_JS_DIR' ) ) {
@@ -103,9 +100,6 @@ class Perfecty_Push {
 		}
 		if ( ! defined( 'PERFECTY_PUSH_SERVICE_WORKER_SCOPE' ) ) {
 			define( 'PERFECTY_PUSH_SERVICE_WORKER_SCOPE', $service_worker_scope );
-		}
-		if ( ! defined( 'PERFECTY_PUSH_SERVER_URL' ) ) {
-			define( 'PERFECTY_PUSH_SERVER_URL', $server_url );
 		}
 		if ( ! defined( 'PERFECTY_PUSH_VAPID_PUBLIC_KEY' ) && $vapid_public_key ) {
 			define( 'PERFECTY_PUSH_VAPID_PUBLIC_KEY', $vapid_public_key );
@@ -214,33 +208,13 @@ class Perfecty_Push {
 			);
 		} elseif ( $plugin_activated == 1 ) {
 			error_log( 'VAPID Keys are missing' );
-			Class_Perfecty_Push_Lib_Utils::show_message( "The VAPID keys are missing in Perfecty Push. Help: <a href='https://github.com/rwngallego/perfecty-push-wp/wiki/Troubleshooting#the-vapid-keys-are-missing-in-perfecty-push-generate-the-vapid-keys' target='_blank'>Generate the VAPID Keys</a>.", 'warning' );
+			Class_Perfecty_Push_Lib_Utils::show_message( sprintf( esc_html( 'The VAPID keys are missing in Perfecty Push. Help: %1$s Generate the VAPID Keys. %2$s', 'perfecty-push-notifications' ), "<a href='https://github.com/rwngallego/perfecty-push-wp/wiki/Troubleshooting#the-vapid-keys-are-missing-in-perfecty-push-generate-the-vapid-keys' target='_blank'>", '</a>' ), 'warning' );
 			Class_Perfecty_Push_Lib_Utils::disable();
 			return false;
 		}
+		$vapid_generator = array( 'Minishlink\WebPush\VAPID', 'createVapidKeys' );
 
-		set_error_handler(
-			function ( $errno, $errstr, $errfile, $errline ) {
-				if ( strpos( $errstr, 'gmp extension is not loaded' ) !== false ) {
-					// we know this, however we capture the E_WARNING because we have previously
-					// informed the user about this in a nicer way
-					return true;
-				}
-				return false; // we raise it to the next handler otherwise
-			}
-		);
-		try {
-			$webpush = new WebPush( $auth );
-			$webpush->setReuseVAPIDHeaders( true );
-			$vapid_generator = array( 'Minishlink\WebPush\VAPID', 'createVapidKeys' );
-			Perfecty_Push_Lib_Push_Server::bootstrap( $webpush, $vapid_generator );
-		} catch ( \Exception $ex ) {
-			error_log( 'Could not bootstrap the Push Server: ' . $ex->getMessage() . ', ' . $ex->getTraceAsString() );
-			Class_Perfecty_Push_Lib_Utils::show_message( 'Could not bootstrap Perfecty Push, check the php error logs for more information.', 'warning' );
-			Class_Perfecty_Push_Lib_Utils::disable();
-		}
-		restore_error_handler();
-
+		Perfecty_Push_Lib_Push_Server::bootstrap( $auth, $vapid_generator );
 		return true;
 	}
 

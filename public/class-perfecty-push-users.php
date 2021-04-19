@@ -59,7 +59,6 @@ class Perfecty_Push_Users {
 				$user->key_auth   = $key_auth;
 				$user->key_p256dh = $key_p256dh;
 				$user->remote_ip  = $remote_ip;
-				$user->disabled   = false;
 				$result           = Perfecty_Push_Lib_Db::update_user( $user );
 				if ( $result === false ) {
 					// Could not update the user
@@ -76,8 +75,8 @@ class Perfecty_Push_Users {
 
 			// The user was registered
 			$response = array(
-				'success' => true,
-				'uuid'    => $user->uuid,
+				'uuid'      => $user->uuid,
+				'is_active' => (bool) $user->is_active,
 			);
 			return (object) $response;
 		} else {
@@ -87,11 +86,41 @@ class Perfecty_Push_Users {
 	}
 
 	/**
-	 * Set the user active or inactive
+	 * Get the user information
 	 *
 	 * @since 1.0.0
 	 */
-	public function set_user_active( $data ) {
+	public function get_user( $data ) {
+		$user_id = $data['user_id'] ?? null;
+
+		// Validate the nonce.
+		$nonce = isset( $_SERVER['HTTP_X_WP_NONCE'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_WP_NONCE'] ) ) : '';
+		if ( wp_verify_nonce( $nonce, 'wp_rest' ) === false ) {
+			$this->terminate();
+		}
+
+		$validation = $this->validate_get_user( $user_id );
+		if ( $validation !== true ) {
+			return new WP_Error( 'bad_request', $validation, array( 'status' => 400 ) );
+		}
+
+		$user   = Perfecty_Push_Lib_Db::get_user_by_uuid( $user_id );
+		$result = array();
+		if ( $user !== null ) {
+			$result = array(
+				'uuid'      => $user->uuid,
+				'is_active' => (bool) $user->is_active,
+			);
+		}
+		return (object) $result;
+	}
+
+	/**
+	 * Change the user preferences
+	 *
+	 * @since 1.0.0
+	 */
+	public function update_preferences( $data ) {
 		$is_active = $data['is_active'] ?? null;
 		$user_id   = $data['user_id'] ?? null;
 
@@ -116,7 +145,6 @@ class Perfecty_Push_Users {
 			return new WP_Error( 'failed_update', __( 'Could not change the user', 'perfecty-push-notifications' ), array( 'status' => 500 ) );
 		} else {
 			$response = array(
-				'success'   => true,
 				'is_active' => $is_active,
 			);
 			return (object) $response;
@@ -173,6 +201,14 @@ class Perfecty_Push_Users {
 		if ( false !== $is_active && true !== $is_active ) {
 			return __( 'is_active must be a boolean', 'perfecty-push-notifications' );
 		}
+		if ( ! Uuid::isValid( $user_id ) ) {
+			return __( 'Invalid player ID', 'perfecty-push-notifications' );
+		}
+
+		return true;
+	}
+
+	private function validate_get_user( $user_id ) {
 		if ( ! Uuid::isValid( $user_id ) ) {
 			return __( 'Invalid player ID', 'perfecty-push-notifications' );
 		}
