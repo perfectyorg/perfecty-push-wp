@@ -55,7 +55,6 @@ class Perfecty_Push_Users {
 
 			$user = Perfecty_Push_Lib_Db::get_user_by( $user_id, $key_auth, $key_p256dh );
 			if ( $user ) {
-				$user->uuid       = $user_id;
 				$user->endpoint   = $endpoint;
 				$user->key_auth   = $key_auth;
 				$user->key_p256dh = $key_p256dh;

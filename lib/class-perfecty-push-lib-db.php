@@ -256,10 +256,6 @@ class Perfecty_Push_Lib_Db {
 	public static function get_user_by( $uuid, $key_auth, $key_p256dh ) {
 		global $wpdb;
 
-		if ( ! $uuid ) {
-			return null;
-		}
-
 		$sql    = $wpdb->prepare(
 			'SELECT ' . self::$allowed_users_fields .
 			' FROM ' . self::users_table() . ' WHERE uuid=%s or (key_auth=%s && key_p256dh=%s)',
@@ -283,7 +279,6 @@ class Perfecty_Push_Lib_Db {
 		$result = $wpdb->update(
 			self::users_table(),
 			array(
-				'uuid'       => $user->uuid,
 				'remote_ip'  => $user->remote_ip,
 				'endpoint'   => $user->endpoint,
 				'key_auth'   => $user->key_auth,

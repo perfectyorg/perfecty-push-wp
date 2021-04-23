@@ -70,20 +70,19 @@ class RestRegistrationTest extends WP_UnitTestCase {
      * Test the user registration with an existing user (key_auth, key_p256dh)
      */
     public function test_registration_existing_user_keys() {
-        $id = Perfecty_Push_Lib_Db::create_user( 'http://my_endpoint', 'my_key_auth', 'my_p256dh_key', '192.168.0.1' );
+        $id = Perfecty_Push_Lib_Db::create_user( 'http://my_endpoint1', 'my_key_auth', 'my_p256dh_key', '192.168.0.1' );
         $user = Perfecty_Push_Lib_Db::get_user($id);
-        $non_existing_uuid = Uuid::uuid4()->toString();
 
         $registration = new Perfecty_Push_Users();
         $data        = array(
             'user' => array(
-                'endpoint' => 'http://my_endpoint',
+                'endpoint' => 'http://my_endpoint2',
                 'keys'     => array(
                     'auth'   => 'my_key_auth',
                     'p256dh' => 'my_p256dh_key',
                 ),
             ),
-            'user_id' => $non_existing_uuid
+            'user_id' => $user->uuid
         );
 
         $previous_users = Perfecty_Push_Lib_Db::get_users( 0, 5 );
@@ -91,8 +90,8 @@ class RestRegistrationTest extends WP_UnitTestCase {
         $users = Perfecty_Push_Lib_Db::get_users( 0, 5 );
 
         $expected = array(
-            'uuid'       => $non_existing_uuid,
-            'endpoint'   => 'http://my_endpoint',
+            'uuid'       => $user->uuid,
+            'endpoint'   => 'http://my_endpoint2',
             'key_auth'   => 'my_key_auth',
             'key_p256dh' => 'my_p256dh_key',
             'remote_ip'  => '127.0.0.1',
@@ -103,7 +102,7 @@ class RestRegistrationTest extends WP_UnitTestCase {
         $this->assertSame(
             (array) $res,
             array(
-                'uuid'    => $non_existing_uuid,
+                'uuid'    => $user->uuid,
                 'is_active' => (bool)$users[0]->is_active
             )
         );
