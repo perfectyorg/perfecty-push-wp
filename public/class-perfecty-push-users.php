@@ -53,8 +53,9 @@ class Perfecty_Push_Users {
 			$remote_ip  = sanitize_text_field( $remote_ip );
 			$user_id    = sanitize_text_field( $user_id );
 
-			$user = Perfecty_Push_Lib_Db::get_user_by_uuid( $user_id );
+			$user = Perfecty_Push_Lib_Db::get_user_by( $user_id, $key_auth, $key_p256dh );
 			if ( $user ) {
+				$user->uuid       = $user_id;
 				$user->endpoint   = $endpoint;
 				$user->key_auth   = $key_auth;
 				$user->key_p256dh = $key_p256dh;
