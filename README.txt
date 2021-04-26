@@ -4,7 +4,7 @@ Donate link: https://github.com/rwngallego
 Tags: Push Notifications, Web Push Notifications, Notifications, User engagement
 Requires at least: 5.0
 Tested up to: 5.7
-Stable tag: 1.1.1
+Stable tag: 1.1.2
 Requires PHP: 7.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -94,6 +94,10 @@ You can create an issue in our Github repo:
 8. Settings
 
 == Changelog ==
+
+= 1.1.2 =
+* Remove jQuery dependency from the public area
+* Detect duplicate endpoint auth/private keys when subscribing
 
 = 1.1.1 =
 * Integrate the Perfecty Push JS SDK: This is backwards compatible but upgrade to this version with caution.
