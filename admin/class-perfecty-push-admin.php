@@ -211,6 +211,14 @@ class Perfecty_Push_Admin {
 		);
 
 		add_settings_field(
+			'widget_hide_bell_after_subscribe', // id
+			esc_html__( 'Hide bell after subscribing', 'perfecty-push-notifications' ), // title
+			array( $this, 'print_widget_hide_bell_after_subscribe' ), // callback
+			'perfecty-push-options', // page
+			'perfecty_push_widget_settings' // section
+		);
+
+		add_settings_field(
 			'service_worker_scope', // id
 			esc_html__( 'Service Worker Scope', 'perfecty-push-notifications' ), // title
 			array( $this, 'print_service_worker_scope' ), // callback
@@ -651,6 +659,11 @@ class Perfecty_Push_Admin {
 		} else {
 			$new_input['widget_debugging_enabled'] = 0;
 		}
+		if ( isset( $input['widget_hide_bell_after_subscribe'] ) ) {
+			$new_input['widget_hide_bell_after_subscribe'] = 1;
+		} else {
+			$new_input['widget_hide_bell_after_subscribe'] = 0;
+		}
 
 		// text
 		if ( isset( $input['service_worker_scope'] ) ) {
@@ -809,6 +822,24 @@ class Perfecty_Push_Admin {
 		printf(
 			'<input type="checkbox" id="perfecty_push[widget_debugging_enabled]"' .
 			'name="perfecty_push[widget_debugging_enabled]" %s />',
+			esc_html( $enabled )
+		);
+	}
+
+	/**
+	 * Print the hide bell after the user has been subscribed
+	 *
+	 * @since 1.1.3
+	 */
+	public function print_widget_hide_bell_after_subscribe() {
+		$options = get_option( 'perfecty_push' );
+		$value   = isset( $options['widget_hide_bell_after_subscribe'] ) ? esc_attr( $options['widget_hide_bell_after_subscribe'] ) : 0;
+
+		$enabled = $value == 1 ? 'checked="checked"' : '';
+
+		printf(
+			'<input type="checkbox" id="perfecty_push[widget_hide_bell_after_subscribe]"' .
+			'name="perfecty_push[widget_hide_bell_after_subscribe]" %s />',
 			esc_html( $enabled )
 		);
 	}

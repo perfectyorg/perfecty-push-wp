@@ -44,6 +44,7 @@
 
 .perfecty-push-settings-container {
   z-index: 100000;
+  display: none;
 }
 
 .perfecty-push-settings-container #perfecty-push-settings-form {
