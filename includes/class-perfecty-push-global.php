@@ -56,6 +56,12 @@ class Perfecty_Push_Global {
 					$options['server_url'] = '';
 					update_option( 'perfecty_push', $options );
 				}
+				if ( version_compare( get_option( 'perfecty_push_version' ), '1.1.3', '<' ) ) {
+					// this is before 1.1.3
+					// we set it as enabled so we don't change the existing IP collection
+					$options['segmentation_enabled'] = 1;
+					update_option( 'perfecty_push', $options );
+				}
 			}
 			update_option( 'perfecty_push_version', PERFECTY_PUSH_VERSION );
 		}

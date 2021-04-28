@@ -11,11 +11,13 @@
 					<br>
 				<div><?php echo esc_html( $item->uuid ); ?></div>
 				</p>
+				<?php if ( $segmentation_enabled ) { ?>
 				<p>
 					<label for="ip"><?php printf( esc_html__( 'IP Address:', 'perfecty-push-notifications' ) ); ?> </label>
 					<br>
 				<div><?php echo esc_html( $item->remote_ip ); ?></div>
 				</p>
+				<?php } ?>
 				<p>
 					<label for="endpoint"><?php printf( esc_html__( 'Registered endpoint:', 'perfecty-push-notifications' ) ); ?> </label>
 					<br>
