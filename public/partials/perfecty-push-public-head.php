@@ -24,6 +24,11 @@ if ( isset( $options['widget_debugging_enabled'] ) && $options['widget_debugging
 } else {
 	$perfecty_push_widget_debugging_enabled = false;
 }
+if ( isset( $options['widget_hide_bell_after_subscribe'] ) && $options['widget_hide_bell_after_subscribe'] == 1 ) {
+	$perfecty_push_widget_hide_bell_after_subscribe = true;
+} else {
+	$perfecty_push_widget_hide_bell_after_subscribe = false;
+}
 
 ?>
 <script language="javascript">
@@ -43,6 +48,7 @@ if ( isset( $options['widget_debugging_enabled'] ) && $options['widget_debugging
 		unregisterConflicts: <?php echo $perfecty_push_unregister_conflicts ? 'true' : 'false'; ?>,
 		serviceWorkerScope: "<?php echo PERFECTY_PUSH_SERVICE_WORKER_SCOPE; ?>",
 		loggerLevel: "<?php echo $perfecty_push_widget_debugging_enabled ? 'debug' : 'error'; ?>",
-		loggerVerbose: <?php echo $perfecty_push_widget_debugging_enabled ? 'true' : 'false'; ?>
+		loggerVerbose: <?php echo $perfecty_push_widget_debugging_enabled ? 'true' : 'false'; ?>,
+		hideBellAfterSubscribe: <?php echo $perfecty_push_widget_hide_bell_after_subscribe ? 'true' : 'false'; ?>
 	}
 </script>

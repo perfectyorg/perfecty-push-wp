@@ -129,7 +129,7 @@ class Perfecty_Push_Admin_Users_Table extends WP_List_Table {
 		$orderby = ( isset( $_REQUEST['orderby'] ) && in_array( $_REQUEST['orderby'], array_keys( $this->get_sortable_columns() ) ) ) ? $_REQUEST['orderby'] : 'created_at';
 		$order   = ( isset( $_REQUEST['order'] ) && in_array( $_REQUEST['order'], array( 'asc', 'desc' ) ) ) ? $_REQUEST['order'] : 'desc';
 
-		$users       = Perfecty_Push_Lib_Db::get_users( $paged, $per_page, $orderby, $order, false, ARRAY_A );
+		$users       = Perfecty_Push_Lib_Db::get_users( $paged * $per_page, $per_page, $orderby, $order, false, ARRAY_A );
 		$this->items = (array) $users;
 
 		$this->set_pagination_args(
