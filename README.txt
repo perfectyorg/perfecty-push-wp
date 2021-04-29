@@ -4,7 +4,7 @@ Donate link: https://github.com/rwngallego
 Tags: Push Notifications, Web Push Notifications, Notifications, User engagement
 Requires at least: 5.0
 Tested up to: 5.7
-Stable tag: 1.1.2
+Stable tag: 1.1.3
 Requires PHP: 7.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -94,6 +94,10 @@ You can create an issue in our Github repo:
 8. Settings
 
 == Changelog ==
+
+= 1.1.3 =
+* IP address collection is disabled by default. It can be enabled using the "Enable and collect data from users" option in the Segmentation settings.
+* Added option to hide the bell after the users have subscribed.
 
 = 1.1.2 =
 * Remove jQuery dependency from the public area
