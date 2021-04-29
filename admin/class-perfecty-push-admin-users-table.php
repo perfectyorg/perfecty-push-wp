@@ -59,7 +59,6 @@ class Perfecty_Push_Admin_Users_Table extends WP_List_Table {
 		$columns = array(
 			'cb'         => '<input type="checkbox" />',
 			'uuid'       => esc_html__( 'UUID', 'perfecty-push-notifications' ),
-			'remote_ip'  => esc_html__( 'IP', 'perfecty-push-notifications' ),
 			'endpoint'   => esc_html__( 'Endpoint', 'perfecty-push-notifications' ),
 			'is_active'  => esc_html__( 'Active', 'perfecty-push-notifications' ),
 			'created_at' => esc_html__( 'Registered at', 'perfecty-push-notifications' ),

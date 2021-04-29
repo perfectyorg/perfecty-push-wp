@@ -28,10 +28,52 @@ class RestRegistrationTest extends WP_UnitTestCase {
 		parent::tearDown();
 	}
 
+    /**
+     * Test the user registration
+     */
+    public function test_registration_new() {
+        $registration = new Perfecty_Push_Users();
+        $data        = array(
+            'user' => array(
+                'endpoint' => 'http://my_endpoint',
+                'keys'     => array(
+                    'auth'   => 'my_auth_key',
+                    'p256dh' => 'my_p256dh_key',
+                ),
+            ),
+        );
+
+        $previous_users = Perfecty_Push_Lib_Db::get_users( 0, 5 );
+        $res           = $registration->register( $data );
+        $users = Perfecty_Push_Lib_Db::get_users( 0, 5 );
+
+        $expected = array(
+            'endpoint'   => 'http://my_endpoint',
+            'key_auth'   => 'my_auth_key',
+            'key_p256dh' => 'my_p256dh_key',
+            'remote_ip'  => '',
+        );
+
+        $this->assertSame( 0, count( $previous_users ) );
+        $this->assertSame( 1, count( $users ) );
+        $this->assertSame(
+            (array) $res,
+            array(
+                'uuid'    => $users[0]->uuid,
+                'is_active' => (bool)$users[0]->is_active
+            )
+        );
+        $this->assertArraySubset( $expected, (array) $users[0] );
+    }
+
 	/**
 	 * Test the user registration
 	 */
-	public function test_registration_new() {
+	public function test_registration_new_with_ip_address() {
+        $options                         = get_option( 'perfecty_push' );
+        $options['segmentation_enabled'] = 1;
+        update_option( 'perfecty_push', $options );
+
 		$registration = new Perfecty_Push_Users();
 		$data        = array(
 			'user' => array(
@@ -94,7 +136,7 @@ class RestRegistrationTest extends WP_UnitTestCase {
             'endpoint'   => 'http://my_endpoint2',
             'key_auth'   => 'my_key_auth',
             'key_p256dh' => 'my_p256dh_key',
-            'remote_ip'  => '127.0.0.1',
+            'remote_ip'  => '',
         );
 
         $this->assertSame( 1, count( $previous_users ) );
@@ -136,7 +178,7 @@ class RestRegistrationTest extends WP_UnitTestCase {
             'endpoint'   => 'http://my_endpoint',
             'key_auth'   => 'updated_my_auth_key',
             'key_p256dh' => 'updated_my_p256dh_key',
-            'remote_ip'  => '127.0.0.1',
+            'remote_ip'  => '',
         );
 
         $this->assertSame( 1, count( $previous_users ) );
@@ -179,6 +221,40 @@ class RestRegistrationTest extends WP_UnitTestCase {
 		$this->assertSame( 400, $res->error_data['validation_error']['status'] );
 	}
 
+    /**
+     * Test the user registration
+     */
+    public function test_registration_new_with_invalid_ip_address()
+    {
+        $options = get_option('perfecty_push');
+        $options['segmentation_enabled'] = 1;
+        update_option('perfecty_push', $options);
+
+        $_SERVER['REMOTE_ADDR'] = '127.7.7.444';
+
+        $registration = new Perfecty_Push_Users();
+        $data = array(
+            'user' => array(
+                'endpoint' => 'http://my_endpoint',
+                'keys' => array(
+                    'auth' => 'my_auth_key',
+                    'p256dh' => 'my_p256dh_key',
+                ),
+            ),
+        );
+
+        $res = $registration->register( $data );
+
+        $expected = array(
+            'validation_error' => array(
+                0 => 'Unknown Ip address',
+            ),
+        );
+
+        $this->assertInstanceOf( WP_Error::class, $res );
+        $this->assertArraySubset( $expected, $res->errors );
+        $this->assertSame( 400, $res->error_data['validation_error']['status'] );
+    }
 	/**
 	 * Test registration missing important data
 	 */

@@ -29,7 +29,7 @@ class Perfecty_Push_Users {
 		// Request
 		$user      = $data['user'] ?? null;
 		$user_id   = $data['user_id'] ?? null;
-		$remote_ip = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '';
+		$remote_ip = $this->get_remote_ip();
 
 		// Validate the nonce
 		$nonce = isset( $_SERVER['HTTP_X_WP_NONCE'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_WP_NONCE'] ) ) : '';
@@ -151,6 +151,12 @@ class Perfecty_Push_Users {
 		}
 	}
 
+	private function get_remote_ip() {
+		$options              = get_option( 'perfecty_push', array() );
+		$segmentation_enabled = isset( $options['segmentation_enabled'] ) && $options['segmentation_enabled'] == 1;
+		return $segmentation_enabled && isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '';
+	}
+
 	private function extract_data( $user ) {
 		$endpoint   = isset( $user['endpoint'] ) ? $user['endpoint'] : '';
 		$key_auth   = '';
@@ -176,7 +182,7 @@ class Perfecty_Push_Users {
 		if ( ! $key_p256dh ) {
 			return __( 'Missing the public p256dh key', 'perfecty-push-notifications' );
 		}
-		if ( ! $remote_ip ) {
+		if ( $remote_ip && ! filter_var( $remote_ip, FILTER_VALIDATE_IP ) ) {
 			return __( 'Unknown Ip address', 'perfecty-push-notifications' );
 		}
 		if ( $user_id && ! Uuid::isValid( $user_id ) ) {
