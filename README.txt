@@ -95,6 +95,10 @@ You can create an issue in our Github repo:
 
 == Changelog ==
 
+= 1.1.4 =
+* Open subscription dialog if the bell is clicked and the user is not subscribed.
+* Move icon to an svg tag in the HTML as suggested by @stkuhn.
+
 = 1.1.3 =
 * IP address collection is disabled by default. It can be enabled using the "Enable and collect data from users" option in the Segmentation settings.
 * Added option to hide the bell after the users have subscribed.
