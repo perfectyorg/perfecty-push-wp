@@ -74,6 +74,7 @@ margin-bottom: 20px;
   margin: 0px;
   padding: 0px;
   outline: 0px;
+  box-sizing: border-box;
 }
 
 .perfecty-push-settings-container #perfecty-push-settings-open svg {
@@ -87,6 +88,7 @@ margin-bottom: 20px;
   cursor: pointer;
   fill: #fff;
   outline: none;
+  box-sizing: border-box;
 }
 
 .perfecty-push-settings-container #perfecty-push-settings-open svg:hover,
