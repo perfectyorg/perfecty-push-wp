@@ -133,7 +133,7 @@ chown -R www-data wp-content
 
 The WordPress Plugin is an Open Source project licensed under [GPL v2](./LICENSE.txt).
 
-The bell icon is a Font Awesome icon, a [CC BY 4.0 License](https://creativecommons.org/licenses/by/4.0/).
+The bell icon SVG code is a Font Awesome icon, a MIT License.
 
 <span>Banner photo by <a href="https://unsplash.com/@nasa?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">NASA</a> on <a href="https://unsplash.com/s/photos/world?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">Unsplash</a></span>
 

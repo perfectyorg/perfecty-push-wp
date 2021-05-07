@@ -68,10 +68,17 @@ margin-bottom: 20px;
 
 .perfecty-push-settings-container #perfecty-push-settings-open {
   height: 48px;
+  width: 48px;
+  background-color: transparent;
+  border: 0px;
+  margin: 0px;
+  padding: 0px;
+  outline: 0px;
 }
 
 .perfecty-push-settings-container #perfecty-push-settings-open svg {
-  padding: 12px;
+  color: #ffffff;
+  padding: 14px;
   width: 48px;
   height: 48px;
   border-radius: 50%;
@@ -84,7 +91,7 @@ margin-bottom: 20px;
 
 .perfecty-push-settings-container #perfecty-push-settings-open svg:hover,
 .perfecty-push-settings-container #perfecty-push-settings-open svg:focus {
-  padding: 8px;
+  padding: 10px;
   width: 48px;
   height: 48px;
   background-color: #f77924;
