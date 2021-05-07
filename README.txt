@@ -96,8 +96,10 @@ You can create an issue in our Github repo:
 == Changelog ==
 
 = 1.1.4 =
-* Open subscription dialog if the bell is clicked and the user is not subscribed.
+* CSS style changes to the bell.
 * Move icon to an svg tag in the HTML as suggested by @stkuhn.
+* Open subscription dialog if the bell is clicked and the user is not subscribed.
+* Fix bug in the Perfecty Push Service Worker detection. Issue [#42](https://github.com/rwngallego/perfecty-push-wp/issues/42)
 
 = 1.1.3 =
 * IP address collection is disabled by default. It can be enabled using the "Enable and collect data from users" option in the Segmentation settings.

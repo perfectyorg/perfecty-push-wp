@@ -196,7 +196,7 @@ class Perfecty_Push_Admin {
 
 		add_settings_field(
 			'unregister_conflicts', // id
-			esc_html__( 'Remove conflicting workers', 'perfecty-push-notifications' ), // title
+			esc_html__( 'Remove conflicting workers (Don\'t use it with PWA/AMP)', 'perfecty-push-notifications' ), // title
 			array( $this, 'print_unregister_conflicts' ), // callback
 			'perfecty-push-options', // page
 			'perfecty_push_widget_settings' // section
