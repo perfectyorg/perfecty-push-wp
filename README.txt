@@ -4,7 +4,7 @@ Donate link: https://github.com/rwngallego
 Tags: Push Notifications, Web Push Notifications, Notifications, User engagement
 Requires at least: 5.0
 Tested up to: 5.7
-Stable tag: 1.1.4
+Stable tag: 1.1.5
 Requires PHP: 7.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -96,7 +96,8 @@ You can create an issue in our Github repo:
 == Changelog ==
 
 = 1.1.5 =
-* Upgrade url-parse to avoid CVE-2021-27515 and some styling fixes in the Bell control
+* Upgrade url-parse to avoid CVE-2021-27515
+* Styling fixes in the Bell control
 
 = 1.1.4 =
 * CSS style changes to the bell.
