@@ -31,7 +31,7 @@ if ( isset( $options['widget_hide_bell_after_subscribe'] ) && $options['widget_h
 }
 
 ?>
-<script language="javascript">
+<script>
 	window.PerfectyPushOptions = {
 		path: "<?php echo PERFECTY_PUSH_JS_DIR; ?>",
 		dialogTitle: "<?php echo $perfecty_push_dialog_title; ?>",

@@ -67,21 +67,22 @@ margin-bottom: 20px;
 }
 
 .perfecty-push-settings-container #perfecty-push-settings-open {
-  height: 48px;
-  width: 48px;
+  height: 56px;
+  width: 56px;
   background-color: transparent;
   border: 0px;
   margin: 0px;
   padding: 0px;
   outline: 0px;
   box-sizing: border-box;
+  box-shadow: none;
 }
 
 .perfecty-push-settings-container #perfecty-push-settings-open svg {
   color: #ffffff;
-  padding: 14px;
-  width: 48px;
-  height: 48px;
+  padding: 16px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
   background-color: #f77924;
   transition: padding .1s ease-in-out;
@@ -93,9 +94,5 @@ margin-bottom: 20px;
 
 .perfecty-push-settings-container #perfecty-push-settings-open svg:hover,
 .perfecty-push-settings-container #perfecty-push-settings-open svg:focus {
-  padding: 10px;
-  width: 48px;
-  height: 48px;
-  background-color: #f77924;
-  border-radius: 50%;
+  padding: 12px;
 }

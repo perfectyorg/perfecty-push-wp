@@ -95,6 +95,9 @@ You can create an issue in our Github repo:
 
 == Changelog ==
 
+= 1.1.5 =
+* Upgrade url-parse to avoid CVE-2021-27515 and some styling fixes in the Bell control
+
 = 1.1.4 =
 * CSS style changes to the bell.
 * Move icon to an svg tag in the HTML as suggested by @stkuhn.
