@@ -61,7 +61,7 @@ class Perfecty_Push_Lib_Db {
 
 		$sql = "CREATE TABLE $notifications_table (
           id int(11) NOT NULL AUTO_INCREMENT,
-          payload varchar(500) NOT NULL,
+          payload varchar(2000) NOT NULL,
           total int(11) DEFAULT 0 NOT NULL,
           succeeded int(11) DEFAULT 0 NOT NULL,
           last_cursor int(11) DEFAULT 0 NOT NULL,
