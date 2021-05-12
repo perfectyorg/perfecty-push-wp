@@ -95,6 +95,9 @@ You can create an issue in our Github repo:
 
 == Changelog ==
 
+= 1.1.6 =
+* Increased payload size to 2.000 characters
+
 = 1.1.5 =
 * Upgrade url-parse to avoid CVE-2021-27515
 * Styling fixes in the Bell control
