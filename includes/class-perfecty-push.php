@@ -208,7 +208,7 @@ class Perfecty_Push {
 			);
 		} elseif ( $plugin_activated == 1 ) {
 			error_log( 'VAPID Keys are missing' );
-			Class_Perfecty_Push_Lib_Utils::show_message( sprintf( esc_html( 'The VAPID keys are missing in Perfecty Push. Help: %1$s Generate the VAPID Keys. %2$s', 'perfecty-push-notifications' ), "<a href='https://github.com/rwngallego/perfecty-push-wp/wiki/Troubleshooting#the-vapid-keys-are-missing-in-perfecty-push-generate-the-vapid-keys' target='_blank'>", '</a>' ), 'warning' );
+			Class_Perfecty_Push_Lib_Utils::show_message( sprintf( esc_html( 'The VAPID keys are missing in Perfecty Push. Help: %1$s Generate the VAPID Keys. %2$s', 'perfecty-push-notifications' ), "<a href='https://github.com/perfectyorg/perfecty-push-wp/wiki/Troubleshooting#the-vapid-keys-are-missing-in-perfecty-push-generate-the-vapid-keys' target='_blank'>", '</a>' ), 'warning' );
 			Class_Perfecty_Push_Lib_Utils::disable();
 			return false;
 		}

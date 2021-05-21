@@ -33,7 +33,7 @@
 		// translators: %3$s is the opening a tag
 		// translators: %4$s is the closing a tag
 			esc_html__( 'Please let us know and give a review in the %3$s WordPress marketplace%4$s.', 'perfecty-push-notifications' ),
-			'<a href="https://github.com/rwngallego/perfecty-push-wp">',
+			'<a href="https://github.com/perfectyorg/perfecty-push-wp">',
 			'</a>',
 			'<a href="https://wordpress.org/plugins/perfecty-push-notifications/#reviews">',
 			'</a>'
@@ -58,7 +58,7 @@
 			// translators: %1$s is the opening a tag
 			// translators: %2$s is the closing a tag
 			esc_html__( 'You can go to the %1$s wiki page %2$s', 'perfecty-push-notifications' ),
-			'<a href="https://github.com/rwngallego/perfecty-push-wp/wiki" target="_blank">',
+			'<a href="https://github.com/perfectyorg/perfecty-push-wp/wiki" target="_blank">',
 			'</a>'
 		);
 		?>
