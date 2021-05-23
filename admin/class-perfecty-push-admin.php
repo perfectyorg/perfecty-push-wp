@@ -96,7 +96,7 @@ class Perfecty_Push_Admin {
 		 */
 
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/perfecty-push-admin.js', array( 'jquery', 'wp-i18n' ), $this->version, false );
-		wp_enqueue_script( 'chartjs', plugin_dir_url( __FILE__ ) . 'js/chart.bundle.min.js', array( 'jquery' ), $this->version, false );
+		wp_enqueue_script( 'chartjs', plugin_dir_url( __FILE__ ) . 'js/chart.bundle.min.js', array( 'jquery' ), '2.9.4', false );
 		wp_enqueue_script( 'jquery-timepicker', plugin_dir_url( __FILE__ ) . 'js/jquery.timepicker.min.js', array( 'jquery' ), '1.3.5', false );
 		wp_enqueue_script( 'html5-fallback', plugin_dir_url( __FILE__ ) . 'js/html5-fallback.js', array( 'jquery-ui-datepicker', 'jquery-timepicker' ), $this->version, false );
 	}

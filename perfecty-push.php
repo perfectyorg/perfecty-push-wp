@@ -16,8 +16,8 @@
  * Plugin URI:        https://wordpress.org/plugins/perfecty-push-notifications
  * Description:       Self-hosted, Open Source and powerful <strong>Web Push Notifications</strong> plugin to send push notifications <strong>from your own server for free!</strong>
  * Version:           1.1.6
- * Author:            Rowinson Gallego
- * Author URI:        https://github.com/rwngallego
+ * Author:            Perfecty
+ * Author URI:        https://perfecty.org
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
  * Text Domain:       perfecty-push-notifications

@@ -265,6 +265,35 @@ class DbTest extends WP_UnitTestCase {
 		$this->assertSame( array(), $users );
 	}
 
+    /**
+     * Test get users by wp user_id
+     */
+    public function test_get_users_by_wp_user_id() {
+        $id1       = Perfecty_Push_Lib_Db::create_user( 'my_endpoint_url', 'my_key_auth', 'my_p256dh_key', '127.0.0.1', 77 );
+        $id2       = Perfecty_Push_Lib_Db::create_user( 'my_endpoint_url_2', 'my_key_auth_2', 'my_p256dh_key_2', '127.0.0.1_2', 77 );
+        $id3       = Perfecty_Push_Lib_Db::create_user( 'my_endpoint_url_3', 'my_key_auth_3', 'my_p256dh_key_3', '127.0.0.1_3');
+        $expected1 = array(
+            'endpoint'   => 'my_endpoint_url',
+            'key_auth'   => 'my_key_auth',
+            'key_p256dh' => 'my_p256dh_key',
+            'remote_ip'  => '127.0.0.1',
+            'wp_user_id'      => 77
+        );
+        $expected2 = array(
+            'endpoint'   => 'my_endpoint_url_2',
+            'key_auth'   => 'my_key_auth_2',
+            'key_p256dh' => 'my_p256dh_key_2',
+            'remote_ip'  => '127.0.0.1_2',
+            'wp_user_id'      => 77
+        );
+
+        $users = Perfecty_Push_Lib_Db::get_users_by_wp_user_id(77);
+
+        $this->assertArraySubset( $expected1, (array) $users[0] );
+        $this->assertArraySubset( $expected2, (array) $users[1] );
+        $this->assertSame(2, count($users));
+    }
+
 	/**
 	 * Test delete users
 	 */
