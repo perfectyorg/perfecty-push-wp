@@ -196,7 +196,7 @@ class Perfecty_Push_Admin {
 
 		add_settings_field(
 			'unregister_conflicts', // id
-			esc_html__( 'Remove conflicting workers', 'perfecty-push-notifications' ), // title
+			esc_html__( 'Remove conflicting workers (Don\'t use it with PWA/AMP)', 'perfecty-push-notifications' ), // title
 			array( $this, 'print_unregister_conflicts' ), // callback
 			'perfecty-push-options', // page
 			'perfecty_push_widget_settings' // section
@@ -206,6 +206,14 @@ class Perfecty_Push_Admin {
 			'widget_debugging_enabled', // id
 			esc_html__( 'Enable debugging', 'perfecty-push-notifications' ), // title
 			array( $this, 'print_widget_debugging_enabled' ), // callback
+			'perfecty-push-options', // page
+			'perfecty_push_widget_settings' // section
+		);
+
+		add_settings_field(
+			'widget_hide_bell_after_subscribe', // id
+			esc_html__( 'Hide bell after subscribing', 'perfecty-push-notifications' ), // title
+			array( $this, 'print_widget_hide_bell_after_subscribe' ), // callback
 			'perfecty-push-options', // page
 			'perfecty_push_widget_settings' // section
 		);
@@ -302,6 +310,21 @@ class Perfecty_Push_Admin {
 			array( $this, 'print_batch_size' ), // callback
 			'perfecty-push-options', // page
 			'perfecty_push_self_hosted_settings' // section
+		);
+
+		add_settings_section(
+			'perfecty_push_segmentation_settings', // id
+			esc_html__( 'Segmentation', 'perfecty-push-notifications' ), // title
+			array( $this, 'print_segmentation_section' ), // callback
+			'perfecty-push-options' // page
+		);
+
+		add_settings_field(
+			'segmentation_enabled', // id
+			esc_html__( 'Enable and collect data from users', 'perfecty-push-notifications' ), // title
+			array( $this, 'print_segmentation_enabled' ), // callback
+			'perfecty-push-options', // page
+			'perfecty_push_segmentation_settings' // section
 		);
 	}
 
@@ -515,8 +538,10 @@ class Perfecty_Push_Admin {
 
 		if ( isset( $_GET['id'] ) && ! empty( $_GET['id'] ) &&
 			isset( $_GET['action'] ) && $_GET['action'] == 'view' ) {
-			$id   = intval( $_REQUEST['id'] );
-			$item = Perfecty_Push_Lib_Db::get_user( $id );
+			$id                   = intval( $_REQUEST['id'] );
+			$item                 = Perfecty_Push_Lib_Db::get_user( $id );
+			$options              = get_option( 'perfecty_push', array() );
+			$segmentation_enabled = isset( $options['segmentation_enabled'] ) && $options['segmentation_enabled'] == 1;
 
 			require_once plugin_dir_path( __FILE__ ) . 'partials/perfecty-push-admin-users-view.php';
 			return true;
@@ -651,6 +676,16 @@ class Perfecty_Push_Admin {
 		} else {
 			$new_input['widget_debugging_enabled'] = 0;
 		}
+		if ( isset( $input['widget_hide_bell_after_subscribe'] ) ) {
+			$new_input['widget_hide_bell_after_subscribe'] = 1;
+		} else {
+			$new_input['widget_hide_bell_after_subscribe'] = 0;
+		}
+		if ( isset( $input['segmentation_enabled'] ) ) {
+			$new_input['segmentation_enabled'] = 1;
+		} else {
+			$new_input['segmentation_enabled'] = 0;
+		}
 
 		// text
 		if ( isset( $input['service_worker_scope'] ) ) {
@@ -710,6 +745,15 @@ class Perfecty_Push_Admin {
 	 */
 	public function print_self_hosted_section() {
 		print esc_html__( 'Configure how to connect your website with your self-hosted Perfecty Push Server.', 'perfecty-push-notifications' );
+	}
+
+	/**
+	 * Print the segmentation section info
+	 *
+	 * @since 1.1.3
+	 */
+	public function print_segmentation_section() {
+		print esc_html__( 'Define how the user segmentation works.', 'perfecty-push-notifications' );
 	}
 
 	/**
@@ -809,6 +853,42 @@ class Perfecty_Push_Admin {
 		printf(
 			'<input type="checkbox" id="perfecty_push[widget_debugging_enabled]"' .
 			'name="perfecty_push[widget_debugging_enabled]" %s />',
+			esc_html( $enabled )
+		);
+	}
+
+	/**
+	 * Print the hide bell after the user has been subscribed
+	 *
+	 * @since 1.1.3
+	 */
+	public function print_widget_hide_bell_after_subscribe() {
+		$options = get_option( 'perfecty_push' );
+		$value   = isset( $options['widget_hide_bell_after_subscribe'] ) ? esc_attr( $options['widget_hide_bell_after_subscribe'] ) : 0;
+
+		$enabled = $value == 1 ? 'checked="checked"' : '';
+
+		printf(
+			'<input type="checkbox" id="perfecty_push[widget_hide_bell_after_subscribe]"' .
+			'name="perfecty_push[widget_hide_bell_after_subscribe]" %s />',
+			esc_html( $enabled )
+		);
+	}
+
+	/**
+	 * Print the enable segmentation setting
+	 *
+	 * @since 1.1.3
+	 */
+	public function print_segmentation_enabled() {
+		$options = get_option( 'perfecty_push' );
+		$value   = isset( $options['segmentation_enabled'] ) ? esc_attr( $options['segmentation_enabled'] ) : 0;
+
+		$enabled = $value == 1 ? 'checked="checked"' : '';
+
+		printf(
+			'<input type="checkbox" id="perfecty_push[segmentation_enabled]"' .
+			'name="perfecty_push[segmentation_enabled]" %s />',
 			esc_html( $enabled )
 		);
 	}

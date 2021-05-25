@@ -1,7 +1,7 @@
 # Perfecty Push WP Plugin ⚡️
 
-[![tests](https://github.com/rwngallego/perfecty-push-wp/workflows/Tests/badge.svg)](https://github.com/rwngallego/perfecty-push-wp/actions?query=workflow%3ATests)
-[![deployment](https://github.com/rwngallego/perfecty-push-wp/workflows/Deployment/badge.svg)](https://github.com/rwngallego/perfecty-push-wp/actions?query=workflow%3ADeployment)
+[![tests](https://github.com/perfectyorg/perfecty-push-wp/workflows/Tests/badge.svg)](https://github.com/perfectyorg/perfecty-push-wp/actions?query=workflow%3ATests)
+[![deployment](https://github.com/perfectyorg/perfecty-push-wp/workflows/Deployment/badge.svg)](https://github.com/perfectyorg/perfecty-push-wp/actions?query=workflow%3ADeployment)
 [![License](https://img.shields.io/badge/license-GLPv2-blue.svg)](./LICENSE.txt)
 [![PHP compatibility](https://plugintests.com/plugins/wporg/perfecty-push-notifications/php-badge.svg)](https://plugintests.com/plugins/wporg/perfecty-push-notifications/latest)
 [![WP compatibility](https://plugintests.com/plugins/wporg/perfecty-push-notifications/wp-badge.svg)](https://plugintests.com/plugins/wporg/perfecty-push-notifications/latest)
@@ -133,7 +133,7 @@ chown -R www-data wp-content
 
 The WordPress Plugin is an Open Source project licensed under [GPL v2](./LICENSE.txt).
 
-The bell icon is a Font Awesome icon, a [CC BY 4.0 License](https://creativecommons.org/licenses/by/4.0/).
+The bell icon SVG code is a Font Awesome icon, a MIT License.
 
 <span>Banner photo by <a href="https://unsplash.com/@nasa?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">NASA</a> on <a href="https://unsplash.com/s/photos/world?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">Unsplash</a></span>
 
@@ -152,6 +152,6 @@ of each project, which in general use the MIT license, except the WordPress plug
 
 ## Special Thanks
 
-[<img alt="Jetbrains" src="https://github.com/rwngallego/perfecty-push-wp/raw/master/.github/assets/jetbrains-logo.svg" width="120">](https://www.jetbrains.com/?from=PerfectyPush)
+[<img alt="Jetbrains" src="https://github.com/perfectyorg/perfecty-push-wp/raw/master/.github/assets/jetbrains-logo.svg" width="120">](https://www.jetbrains.com/?from=PerfectyPush)
 
 Thanks to Jetbrains for supporting this Open Source project with their magnificent tools.

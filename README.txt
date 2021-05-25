@@ -4,7 +4,7 @@ Donate link: https://github.com/rwngallego
 Tags: Push Notifications, Web Push Notifications, Notifications, User engagement
 Requires at least: 5.0
 Tested up to: 5.7
-Stable tag: 1.1.1
+Stable tag: 1.1.6
 Requires PHP: 7.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -35,11 +35,11 @@ Requirements:
 
 ## Documentation
 
-[https://github.com/rwngallego/perfecty-push-wp/wiki](https://github.com/rwngallego/perfecty-push-wp/wiki)
+[https://github.com/perfectyorg/perfecty-push-wp/wiki](https://github.com/perfectyorg/perfecty-push-wp/wiki)
 
 ## Code
 
-Want to check the code? [https://github.com/rwngallego/perfecty-push-wp](https://github.com/rwngallego/perfecty-push-wp)
+Want to check the code? [https://github.com/perfectyorg/perfecty-push-wp](https://github.com/perfectyorg/perfecty-push-wp)
 
 This plugin uses the [Chart.js](https://www.chartjs.org/) library for the admin stats.
 
@@ -71,7 +71,7 @@ The `gmp` extension is optional in PHP >= 7.3. In PHP 7.2 you can't generate the
 
 = How do I install the `gmp` extension? =
 
-It depends on the operating system, but in theory you install it as a regular PHP extension. More information: [Install the gmp extension](https://github.com/rwngallego/perfecty-push-wp/wiki/Troubleshooting#install-the-gmp-extension)
+It depends on the operating system, but in theory you install it as a regular PHP extension. More information: [Install the gmp extension](https://github.com/perfectyorg/perfecty-push-wp/wiki/Troubleshooting#install-the-gmp-extension)
 
 = Is this working in production? =
 
@@ -80,7 +80,7 @@ This plugin has been deployed in a real site with more than 800.000 monthly visi
 = How do I report a bug? =
 
 You can create an issue in our Github repo:
-[https://github.com/rwngallego/perfecty-push-wp/issues](https://github.com/rwngallego/perfecty-push-wp/issues)
+[https://github.com/perfectyorg/perfecty-push-wp/issues](https://github.com/perfectyorg/perfecty-push-wp/issues)
 
 == Screenshots ==
 
@@ -94,6 +94,27 @@ You can create an issue in our Github repo:
 8. Settings
 
 == Changelog ==
+
+= 1.1.6 =
+* Increased payload size to 2.000 characters to support arabic characters. Issue [#46](https://github.com/perfectyorg/perfecty-push-wp/issues/46)
+
+= 1.1.5 =
+* Upgrade url-parse to avoid CVE-2021-27515
+* Styling fixes in the Bell control
+
+= 1.1.4 =
+* CSS style changes to the bell.
+* Move icon to an svg tag in the HTML as suggested by @stkuhn.
+* Open subscription dialog if the bell is clicked and the user is not subscribed.
+* Fix bug in the Perfecty Push Service Worker detection. Issue [#42](https://github.com/perfectyorg/perfecty-push-wp/issues/42)
+
+= 1.1.3 =
+* IP address collection is disabled by default. It can be enabled using the "Enable and collect data from users" option in the Segmentation settings.
+* Added option to hide the bell after the users have subscribed.
+
+= 1.1.2 =
+* Remove jQuery dependency from the public area
+* Detect duplicate endpoint auth/private keys when subscribing
 
 = 1.1.1 =
 * Integrate the Perfecty Push JS SDK: This is backwards compatible but upgrade to this version with caution.
