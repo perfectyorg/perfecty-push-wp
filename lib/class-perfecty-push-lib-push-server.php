@@ -84,7 +84,7 @@ class Perfecty_Push_Lib_Push_Server {
 	 * @return int $notification_id if success, false otherwise
 	 * @throws Exception
 	 */
-	public static function schedule_broadcast_async( $payload ) {
+	public static function schedule_broadcast_async( $payload, $timeoffset = 0 ) {
 		// required because is_plugin_active is needed when saving a post
 		// and 'admin_init' hasn't been fired yet
 		require_once ABSPATH . '/wp-admin/includes/plugin.php';
@@ -115,7 +115,7 @@ class Perfecty_Push_Lib_Push_Server {
 				error_log( 'Could not schedule the notification.' );
 				return false;
 			}
-			wp_schedule_single_event( time(), 'perfecty_push_broadcast_notification_event', array( $notification_id ) );
+			wp_schedule_single_event( time() + intval( $timeoffset ), 'perfecty_push_broadcast_notification_event', array( $notification_id ) );
 			return $notification_id;
 		}
 	}

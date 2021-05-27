@@ -72,6 +72,8 @@ class Perfecty_Push_Admin {
 		 */
 
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/perfecty-push-admin.css', array(), $this->version, 'all' );
+		wp_enqueue_style( 'jquery.timepicker', plugin_dir_url( __FILE__ ) . 'css/jquery.timepicker.min.css', array(), '1.3.5', 'screen' );
+		wp_enqueue_style( 'jquery-ui', plugin_dir_url( __FILE__ ) . 'css/jquery-ui/themes/smoothness/jquery-ui.min.css', array(), '1.12.1', 'screen' );
 	}
 
 	/**
@@ -95,6 +97,8 @@ class Perfecty_Push_Admin {
 
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/perfecty-push-admin.js', array( 'jquery', 'wp-i18n' ), $this->version, false );
 		wp_enqueue_script( 'chartjs', plugin_dir_url( __FILE__ ) . 'js/chart.bundle.min.js', array( 'jquery' ), $this->version, false );
+		wp_enqueue_script( 'jquery-timepicker', plugin_dir_url( __FILE__ ) . 'js/jquery.timepicker.min.js', array( 'jquery' ), '1.3.5', false );
+		wp_enqueue_script( 'html5-fallback', plugin_dir_url( __FILE__ ) . 'js/html5-fallback.js', array( 'jquery-ui-datepicker', 'jquery-timepicker' ), $this->version, false );
 	}
 
 	 /**
@@ -566,6 +570,7 @@ class Perfecty_Push_Admin {
 			'perfecty-push-send-notification-message'     => '',
 			'perfecty-push-send-notification-url-to-open' => '',
 			'perfecty-push-send-notification-image'       => '',
+			'perfecty-push-send-notification-timeoffset'  => '',
 		);
 
 		if ( isset( $_REQUEST['nonce'] ) && wp_verify_nonce( $_REQUEST['nonce'], 'perfecty_push_send_notification' ) ) {
@@ -578,11 +583,12 @@ class Perfecty_Push_Admin {
 				$item['perfecty-push-send-notification-message']     = sanitize_textarea_field( $item['perfecty-push-send-notification-message'] );
 				$item['perfecty-push-send-notification-url-to-open'] = sanitize_text_field( $item['perfecty-push-send-notification-url-to-open'] );
 				$item['perfecty-push-send-notification-image']       = sanitize_text_field( $item['perfecty-push-send-notification-image'] );
+				$item['perfecty-push-send-notification-timeoffset']  = sanitize_text_field( $item['perfecty-push-send-notification-timeoffset'] );
 
-				$payload = Perfecty_Push_Lib_Payload::build( $item['perfecty-push-send-notification-message'], $item['perfecty-push-send-notification-title'], $item['perfecty-push-send-notification-image'], $item['perfecty-push-send-notification-url-to-open'] );
-
+				$payload    = Perfecty_Push_Lib_Payload::build( $item['perfecty-push-send-notification-message'], $item['perfecty-push-send-notification-title'], $item['perfecty-push-send-notification-image'], $item['perfecty-push-send-notification-url-to-open'] );
+				$timeoffset = intval( $item['perfecty-push-send-notification-timeoffset'] );
 				// send notification
-				$result = Perfecty_Push_Lib_Push_Server::schedule_broadcast_async( $payload );
+				$result = Perfecty_Push_Lib_Push_Server::schedule_broadcast_async( $payload, $timeoffset );
 				if ( $result === false ) {
 					  $notice = esc_html__( 'Could not schedule the notification, check the logs', 'perfecty-push-notifications' );
 				} else {

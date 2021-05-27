@@ -662,6 +662,11 @@ class Perfecty_Push_Lib_Db {
 		}
 		$ids = implode( ',', $notification_ids );
 
+		// First delete scheduled events.
+		foreach ( $notification_ids as $nid ) {
+			$args = array( intval( $nid ) );
+			wp_clear_scheduled_hook( 'perfecty_push_broadcast_notification_event', $args );
+		}
 		return $wpdb->query( 'DELETE FROM ' . self::notifications_table() . " WHERE id IN ($ids)" );
 	}
 
@@ -681,6 +686,18 @@ class Perfecty_Push_Lib_Db {
 			array( 'id' => $notification_id )
 		);
 
+		return $result;
+	}
+
+	/**
+	 * Get scheduled time
+	 *
+	 * @param $notification_id int Notification id
+	 * @return int|bool Scheduled Unix timestamp for the notification or false
+	 */
+	public static function get_notification_scheduled_time( $notification_id ) {
+		$args   = array( intval( $notification_id ) );
+		$result = wp_next_scheduled( 'perfecty_push_broadcast_notification_event', $args );
 		return $result;
 	}
 }
