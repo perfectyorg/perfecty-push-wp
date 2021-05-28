@@ -626,4 +626,40 @@ class DbTest extends WP_UnitTestCase {
 		$this->assertEquals( 0, $completed_notification->is_taken );
         $this->assertNotEquals( null, $completed_notification->finished_at );
 	}
+
+    /**
+     * Test insert log
+     */
+    public function test_insert_log() {
+        Perfecty_Push_Lib_Db::insert_log( 'debug', 'my test debug message' );
+        Perfecty_Push_Lib_Db::insert_log( 'info', 'my test info message' );
+
+        $logs = Perfecty_Push_Lib_Db::get_logs(0, 10);
+
+        $expected_debug = array(
+            'level' => 'debug',
+            'message' => 'my test debug message'
+        );
+        $expected_info = array(
+            'level' => 'info',
+            'message' => 'my test info message'
+        );
+        $this->assertArraySubset( $expected_debug, (array) $logs[0]);
+        $this->assertArraySubset( $expected_info, (array) $logs[1]);
+        $this->assertSame( 2, count($logs) );
+    }
+
+    /**
+     * Test total logs
+     */
+    public function test_get_total_logs() {
+        $initial = Perfecty_Push_Lib_Db::get_total_logs();
+        Perfecty_Push_Lib_Db::insert_log( 'info', 'my test info message' );
+        Perfecty_Push_Lib_Db::insert_log( 'debug', 'my test debug message' );
+
+        $total = Perfecty_Push_Lib_Db::get_total_logs();
+
+        $this->assertSame( $initial, 0 );
+        $this->assertSame( $total, 2 );
+    }
 }

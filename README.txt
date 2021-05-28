@@ -99,6 +99,7 @@ You can create an issue in our Github repo:
 * Schedule notifications is now possible thanks to [@mociofiletto](https://profiles.wordpress.org/mociofiletto/)
 * Support external plugin integrations. Fixes [#5](https://github.com/perfectyorg/perfecty-push-wp/issues/5)
 * Push Subscribers are linked with their WordPress User Id if they're logged in users
+* Push Server logs (DB Driver initially). Fixes [#30](https://github.com/perfectyorg/perfecty-push-wp/issues/30) and [#31](https://github.com/perfectyorg/perfecty-push-wp/issues/31)
 
 = 1.1.6 =
 * Increased payload size to 2.000 characters to support arabic characters. Issue [#46](https://github.com/perfectyorg/perfecty-push-wp/issues/46)

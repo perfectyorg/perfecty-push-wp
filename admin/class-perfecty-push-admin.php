@@ -163,6 +163,15 @@ class Perfecty_Push_Admin {
 
 		add_submenu_page(
 			'perfecty-push',
+			esc_html__( 'Logs', 'perfecty-push-notifications' ),
+			esc_html__( 'Logs', 'perfecty-push-notifications' ),
+			'manage_options',
+			'perfecty-push-logs',
+			array( $this, 'print_logs_page' )
+		);
+
+		add_submenu_page(
+			'perfecty-push',
 			esc_html__( 'About', 'perfecty-push-notifications' ),
 			esc_html__( 'About', 'perfecty-push-notifications' ),
 			'manage_options',
@@ -312,6 +321,14 @@ class Perfecty_Push_Admin {
 			'batch_size', // id
 			esc_html__( 'Batch Size', 'perfecty-push-notifications' ), // title
 			array( $this, 'print_batch_size' ), // callback
+			'perfecty-push-options', // page
+			'perfecty_push_self_hosted_settings' // section
+		);
+
+		add_settings_field(
+			'logs_enabled', // id
+			esc_html__( 'Enable logs', 'perfecty-push-notifications' ), // title
+			array( $this, 'print_logs_enabled' ), // callback
 			'perfecty-push-options', // page
 			'perfecty_push_self_hosted_settings' // section
 		);
@@ -666,6 +683,25 @@ class Perfecty_Push_Admin {
 	}
 
 	/**
+	 * Renders the logs page
+	 *
+	 * @since 1.2.0
+	 */
+	public function print_logs_page() {
+		$page = esc_html( sanitize_key( $_REQUEST['page'] ) );
+
+		$table        = new Perfecty_Push_Admin_Logs_Table();
+		$affected     = $table->prepare_items();
+		$options      = get_option( 'perfecty_push', array() );
+		$enabled_logs = isset( $options['logs_enabled'] ) && $options['logs_enabled'] == 1;
+		if ( ! $enabled_logs ) {
+			$message = esc_html__( 'Logs are disabled. You need to enable them in Settings.', 'perfecty-push-notifications' );
+		} else {
+		}
+		require_once plugin_dir_path( __FILE__ ) . 'partials/perfecty-push-admin-logs.php';
+	}
+
+	/**
 	 * Renders the about page
 	 *
 	 * @since 1.0.0
@@ -709,6 +745,11 @@ class Perfecty_Push_Admin {
 			$new_input['segmentation_enabled'] = 1;
 		} else {
 			$new_input['segmentation_enabled'] = 0;
+		}
+		if ( isset( $input['logs_enabled'] ) ) {
+			$new_input['logs_enabled'] = 1;
+		} else {
+			$new_input['logs_enabled'] = 0;
 		}
 
 		// text
@@ -895,6 +936,24 @@ class Perfecty_Push_Admin {
 		printf(
 			'<input type="checkbox" id="perfecty_push[widget_hide_bell_after_subscribe]"' .
 			'name="perfecty_push[widget_hide_bell_after_subscribe]" %s />',
+			esc_html( $enabled )
+		);
+	}
+
+	/**
+	 * Print the enable logs setting
+	 *
+	 * @since 1.2.0
+	 */
+	public function print_logs_enabled() {
+		$options = get_option( 'perfecty_push' );
+		$value   = isset( $options['logs_enabled'] ) ? esc_attr( $options['logs_enabled'] ) : 0;
+
+		$enabled = $value == 1 ? 'checked="checked"' : '';
+
+		printf(
+			'<input type="checkbox" id="perfecty_push[logs_enabled]"' .
+			'name="perfecty_push[logs_enabled]" %s />',
 			esc_html( $enabled )
 		);
 	}

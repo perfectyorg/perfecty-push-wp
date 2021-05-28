@@ -52,7 +52,7 @@ class Perfecty_Push_Users {
 			$key_p256dh = sanitize_text_field( $key_p256dh );
 			$remote_ip  = sanitize_text_field( $remote_ip );
 			$user_id    = sanitize_text_field( $user_id );
-            $wp_user_id = is_user_logged_in() ? get_current_user_id() : null;
+			$wp_user_id = is_user_logged_in() ? get_current_user_id() : null;
 
 			$user = Perfecty_Push_Lib_Db::get_user_by( $user_id, $key_auth, $key_p256dh );
 			if ( $user ) {
