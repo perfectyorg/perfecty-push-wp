@@ -585,14 +585,21 @@ class Perfecty_Push_Admin {
 				$item['perfecty-push-send-notification-image']       = sanitize_text_field( $item['perfecty-push-send-notification-image'] );
 				$item['perfecty-push-send-notification-timeoffset']  = sanitize_text_field( $item['perfecty-push-send-notification-timeoffset'] );
 
-				$payload    = Perfecty_Push_Lib_Payload::build( $item['perfecty-push-send-notification-message'], $item['perfecty-push-send-notification-title'], $item['perfecty-push-send-notification-image'], $item['perfecty-push-send-notification-url-to-open'] );
-				$timeoffset = intval( $item['perfecty-push-send-notification-timeoffset'] );
+				$payload        = Perfecty_Push_Lib_Payload::build( $item['perfecty-push-send-notification-message'], $item['perfecty-push-send-notification-title'], $item['perfecty-push-send-notification-image'], $item['perfecty-push-send-notification-url-to-open'] );
+				$timeoffset     = intval( $item['perfecty-push-send-notification-timeoffset'] );
+				$scheduled_time = self::calculate_scheduled_time_from_offset( $timeoffset );
+
 				// send notification
-				$result = Perfecty_Push_Lib_Push_Server::schedule_broadcast_async( $payload, $timeoffset );
+				$result = Perfecty_Push_Lib_Push_Server::schedule_broadcast_async( $payload, $scheduled_time );
+
 				if ( $result === false ) {
 					  $notice = esc_html__( 'Could not schedule the notification, check the logs', 'perfecty-push-notifications' );
 				} else {
 					$message = esc_html__( 'The notification job has been scheduled', 'perfecty-push-notifications' );
+					if ( $item['perfecty-push-send-notification-timeoffset'] ) {
+						$message .= ' ' . esc_html__( 'at', 'perfecty-push-notifications' ) . ' ';
+						$message .= get_date_from_gmt( date( 'Y-m-d H:i:s', $scheduled_time ), 'Y-m-d H:i:s' );
+					}
 
 					// we clear the form
 					$item = $default;
@@ -613,6 +620,17 @@ class Perfecty_Push_Admin {
 		);
 
 		require_once plugin_dir_path( __FILE__ ) . 'partials/perfecty-push-admin-send-notification.php';
+	}
+
+	/**
+	 * Calculate scheduled time
+	 *
+	 * @param array $input Contains the settings
+	 * @return int The notification scheduled time measured in the number of seconds since the Unix Epoch (January 1 1970 00:00:00 GMT).
+	 */
+	private function calculate_scheduled_time_from_offset( $timeoffset ) {
+		$timeoffset = intval( $timeoffset );
+		return time() + $timeoffset;
 	}
 
 	/**
