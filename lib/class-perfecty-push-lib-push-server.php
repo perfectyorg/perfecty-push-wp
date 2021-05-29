@@ -81,10 +81,11 @@ class Perfecty_Push_Lib_Push_Server {
 	 * Schedules an async notification to all the users
 	 *
 	 * @param $payload array Payload to be sent, array
+	 * @param $scheduled_time int|string a unix timestamp, or a string representing a date
 	 * @return int $notification_id if success, false otherwise
 	 * @throws Exception
 	 */
-	public static function schedule_broadcast_async( $payload ) {
+	public static function schedule_broadcast_async( $payload, $scheduled_time = null ) {
 		// required because is_plugin_active is needed when saving a post
 		// and 'admin_init' hasn't been fired yet
 		require_once ABSPATH . '/wp-admin/includes/plugin.php';
@@ -115,7 +116,14 @@ class Perfecty_Push_Lib_Push_Server {
 				error_log( 'Could not schedule the notification.' );
 				return false;
 			}
-			wp_schedule_single_event( time(), 'perfecty_push_broadcast_notification_event', array( $notification_id ) );
+			if ( is_null( $scheduled_time ) ) {
+				$scheduled_time = time();
+			}
+			if ( is_string( $scheduled_time ) ) {
+				$date           = new DateTime( $scheduled_time );
+				$scheduled_time = $date->getTimestamp();
+			}
+			wp_schedule_single_event( $scheduled_time, 'perfecty_push_broadcast_notification_event', array( $notification_id ) );
 			return $notification_id;
 		}
 	}

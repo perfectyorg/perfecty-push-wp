@@ -63,6 +63,19 @@ class Perfecty_Push_Admin_Notifications_Table extends WP_List_Table {
 		return sprintf( esc_html__( 'Title: %1$s %2$s Content: %3$s %4$s %5$s', 'perfecty-push-notifications' ), $title, '<br />', $body, '<br />', $row_actions );
 	}
 
+	function column_status( $item ) {
+		if ( $item['status'] == Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_SCHEDULED ) {
+			$timestamp = Perfecty_Push_Lib_Db::get_notification_scheduled_time( $item['id'] );
+			return sprintf(
+				'%s %s',
+				$item['status'],
+				'<br />' . esc_html__( 'at', 'perfecty-push-notifications' ) . ' ' . get_date_from_gmt( date( 'Y-m-d H:i:s', $timestamp ), 'Y-m-d H:i:s' )
+			);
+		} else {
+			return $item['status'];
+		}
+	}
+
 	/**
 	 * Limit the max length of the text and adds '...' if it exceeds it
 	 *
