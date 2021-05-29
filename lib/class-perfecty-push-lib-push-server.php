@@ -82,7 +82,7 @@ class Perfecty_Push_Lib_Push_Server {
 	 *
 	 * @param $payload array Payload to be sent, array
 	 * @param $scheduled_time int|string a unix timestamp, or a string representing a date
-	 * @return int $notification_id if success, false otherwise
+	 * @return int | bool $notification_id if success, false otherwise
 	 * @throws Exception
 	 */
 	public static function schedule_broadcast_async( $payload, $scheduled_time = null ) {
@@ -128,7 +128,32 @@ class Perfecty_Push_Lib_Push_Server {
 		}
 	}
 
-	/**
+    /**
+     * Send the notification to a WordPress user
+     *
+     * @param $wp_user_id int WordPress User Id
+     * @param $payload array|string Payload to be sent, json encoded or array
+     * @return array Array with [total, succeeded]
+     * @throws ErrorException
+     */
+    public static function notify ( $wp_user_id, $payload ) {
+        $users = Perfecty_Push_Lib_Db::get_users_by_wp_user_id( $wp_user_id );
+
+        return self::send_notification( $payload, $users );
+    }
+
+    /**
+     * Schedule a broadcast notification job for all the users
+     *
+     * @param $payload array|string Payload to be sent, json encoded or array
+     * @return int $notification_id if success, false otherwise
+     * @throws Exception
+     */
+    public static function broadcast ( $payload ) {
+        return self::schedule_broadcast_async( $payload );
+    }
+
+    /**
 	 * Execute one broadcast batch
 	 *
 	 * @param int $notification_id Notification id
@@ -204,13 +229,14 @@ class Perfecty_Push_Lib_Push_Server {
 		return true;
 	}
 
-	/**
-	 * Send the notification to a set of users
-	 *
-	 * @param $payload array|string Payload to be sent, json encoded or array
-	 * @param $users array List of users
-	 * @return [$total, $succeeded] | string Total/succeeded messages or Error message
-	 */
+    /**
+     * Send the notification to a set of users
+     *
+     * @param $payload array|string Payload to be sent, json encoded or array
+     * @param $users array List of users
+     * @return array Array with [total, succeeded]
+     * @throws ErrorException
+     */
 	public static function send_notification( $payload, $users ) {
 		if ( ! is_string( $payload ) ) {
 			$payload = json_encode( $payload );

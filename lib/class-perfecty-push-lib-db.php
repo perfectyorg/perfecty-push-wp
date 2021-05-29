@@ -7,7 +7,7 @@ use Ramsey\Uuid\Uuid;
  */
 class Perfecty_Push_Lib_Db {
 
-	private static $allowed_users_fields         = 'id,uuid,endpoint,key_auth,key_p256dh,remote_ip,is_active,created_at';
+	private static $allowed_users_fields         = 'id,uuid,wp_user_id,endpoint,key_auth,key_p256dh,remote_ip,is_active,created_at';
 	private static $allowed_notifications_fields = 'id,payload,total,succeeded,last_cursor,batch_size,status,is_taken,created_at,finished_at';
 
 	public const NOTIFICATIONS_STATUS_SCHEDULED = 'scheduled';
@@ -46,6 +46,7 @@ class Perfecty_Push_Lib_Db {
 		// We execute the queries per table
 		$sql = "CREATE TABLE $user_table (
           id int(11) NOT NULL AUTO_INCREMENT,
+          wp_user_id int(11) NULL,
           uuid char(36) NOT NULL,
           remote_ip varchar(46) DEFAULT '',
           endpoint varchar(500) NOT NULL,
@@ -108,11 +109,12 @@ class Perfecty_Push_Lib_Db {
 	 * @param $key_auth
 	 * @param $key_p256dh
 	 * @param $remote_ip
+     * @param $wp_user_id
 	 *
 	 * @return $uuid The id for the created user or false
 	 * @throws Exception
 	 */
-	public static function create_user( $endpoint, $key_auth, $key_p256dh, $remote_ip ) {
+	public static function create_user( $endpoint, $key_auth, $key_p256dh, $remote_ip, $wp_user_id = null) {
 		global $wpdb;
 
 		$uuid   = Uuid::uuid4()->toString();
@@ -124,6 +126,7 @@ class Perfecty_Push_Lib_Db {
 				'key_auth'   => $key_auth,
 				'key_p256dh' => $key_p256dh,
 				'remote_ip'  => $remote_ip,
+                'wp_user_id' => $wp_user_id,
 			)
 		);
 
@@ -284,6 +287,7 @@ class Perfecty_Push_Lib_Db {
 				'key_auth'   => $user->key_auth,
 				'key_p256dh' => $user->key_p256dh,
 				'is_active'  => $user->is_active,
+                'wp_user_id' => $user->wp_user_id,
 			),
 			array( 'id' => $user->id )
 		);
@@ -338,7 +342,26 @@ class Perfecty_Push_Lib_Db {
 		return $results;
 	}
 
-	/**
+    /**
+     * Get the users that belong to the given WordPress User Id
+     *
+     * @param $wp_user_id int WordPress User Id
+     * @param  $mode int WPDB Mode
+     * @return array The result with the users
+     */
+    public static function get_users_by_wp_user_id($wp_user_id, $mode = OBJECT ) {
+        global $wpdb;
+
+        $sql     = $wpdb->prepare(
+            'SELECT ' . self::$allowed_users_fields .
+            ' FROM ' . self::users_table() .
+            ' WHERE wp_user_id = %d',
+            $wp_user_id
+        );
+        return $wpdb->get_results( $sql, $mode );
+    }
+
+    /**
 	 * Create a notification in the DB
 	 *
 	 * @param $payload

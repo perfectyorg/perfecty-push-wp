@@ -52,6 +52,7 @@ class Perfecty_Push_Users {
 			$key_p256dh = sanitize_text_field( $key_p256dh );
 			$remote_ip  = sanitize_text_field( $remote_ip );
 			$user_id    = sanitize_text_field( $user_id );
+            $wp_user_id = is_user_logged_in() ? get_current_user_id() : null;
 
 			$user = Perfecty_Push_Lib_Db::get_user_by( $user_id, $key_auth, $key_p256dh );
 			if ( $user ) {
@@ -59,13 +60,14 @@ class Perfecty_Push_Users {
 				$user->key_auth   = $key_auth;
 				$user->key_p256dh = $key_p256dh;
 				$user->remote_ip  = $remote_ip;
+				$user->wp_user_id = $wp_user_id;
 				$result           = Perfecty_Push_Lib_Db::update_user( $user );
 				if ( $result === false ) {
 					// Could not update the user
 					return new WP_Error( 'failed_update', __( 'Could not update the user', 'perfecty-push-notifications' ), array( 'status' => 500 ) );
 				}
 			} else {
-				$result = Perfecty_Push_Lib_Db::create_user( $endpoint, $key_auth, $key_p256dh, $remote_ip );
+				$result = Perfecty_Push_Lib_Db::create_user( $endpoint, $key_auth, $key_p256dh, $remote_ip, $wp_user_id );
 				if ( $result === false ) {
 					// Could not subscribe
 					return new WP_Error( 'failed_create', __( 'Could not subscribe the user', 'perfecty-push-notifications' ), array( 'status' => 500 ) );

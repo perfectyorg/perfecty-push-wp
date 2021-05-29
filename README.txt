@@ -1,6 +1,6 @@
 === Perfecty Push Notifications ===
 Contributors: rwngallego, mociofiletto
-Donate link: https://github.com/rwngallego
+Donate link: https://github.com/perfectyorg
 Tags: Push Notifications, Web Push Notifications, Notifications, User engagement
 Requires at least: 5.0
 Tested up to: 5.7
@@ -94,6 +94,11 @@ You can create an issue in our Github repo:
 8. Settings
 
 == Changelog ==
+
+= 1.2.0 =
+* Schedule notifications is now possible thanks to [@mociofiletto](https://profiles.wordpress.org/mociofiletto/)
+* Support external plugin integrations. Fixes [#5](https://github.com/perfectyorg/perfecty-push-wp/issues/5)
+* Push Subscribers are linked with their WordPress User Id if they're logged in users
 
 = 1.1.6 =
 * Increased payload size to 2.000 characters to support arabic characters. Issue [#46](https://github.com/perfectyorg/perfecty-push-wp/issues/46)

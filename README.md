@@ -23,6 +23,7 @@ No hidden fees, no third-party dependencies and you own your data. 👏
 
 - **Open Source**, send Push Notifications **from your server for free!**
 - PWA & AMP compatible
+- Can be called by other plugins using the `Perfecty_Push_Integration` class
 - No third-party dependencies
 - Migrate users from other push services like OneSignal
 - Send push notifications on posts publishing
@@ -144,7 +145,7 @@ suggestions as a PR or an issue directly to any of the projects repos.
 Remember to read the [Code of Conduct](./CONDUCT) and the license information
 of each project, which in general use the MIT license, except the WordPress plugin (GPL v2).
 
-## Collaborators 🔥
+## Open Source contributors 🔥
 
 [<img src="https://avatars3.githubusercontent.com/u/691521?s=460&u=ceab22655f55101b66f8e79ed08007e2f8034f34&v=4" width="117">](https://github.com/rwngallego) | [<img src="https://avatars.githubusercontent.com/u/26635356?s=460&v=4" width="117">](https://github.com/MocioF) |
 :---: | :---: |
