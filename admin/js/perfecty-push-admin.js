@@ -39,7 +39,6 @@
 			$( "#form" ).submit(
 				function(e){
 					if ( $( "#perfecty-push-send-notification-schedule-notification" ).is( ":checked" ) ) {
-						// Forse devi fare dei controlli prima
 						var scheduledTime = new Date( $( "#perfecty-push-send-notification-scheduled-date" ).val() + 'T' + $( "#perfecty-push-send-notification-scheduled-time" ).val() );
 						var scheduledTimeEpoch = Math.round(scheduledTime.getTime() / 1000);
 						var currentTimeEpoch = Math.round(Date.now() / 1000);
