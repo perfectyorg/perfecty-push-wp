@@ -2,6 +2,7 @@
 
 use Minishlink\WebPush\Subscription;
 use Minishlink\WebPush\WebPush;
+use Perfecty_Push_Lib_Log as Log;
 
 /***
  * Perfecty Push server.
@@ -25,7 +26,7 @@ class Perfecty_Push_Lib_Push_Server {
 	 */
 	public static function bootstrap( $auth, $vapid_generator, $webpush = null ) {
 		if ( ! is_callable( $vapid_generator ) ) {
-			error_log( "$vapid_generator must be a callable function" );
+			Log::error( "$vapid_generator must be a callable function" );
 		}
 
 		self::$auth            = $auth;
@@ -40,7 +41,7 @@ class Perfecty_Push_Lib_Push_Server {
 	 */
 	public static function getPushServer() {
 		if ( ! self::$auth ) {
-			error_log( 'The VAPID auth keys were not found' );
+			Log::error( 'The VAPID auth keys were not found' );
 			return null;
 		}
 
@@ -51,14 +52,16 @@ class Perfecty_Push_Lib_Push_Server {
 					// informed the user about this in a nicer way
 					return true;
 				}
+
+				Log::error( 'Could not get the Push Server: ' . $errno . ' ' . $errstr . ' ' . $errfile . ' ' . $errline );
 				return false; // we raise it to the next handler otherwise
 			}
 		);
 		try {
 			$webpush = new WebPush( self::$auth );
 			$webpush->setReuseVAPIDHeaders( true );
-		} catch ( \Exception $ex ) {
-			error_log( 'Could not start the Push Server: ' . $ex->getMessage() . ', ' . $ex->getTraceAsString() );
+		} catch ( \Throwable $ex ) {
+			Log::error( 'Could not start the Push Server: ' . $ex->getMessage() . ', ' . $ex->getTraceAsString() );
 			Class_Perfecty_Push_Lib_Utils::show_message( esc_html( 'Could not start the Push Server, check the PHP error logs for more information.', 'perfecty-push-notifications' ), 'warning' );
 			Class_Perfecty_Push_Lib_Utils::disable();
 			throw $ex;
@@ -74,6 +77,8 @@ class Perfecty_Push_Lib_Push_Server {
 	 */
 	public static function create_vapid_keys() {
 		$vapid_keys = call_user_func( self::$vapid_generator );
+		Log::info( 'VAPID Keys were created' );
+
 		return $vapid_keys;
 	}
 
@@ -86,6 +91,9 @@ class Perfecty_Push_Lib_Push_Server {
 	 * @throws Exception
 	 */
 	public static function schedule_broadcast_async( $payload, $scheduled_time = null ) {
+		Log::info( 'Scheduling a broadcast notification' );
+		Log::debug( print_r( $payload, true ) );
+
 		// required because is_plugin_active is needed when saving a post
 		// and 'admin_init' hasn't been fired yet
 		require_once ABSPATH . '/wp-admin/includes/plugin.php';
@@ -96,7 +104,7 @@ class Perfecty_Push_Lib_Push_Server {
 		$payload = json_encode( $payload );
 
 		if ( Class_Perfecty_Push_Lib_Utils::is_disabled() ) {
-			error_log( 'Perfecty Push is disabled, fix the issues already reported.' );
+			Log::error( 'Perfecty Push is disabled, fix the issues already reported.' );
 			return false;
 		}
 
@@ -106,14 +114,14 @@ class Perfecty_Push_Lib_Push_Server {
 
 		if ( is_plugin_active( 'action-scheduler' ) || $use_action_scheduler ) {
 			// Execute using action scheduler: https://actionscheduler.org/usage/
-			error_log( 'Action scheduler not implemented' );
+			Log::error( 'Action scheduler not implemented' );
 			return false;
 		} else {
 			// Fallback to wp-cron
 			$total_users     = Perfecty_Push_Lib_Db::get_total_users( true );
 			$notification_id = Perfecty_Push_Lib_Db::create_notification( $payload, Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_SCHEDULED, $total_users, $batch_size );
 			if ( ! $notification_id ) {
-				error_log( 'Could not schedule the notification.' );
+				Log::error( 'Could not schedule the notification.' );
 				return false;
 			}
 			if ( is_null( $scheduled_time ) ) {
@@ -123,37 +131,38 @@ class Perfecty_Push_Lib_Push_Server {
 				$date           = new DateTime( $scheduled_time );
 				$scheduled_time = $date->getTimestamp();
 			}
-			wp_schedule_single_event( $scheduled_time, 'perfecty_push_broadcast_notification_event', array( $notification_id ) );
+			$result = wp_schedule_single_event( $scheduled_time, 'perfecty_push_broadcast_notification_event', array( $notification_id ) );
+			Log::info( 'Scheduling job id=' . $notification_id . ', result: ' . $result );
 			return $notification_id;
 		}
 	}
 
-    /**
-     * Send the notification to a WordPress user
-     *
-     * @param $wp_user_id int WordPress User Id
-     * @param $payload array|string Payload to be sent, json encoded or array
-     * @return array Array with [total, succeeded]
-     * @throws ErrorException
-     */
-    public static function notify ( $wp_user_id, $payload ) {
-        $users = Perfecty_Push_Lib_Db::get_users_by_wp_user_id( $wp_user_id );
+	/**
+	 * Send the notification to a WordPress user
+	 *
+	 * @param $wp_user_id int WordPress User Id
+	 * @param $payload array|string Payload to be sent, json encoded or array
+	 * @return array Array with [total, succeeded]
+	 * @throws ErrorException
+	 */
+	public static function notify( $wp_user_id, $payload ) {
+		$users = Perfecty_Push_Lib_Db::get_users_by_wp_user_id( $wp_user_id );
 
-        return self::send_notification( $payload, $users );
-    }
+		return self::send_notification( $payload, $users );
+	}
 
-    /**
-     * Schedule a broadcast notification job for all the users
-     *
-     * @param $payload array|string Payload to be sent, json encoded or array
-     * @return int $notification_id if success, false otherwise
-     * @throws Exception
-     */
-    public static function broadcast ( $payload ) {
-        return self::schedule_broadcast_async( $payload );
-    }
+	/**
+	 * Schedule a broadcast notification job for all the users
+	 *
+	 * @param $payload array|string Payload to be sent, json encoded or array
+	 * @return int $notification_id if success, false otherwise
+	 * @throws Exception
+	 */
+	public static function broadcast( $payload ) {
+		return self::schedule_broadcast_async( $payload );
+	}
 
-    /**
+	/**
 	 * Execute one broadcast batch
 	 *
 	 * @param int $notification_id Notification id
@@ -161,15 +170,17 @@ class Perfecty_Push_Lib_Push_Server {
 	 * @return bool Succeeded or failed
 	 */
 	public static function execute_broadcast_batch( $notification_id ) {
+		Log::info( 'Executing batch for job id=' . $notification_id );
+
 		$notification = Perfecty_Push_Lib_Db::get_notification( $notification_id );
 		if ( ! $notification ) {
-			error_log( "Notification $notification_id was not found" );
+			Log::error( "Notification job $notification_id was not found" );
 			return false;
 		}
 
 		// if it has been taken but not released, that means a wrong state
 		if ( $notification->is_taken ) {
-			error_log( 'Halted, notification taken but not released, notification_id: ' . $notification_id );
+			Log::error( 'Halted, notification taken but not released, notification_id: ' . $notification_id );
 			Perfecty_Push_Lib_Db::mark_notification_failed( $notification_id );
 			Perfecty_Push_Lib_Db::untake_notification( $notification_id );
 			return false;
@@ -179,12 +190,13 @@ class Perfecty_Push_Lib_Push_Server {
 		// we only process running or scheduled jobs
 		if ( $notification->status !== Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_SCHEDULED &&
 		$notification->status !== Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_RUNNING ) {
-			error_log( 'Halted, received a job with an invalid status (' . $notification->status . '), notification_id: ' . $notification_id );
+			Log::error( 'Halted, received a job with an invalid status (' . $notification->status . '), notification_id: ' . $notification_id );
 			return false;
 		}
 
 		// this is the first time we get here so we mark it as running
 		if ( $notification->status == Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_SCHEDULED ) {
+			Log::info( 'Marking job id=' . $notification_id . ' as running' );
 			Perfecty_Push_Lib_Db::mark_notification_running( $notification_id );
 		}
 
@@ -195,9 +207,10 @@ class Perfecty_Push_Lib_Push_Server {
 		$users = Perfecty_Push_Lib_Db::get_users( $notification->last_cursor, $notification->batch_size, 'created_at', 'desc', true );
 
 		if ( count( $users ) == 0 ) {
+			Log::info( 'Job id=' . $notification_id . ' completed, released' );
 			$result = Perfecty_Push_Lib_Db::mark_notification_completed_untake( $notification_id );
 			if ( ! $result ) {
-				error_log( "Could not mark the notification $notification_id as completed" );
+				Log::error( "Could not mark the notification job $notification_id as completed" );
 				return false;
 			}
 			return true;
@@ -213,31 +226,38 @@ class Perfecty_Push_Lib_Push_Server {
 			$notification->succeeded   += $succeeded;
 			$notification->is_taken     = 0;
 			$result                     = Perfecty_Push_Lib_Db::update_notification( $notification );
+
+			Log::info( 'Notification batch for id=' . $notification_id . ' sent. Cursor: ' . $notification->last_cursor . ', Total: ' . $total_batch . ', Succeeded: ' . $succeeded );
 			if ( ! $result ) {
-				error_log( 'Could not update the notification after sending one batch' );
+				Log::error( 'Could not update the notification after sending one batch' );
 				return false;
 			}
 		} else {
-			error_log( "Error executing one batch, result: $result, notification_id: " . $notification_id );
+			Log::error( 'Error executing one batch for id=' . $notification_id . ', result: ' . $result );
 			Perfecty_Push_Lib_Db::mark_notification_failed( $notification_id );
 			Perfecty_Push_Lib_Db::untake_notification( $notification_id );
 			return false;
 		}
 
 		// execute the next batch
-		wp_schedule_single_event( time(), 'perfecty_push_broadcast_notification_event', array( $notification_id ) );
+		$result = wp_schedule_single_event( time(), 'perfecty_push_broadcast_notification_event', array( $notification_id ) );
+		Log::info( 'Scheduling next batch for id=' . $notification_id . ' . Result: ' . $result );
+
 		return true;
 	}
 
-    /**
-     * Send the notification to a set of users
-     *
-     * @param $payload array|string Payload to be sent, json encoded or array
-     * @param $users array List of users
-     * @return array Array with [total, succeeded]
-     * @throws ErrorException
-     */
+	/**
+	 * Send the notification to a set of users
+	 *
+	 * @param $payload array|string Payload to be sent, json encoded or array
+	 * @param $users array List of users
+	 * @return array Array with [total, succeeded]
+	 * @throws ErrorException
+	 */
 	public static function send_notification( $payload, $users ) {
+		Log::info( 'Sending notification to ' . count( $users ) . ' users' );
+		Log::debug( print_r( $payload, true ) );
+
 		if ( ! is_string( $payload ) ) {
 			$payload = json_encode( $payload );
 		}
@@ -246,6 +266,7 @@ class Perfecty_Push_Lib_Push_Server {
 		}
 
 		foreach ( $users as $item ) {
+			Log::debug( 'Enqueuing notification to user id=' . $item->id );
 			$push_user = new Subscription(
 				$item->endpoint,
 				$item->key_p256dh,
@@ -259,19 +280,20 @@ class Perfecty_Push_Lib_Push_Server {
 		$succeeded = 0;
 		foreach ( self::$webpush->flush() as $report ) {
 			if ( $report->isSuccess() ) {
+				Log::debug( 'Notification sent successfully' );
 				$succeeded++;
 			} else {
-				error_log( 'Failed to send one notification, error: ' . $report->getReason() );
+				Log::error( 'Failed to send one notification, error: ' . $report->getReason() );
 
 				$endpoint = $report->getEndpoint();
 				if ( $report->isSubscriptionExpired() ) {
-					error_log( "User subscription has expired, removing it: $endpoint" );
+					Log::error( "User subscription has expired, removing it: $endpoint" );
 					Perfecty_Push_Lib_Db::delete_user_by_endpoint( $endpoint );
 					continue;
 				}
 				$response = $report->getResponse();
 				if ( $response != null && $response->getStatusCode() == 403 ) {
-					error_log( "The endpoint should not be tried again, removing it: $endpoint" );
+					Log::error( "The endpoint should not be tried again, removing it: $endpoint" );
 					Perfecty_Push_Lib_Db::delete_user_by_endpoint( $endpoint );
 					continue;
 				}

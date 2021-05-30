@@ -41,3 +41,7 @@
   width: 50px;
   height: 50px;
 }
+
+.perfecty-push-logs-table table tbody tr td{
+  font-family: monospace;
+}
