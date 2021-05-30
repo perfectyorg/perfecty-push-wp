@@ -8,7 +8,7 @@
 /**
  * Test the Perfecty_Push_Users class
  */
-class RestGetUserTest extends WP_UnitTestCase {
+class RestUnregisterUserTest extends WP_UnitTestCase {
 
 	public function setUp() {
 		parent::setUp();
@@ -24,9 +24,9 @@ class RestGetUserTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test get user
+	 * Test unregister user
 	 */
-	public function test_get_user() {
+	public function test_unregister_user() {
 		$id           = Perfecty_Push_Lib_Db::create_user( 'my_endpoint_url', 'my_key_auth', 'my_p256dh_key', '127.0.0.1' );
 		$user = Perfecty_Push_Lib_Db::get_user( $id );
 
@@ -34,39 +34,49 @@ class RestGetUserTest extends WP_UnitTestCase {
 			'user_id'   => $user->uuid,
 		);
 		$users = new Perfecty_Push_Users();
-		$res         = $users->get_user( $data );
+		$res         = $users->unregister( $data );
+        $deleted_user = Perfecty_Push_Lib_Db::get_user( $id );
 
 		$this->assertSame(
             (array) $res,
             array(
-				'uuid'   => $user->uuid,
+			    'result' => true
 			)
 		);
+		$this->assertSame(null, $deleted_user);
 	}
 
 	/**
-	 * Test get user not found
+	 * Test unregister user not found
 	 */
-	public function test_get_user_not_found() {
+	public function test_unregister_user_not_found() {
 	    $uuid = \Ramsey\Uuid\Uuid::uuid4();
 		$data        = array(
 			'user_id'   => $uuid->toString(),
 		);
 		$users = new Perfecty_Push_Users();
-		$res         = $users->get_user( $data );
+		$res         = $users->unregister( $data );
 
-		$this->assertSame((array) $res, array());
+        $expected = array(
+            'bad_request' => array(
+                0 => 'User id not found',
+            ),
+        );
+
+        $this->assertInstanceOf( WP_Error::class, $res );
+        $this->assertArraySubset( $expected, $res->errors );
+        $this->assertSame( 404, $res->error_data['bad_request']['status'] );
 	}
 
 	/**
-	 * Test get user invalid
+	 * Test unregister user invalid
 	 */
-	public function test_get_user_invalid() {
+	public function test_unregister_user_invalid() {
 		$data        = array(
 			'user_id'   => '7777777-wrong-uuid',
 		);
 		$users = new Perfecty_Push_Users();
-		$res         = $users->get_user( $data );
+		$res         = $users->unregister( $data );
 
 		$expected = array(
 			'bad_request' => array(
@@ -80,9 +90,9 @@ class RestGetUserTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test get user with invalid nonce
+	 * Test unregister user with invalid nonce
 	 */
-	public function test_get_user_invalid_nonce() {
+	public function test_unregister_user_invalid_nonce() {
         $uuid = \Ramsey\Uuid\Uuid::uuid4();
         $data        = array(
             'user_id'   => $uuid->toString(),
@@ -98,6 +108,6 @@ class RestGetUserTest extends WP_UnitTestCase {
 		);
 
 		$this->expectException( InvalidNonceException::class );
-		$mock->get_user( $data );
+		$mock->unregister($data);
 	}
 }

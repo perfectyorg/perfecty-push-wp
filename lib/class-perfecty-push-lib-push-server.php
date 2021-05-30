@@ -118,7 +118,7 @@ class Perfecty_Push_Lib_Push_Server {
 			return false;
 		} else {
 			// Fallback to wp-cron
-			$total_users     = Perfecty_Push_Lib_Db::get_total_users( true );
+			$total_users     = Perfecty_Push_Lib_Db::get_total_users();
 			$notification_id = Perfecty_Push_Lib_Db::create_notification( $payload, Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_SCHEDULED, $total_users, $batch_size );
 			if ( ! $notification_id ) {
 				Log::error( 'Could not schedule the notification.' );
@@ -204,7 +204,7 @@ class Perfecty_Push_Lib_Push_Server {
 
 		// we get the next batch, starting from $last_cursor we take $batch_size elements
 		// we only fetch the active users (only_active)
-		$users = Perfecty_Push_Lib_Db::get_users( $notification->last_cursor, $notification->batch_size, 'created_at', 'desc', true );
+		$users = Perfecty_Push_Lib_Db::get_users( $notification->last_cursor, $notification->batch_size, 'created_at', 'desc' );
 
 		if ( count( $users ) == 0 ) {
 			Log::info( 'Job id=' . $notification_id . ' completed, released' );

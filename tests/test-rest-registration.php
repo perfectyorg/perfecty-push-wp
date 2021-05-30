@@ -61,7 +61,6 @@ class RestRegistrationTest extends WP_UnitTestCase {
             (array) $res,
             array(
                 'uuid'    => $users[0]->uuid,
-                'is_active' => (bool)$users[0]->is_active
             )
         );
         $this->assertArraySubset( $expected, (array) $users[0] );
@@ -104,7 +103,6 @@ class RestRegistrationTest extends WP_UnitTestCase {
 			(array) $res,
 			array(
 				'uuid'    => $users[0]->uuid,
-                'is_active' => (bool)$users[0]->is_active
 			)
 		);
 		$this->assertArraySubset( $expected, (array) $users[0] );
@@ -149,7 +147,6 @@ class RestRegistrationTest extends WP_UnitTestCase {
             (array) $res,
             array(
                 'uuid'    => $users[0]->uuid,
-                'is_active' => (bool)$users[0]->is_active
             )
         );
         $this->assertArraySubset( $expected, (array) $users[0] );
@@ -192,7 +189,6 @@ class RestRegistrationTest extends WP_UnitTestCase {
             (array) $res,
             array(
                 'uuid'    => $user->uuid,
-                'is_active' => (bool)$users[0]->is_active
             )
         );
         $this->assertArraySubset( $expected, (array) $users[0] );
@@ -235,7 +231,6 @@ class RestRegistrationTest extends WP_UnitTestCase {
             (array) $res,
             array(
                 'uuid'    => $users[0]->uuid,
-                'is_active' => (bool)$users[0]->is_active
             )
         );
         $this->assertArraySubset( $expected, (array) $users[0] );
