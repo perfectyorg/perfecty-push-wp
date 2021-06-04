@@ -479,6 +479,29 @@ class Perfecty_Push_Admin {
 
 			delete_transient( 'perfecty_push_admin_notice' );
 		}
+
+		$cron_check_status = Perfecty_Push_Cron_Check::get_cron_status();
+
+		if ( ! $cron_check_status ) {
+
+			printf(
+				'<div class="notice notice-warning is-dismissible"><b>' .
+				esc_html__( 'It seems no cron system is working.', 'perfecty-push-notification' ) . '</b><br />'
+			);
+			printf( esc_html__( 'Perfecty Push Notifications uses scheduled actions to make its magic.', 'perfecty-push-notification' ) . ' ' );
+			printf(
+				// translators: %1$s is the opening a tag
+				// translators: %2$s is the closing a tag
+				esc_html__(
+					'Please, check your wp-config.php to assure %1$sDISABLE_WP_CRON%2$s is not set to \'true\' ' .
+					'and/or a system cron action is set in your server to periodically call wp-cron.php',
+					'perfecty-push-notification'
+				),
+				'<a href="https://developer.wordpress.org/plugins/cron/hooking-wp-cron-into-the-system-task-scheduler/" target="_blank">',
+				'</a>'
+			);
+			printf( '</div>' );
+		}
 	}
 
 	/**
@@ -495,6 +518,9 @@ class Perfecty_Push_Admin {
 		$notifications_stats = Perfecty_Push_Lib_Db::get_notifications_stats();
 		$jobs_stats          = Perfecty_Push_Lib_Db::get_jobs_stats();
 		$daily_stats         = Perfecty_Push_Lib_Db::get_notifications_daily_stats( $start_date, $end_date );
+
+		$cron_check_box_class = Perfecty_Push_Cron_Check::get_cron_check_box_class();
+		$cron_check_box_text  = Perfecty_Push_Cron_Check::get_cron_check_box_text();
 
 		require_once plugin_dir_path( __FILE__ ) . 'partials/perfecty-push-admin-dashboard.php';
 	}

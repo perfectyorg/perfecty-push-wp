@@ -41,3 +41,28 @@
   width: 50px;
   height: 50px;
 }
+
+.perfecty-push-cron-check {
+  clear: both;
+  display: block;
+  position: relative;
+  width: 800px;
+}
+
+.perfecty-push-cron-working {
+  padding: 0 20px;
+  border-color: #00e600;
+  border-style: solid;
+  border-width: 1px;
+  background-color: #e6ffe6;
+  color: #008000;
+}
+
+.perfecty-push-cron-stopped {
+  padding: 0 20px;
+  border-color: #e60000;
+  border-style: solid;
+  border-width: 1px;
+  background-color: #ffcccc;
+  color: #800000;
+}

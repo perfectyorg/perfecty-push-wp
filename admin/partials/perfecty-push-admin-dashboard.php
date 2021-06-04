@@ -139,4 +139,21 @@
 			</div>
 		</div>
 	</div>
+	<br />
+	<div class="perfecty-push-cron-check">
+		<div class="<?php print( esc_attr( $cron_check_box_class ) ); ?>">
+			<h3><?php printf( esc_html__( 'Cron monitor', 'perfecty-push-notifications' ) ); ?></h3>
+			<?php
+			$allowed_html = array(
+				'div'  => array(
+					'class' => array(),
+				),
+				'span' => array(),
+				'b'    => array(),
+				'br'   => array(),
+			);
+			echo wp_kses( $cron_check_box_text, $allowed_html );
+			?>
+		</div>
+	</div>
 </div>
