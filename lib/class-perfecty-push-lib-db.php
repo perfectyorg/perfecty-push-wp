@@ -9,6 +9,7 @@ class Perfecty_Push_Lib_Db {
 
 	private static $allowed_users_fields         = 'id,uuid,wp_user_id,endpoint,key_auth,key_p256dh,remote_ip,is_active,created_at';
 	private static $allowed_notifications_fields = 'id,payload,total,succeeded,last_cursor,batch_size,status,is_taken,created_at,finished_at';
+	private static $allowed_logs_fields          = 'level,message,created_at';
 
 	public const NOTIFICATIONS_STATUS_SCHEDULED = 'scheduled';
 	public const NOTIFICATIONS_STATUS_RUNNING   = 'running';
@@ -28,6 +29,10 @@ class Perfecty_Push_Lib_Db {
 		return self::with_prefix( 'perfecty_push_notifications' );
 	}
 
+	private static function logs_table() {
+		return self::with_prefix( 'perfecty_push_logs' );
+	}
+
 	/**
 	 * Creates the tables in the WordPress DB and register the DB version
 	 */
@@ -42,6 +47,7 @@ class Perfecty_Push_Lib_Db {
 		$charset             = $wpdb->get_charset_collate();
 		$user_table          = self::users_table();
 		$notifications_table = self::notifications_table();
+		$logs_table          = self::logs_table();
 
 		// We execute the queries per table
 		$sql = "CREATE TABLE $user_table (
@@ -72,6 +78,13 @@ class Perfecty_Push_Lib_Db {
           created_at datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
           finished_at datetime NULL,
           PRIMARY KEY  (id)
+        ) $charset;";
+		dbDelta( $sql );
+
+		$sql = "CREATE TABLE $logs_table (
+          level varchar(10) DEFAULT 'debug',
+          message varchar(2000) NOT NULL,
+          created_at datetime DEFAULT CURRENT_TIMESTAMP NOT NULL
         ) $charset;";
 		dbDelta( $sql );
 
@@ -109,12 +122,12 @@ class Perfecty_Push_Lib_Db {
 	 * @param $key_auth
 	 * @param $key_p256dh
 	 * @param $remote_ip
-     * @param $wp_user_id
+	 * @param $wp_user_id
 	 *
 	 * @return $uuid The id for the created user or false
 	 * @throws Exception
 	 */
-	public static function create_user( $endpoint, $key_auth, $key_p256dh, $remote_ip, $wp_user_id = null) {
+	public static function create_user( $endpoint, $key_auth, $key_p256dh, $remote_ip, $wp_user_id = null ) {
 		global $wpdb;
 
 		$uuid   = Uuid::uuid4()->toString();
@@ -126,7 +139,7 @@ class Perfecty_Push_Lib_Db {
 				'key_auth'   => $key_auth,
 				'key_p256dh' => $key_p256dh,
 				'remote_ip'  => $remote_ip,
-                'wp_user_id' => $wp_user_id,
+				'wp_user_id' => $wp_user_id,
 			)
 		);
 
@@ -287,7 +300,7 @@ class Perfecty_Push_Lib_Db {
 				'key_auth'   => $user->key_auth,
 				'key_p256dh' => $user->key_p256dh,
 				'is_active'  => $user->is_active,
-                'wp_user_id' => $user->wp_user_id,
+				'wp_user_id' => $user->wp_user_id,
 			),
 			array( 'id' => $user->id )
 		);
@@ -342,26 +355,26 @@ class Perfecty_Push_Lib_Db {
 		return $results;
 	}
 
-    /**
-     * Get the users that belong to the given WordPress User Id
-     *
-     * @param $wp_user_id int WordPress User Id
-     * @param  $mode int WPDB Mode
-     * @return array The result with the users
-     */
-    public static function get_users_by_wp_user_id($wp_user_id, $mode = OBJECT ) {
-        global $wpdb;
+	/**
+	 * Get the users that belong to the given WordPress User Id
+	 *
+	 * @param $wp_user_id int WordPress User Id
+	 * @param  $mode int WPDB Mode
+	 * @return array The result with the users
+	 */
+	public static function get_users_by_wp_user_id( $wp_user_id, $mode = OBJECT ) {
+		global $wpdb;
 
-        $sql     = $wpdb->prepare(
-            'SELECT ' . self::$allowed_users_fields .
-            ' FROM ' . self::users_table() .
-            ' WHERE wp_user_id = %d',
-            $wp_user_id
-        );
-        return $wpdb->get_results( $sql, $mode );
-    }
+		$sql = $wpdb->prepare(
+			'SELECT ' . self::$allowed_users_fields .
+			' FROM ' . self::users_table() .
+			' WHERE wp_user_id = %d',
+			$wp_user_id
+		);
+		return $wpdb->get_results( $sql, $mode );
+	}
 
-    /**
+	/**
 	 * Create a notification in the DB
 	 *
 	 * @param $payload
@@ -722,5 +735,71 @@ class Perfecty_Push_Lib_Db {
 		$args   = array( intval( $notification_id ) );
 		$result = wp_next_scheduled( 'perfecty_push_broadcast_notification_event', $args );
 		return $result;
+	}
+
+	/**
+	 * Inserts a log entry in the DB
+	 *
+	 * @param string $level
+	 * @param string $message
+	 *
+	 * @return int Inserted Id or false if error
+	 */
+	public static function insert_log( $level, $message ) {
+		global $wpdb;
+
+		$result = $wpdb->insert(
+			self::logs_table(),
+			array(
+				'level'   => $level,
+				'message' => $message,
+			)
+		);
+
+		if ( $result === false ) {
+			error_log( 'Could not insert the log: ' . $level . ' ' . $message );
+			return $result;
+		}
+
+		return $wpdb->insert_id;
+	}
+
+	/**
+	 * Return the total log entries
+	 *
+	 * @return int Total log entries
+	 */
+	public static function get_total_logs() {
+		global $wpdb;
+
+		$total = $wpdb->get_var( 'SELECT COUNT(*) FROM ' . self::logs_table() );
+		return $total != null ? intval( $total ) : 0;
+	}
+
+	/**
+	 * Get the logs
+	 *
+	 * @param $offset int Offset
+	 * @param $size int Limit
+	 * @return array The result with the logs
+	 */
+	public static function get_logs( $offset, $size, $order_by = 'created_at', $order_asc = 'desc', $mode = OBJECT ) {
+		global $wpdb;
+
+		if ( strpos( self::$allowed_logs_fields, $order_by ) === false ) {
+			throw new Exception( "The order by [$order_by] field is not allowed" );
+		}
+		$order_asc = $order_asc === 'asc' ? 'asc' : 'desc';
+
+		$sql     = $wpdb->prepare(
+			'SELECT ' . self::$allowed_logs_fields .
+			' FROM ' . self::logs_table() .
+			' ORDER BY ' . $order_by . ' ' . $order_asc .
+			' LIMIT %d OFFSET %d',
+			$size,
+			$offset
+		);
+		$results = $wpdb->get_results( $sql, $mode );
+		return $results;
 	}
 }

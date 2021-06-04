@@ -39,10 +39,10 @@ define( 'PERFECTY_PUSH_VERSION', '1.1.6' );
 /**
  * DB Version of the plugin
  */
-define( 'PERFECTY_PUSH_DB_VERSION', 3 );
+define( 'PERFECTY_PUSH_DB_VERSION', 4 );
 
 /**
- * The code that runs during plugin activation.
+ * The code that runs during the plugin activation.
  * This action is documented in includes/class-perfecty-push-activator.php
  */
 function activate_perfecty_push() {
