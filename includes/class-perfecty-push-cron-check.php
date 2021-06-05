@@ -100,48 +100,28 @@ class Perfecty_Push_Cron_Check {
 	 */
 	public static function get_cron_check_box_text() {
 		$checks = self::get_last_logs();
+		$text   = '';
+		$msgs   = array();
+
 		if ( ! empty( $checks ) ) {
-			$text = '';
 			foreach ( $checks as $timestamp ) {
-				$text .= '<div class="perfecty-push-stats-text">';
-				$text .= '<span>' . esc_html__( 'Cron monitor runned at: ', 'perfecty-push-notifications' ) . get_date_from_gmt( gmdate( 'Y-m-d H:i:s', intval( $timestamp ) ), 'Y-m-d H:i:s' ) . '</span>';
-				$text .= '</div>';
+				$msgs[] = esc_html__( 'Cron monitor runned at: ', 'perfecty-push-notifications' ) . get_date_from_gmt( gmdate( 'Y-m-d H:i:s', intval( $timestamp ) ), 'Y-m-d H:i:s' );
 			}
 		} else {
-			$text .= '<div class="perfecty-push-stats-text">';
-			$text .= '<span>' . esc_html__( 'Cron monitor never runned ', 'perfecty-push-notifications' ) . '</span>';
-			$text .= '</div>';
+			$msgs[] = esc_html__( 'Cron monitor never runned ', 'perfecty-push-notifications' );
 		}
-		$text .= '<div class="perfecty-push-stats-text">';
-		$text .= '<span>&nbsp;</span>';
-		$text .= '</div>';
-
-		$text .= '<div class="perfecty-push-stats-text">';
-		$text .= '<span>' . esc_html__( 'Next check scheduled at: ', 'perfecty-push-notifications' ) . get_date_from_gmt( gmdate( 'Y-m-d H:i:s', intval( wp_next_scheduled( self::CRON_HOOK ) ) ), 'Y-m-d H:i:s' ) . '</span>';
-		$text .= '</div>';
+		$msgs[] = '&nbsp;';
+		$msgs[] = esc_html__( 'Next check scheduled at: ', 'perfecty-push-notifications' ) . get_date_from_gmt( gmdate( 'Y-m-d H:i:s', intval( wp_next_scheduled( self::CRON_HOOK ) ) ), 'Y-m-d H:i:s' );
+		$msgs[] = '&nbsp;';
 
 		if ( false === self::$cron_working ) {
-			$text .= '<div class="perfecty-push-stats-text">';
-			$text .= '<span>&nbsp;</span>';
-			$text .= '</div>';
-
-			$text .= '<div class="perfecty-push-stats-text">';
-			$text .= '<span>' . esc_html__( 'A cron system has to be enabled to let notifications work!', 'perfecty-push-notifications' ) . '</span>';
-			$text .= '</div>';
-			$text .= '<div class="perfecty-push-stats-text">';
-			$text .= '<span><b>' . esc_html__( 'DISABLE_WP_CRON is set to ', 'perfecty-push-notifications' ) . var_export( DISABLE_WP_CRON, true ) . '</b></span>'; // phpcs:ignore
-			$text .= '</div>';
+			$msgs[] = esc_html__( 'A cron system has to be enabled to let notifications work!', 'perfecty-push-notifications' );
 		} else {
-			$text .= '<div class="perfecty-push-stats-text">';
-			$text .= '<span>&nbsp;</span>';
-			$text .= '</div>';
-
-			$text .= '<div class="perfecty-push-stats-text">';
-			$text .= '<span><b>' . esc_html__( 'A cron system is running!', 'perfecty-push-notifications' ) . '</b></span>';
-			$text .= '</div>';
-			$text .= '<div class="perfecty-push-stats-text">';
-			$text .= '<span><b>' . esc_html__( 'DISABLE_WP_CRON is set to ', 'perfecty-push-notifications' ) . var_export( DISABLE_WP_CRON, true ) . '</b></span>'; // phpcs:ignore
-			$text .= '</div>';
+			$msgs[] = '<b>' . esc_html__( 'A cron system is running!', 'perfecty-push-notifications' ) . '</b>';
+		}
+		$msgs[] = '<b>' . esc_html__( 'DISABLE_WP_CRON is set to ', 'perfecty-push-notifications' ) . var_export( DISABLE_WP_CRON, true ) . '</b>'; // phpcs:ignore
+		foreach ( $msgs as $msg ) {
+			$text .= '<div class="perfecty-push-stats-text"><span>' . $msg . '</span></div>';
 		}
 		return $text;
 	}
