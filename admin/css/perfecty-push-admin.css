@@ -54,7 +54,7 @@
 }
 
 .perfecty-push-cron-working {
-  padding: 0 20px;
+  padding: 0 20px 20px;
   border-color: #00e600;
   border-style: solid;
   border-width: 1px;
@@ -63,7 +63,7 @@
 }
 
 .perfecty-push-cron-stopped {
-  padding: 0 20px;
+  padding: 0 20px 20px;
   border-color: #e60000;
   border-style: solid;
   border-width: 1px;
