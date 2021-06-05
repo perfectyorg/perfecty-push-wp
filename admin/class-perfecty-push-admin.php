@@ -503,16 +503,16 @@ class Perfecty_Push_Admin {
 
 			printf(
 				'<div class="notice notice-warning is-dismissible"><b>' .
-				esc_html__( 'It seems no cron system is working.', 'perfecty-push-notification' ) . '</b><br />'
+				esc_html__( 'It seems no cron system is working.', 'perfecty-push-notifications' ) . '</b><br />'
 			);
-			printf( esc_html__( 'Perfecty Push Notifications uses scheduled actions to make its magic.', 'perfecty-push-notification' ) . ' ' );
+			printf( esc_html__( 'Perfecty Push Notifications uses scheduled actions to make its magic.', 'perfecty-push-notifications' ) . ' ' );
 			printf(
 				// translators: %1$s is the opening a tag
 				// translators: %2$s is the closing a tag
 				esc_html__(
 					'Please, check your wp-config.php to assure %1$sDISABLE_WP_CRON%2$s is not set to \'true\' ' .
 					'and/or a system cron action is set in your server to periodically call wp-cron.php',
-					'perfecty-push-notification'
+					'perfecty-push-notifications'
 				),
 				'<a href="https://developer.wordpress.org/plugins/cron/hooking-wp-cron-into-the-system-task-scheduler/" target="_blank">',
 				'</a>'
