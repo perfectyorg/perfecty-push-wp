@@ -496,6 +496,25 @@ class Perfecty_Push_Admin {
 
 			delete_transient( 'perfecty_push_admin_notice' );
 		}
+
+		$cron_check_status = Perfecty_Push_Lib_Cron_Check::get_cron_status();
+
+		if ( ! $cron_check_status ) {
+			$message  = esc_html__( 'It seems no cron system is working.', 'perfecty-push-notifications' ) . '</b><br />';
+			$message .= esc_html__( 'Perfecty Push Notifications uses scheduled actions to make its magic.', 'perfecty-push-notifications' ) . ' ';
+			$message .= sprintf(
+				// translators: %1$s is the opening a tag
+				// translators: %2$s is the closing a tag
+				esc_html__(
+					'Please, check your wp-config.php to assure %1$sDISABLE_WP_CRON%2$s is not set to \'true\' ' .
+					'and/or a system cron action is set in your server to periodically call wp-cron.php',
+					'perfecty-push-notifications'
+				),
+				'<a href="https://developer.wordpress.org/plugins/cron/hooking-wp-cron-into-the-system-task-scheduler/" target="_blank">',
+				'</a>'
+			);
+			Class_Perfecty_Push_Lib_Utils::show_message( $message, 'warning' );
+		}
 	}
 
 	/**

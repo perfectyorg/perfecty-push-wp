@@ -173,6 +173,7 @@ class Perfecty_Push {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'lib/class-perfecty-push-lib-log.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'lib/log/class-perfecty-push-lib-log-writer.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'lib/log/class-perfecty-push-lib-log-db.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'lib/class-perfecty-push-lib-cron-check.php';
 		$this->loader = new Perfecty_Push_Loader();
 	}
 
@@ -243,6 +244,9 @@ class Perfecty_Push {
 	 * @access   private
 	 */
 	private function define_global_hooks() {
+		$cron_check = new Perfecty_Push_Lib_Cron_Check();
+		$this->loader->add_action( 'perfecty_push_cron_check', $cron_check, 'schedule_cron_job' );
+
 		$global = new Perfecty_Push_Global();
 		$this->loader->add_action( 'plugins_loaded', $global, 'upgrade_check' );
 	}
