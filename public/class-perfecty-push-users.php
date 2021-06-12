@@ -77,8 +77,7 @@ class Perfecty_Push_Users {
 
 			// The user was registered
 			$response = array(
-				'uuid'      => $user->uuid,
-				'is_active' => (bool) $user->is_active,
+				'uuid' => $user->uuid,
 			);
 			return (object) $response;
 		} else {
@@ -110,11 +109,45 @@ class Perfecty_Push_Users {
 		$result = array();
 		if ( $user !== null ) {
 			$result = array(
-				'uuid'      => $user->uuid,
-				'is_active' => (bool) $user->is_active,
+				'uuid' => $user->uuid,
 			);
 		}
 		return (object) $result;
+	}
+
+	/**
+	 * Remove the user subscription
+	 *
+	 * @since 1.2.0
+	 */
+	public function unregister( $data ) {
+		$user_id = $data['user_id'] ?? null;
+
+		// Validate the nonce.
+		$nonce = isset( $_SERVER['HTTP_X_WP_NONCE'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_WP_NONCE'] ) ) : '';
+		if ( wp_verify_nonce( $nonce, 'wp_rest' ) === false ) {
+			$this->terminate();
+		}
+
+		$validation = $this->validate_delete( $user_id );
+		if ( $validation !== true ) {
+			return new WP_Error( 'bad_request', $validation, array( 'status' => 400 ) );
+		}
+
+		$user = Perfecty_Push_Lib_Db::get_user_by_uuid( $user_id );
+		if ( $user == null ) {
+			return new WP_Error( 'bad_request', __( 'User id not found', 'perfecty-push-notifications' ), array( 'status' => 404 ) );
+		}
+		$result = Perfecty_Push_Lib_Db::delete_users( array( $user->id ) );
+
+		if ( $result === false ) {
+			return new WP_Error( 'failed_delete', __( 'Could not delete the user', 'perfecty-push-notifications' ), array( 'status' => 500 ) );
+		} else {
+			$response = array(
+				'result' => true,
+			);
+			return (object) $response;
+		}
 	}
 
 	/**
@@ -141,7 +174,8 @@ class Perfecty_Push_Users {
 		if ( $user == null ) {
 			return new WP_Error( 'bad_request', __( 'user id not found', 'perfecty-push-notifications' ), array( 'status' => 404 ) );
 		}
-		$result = Perfecty_Push_Lib_Db::set_user_active( $user->id, $is_active );
+		// FIXME Temporary disabled functionality
+		$result = true;
 
 		if ( $result === false ) {
 			return new WP_Error( 'failed_update', __( 'Could not change the user', 'perfecty-push-notifications' ), array( 'status' => 500 ) );
@@ -210,7 +244,15 @@ class Perfecty_Push_Users {
 			return __( 'is_active must be a boolean', 'perfecty-push-notifications' );
 		}
 		if ( ! Uuid::isValid( $user_id ) ) {
-			return __( 'Invalid player ID', 'perfecty-push-notifications' );
+			return __( 'Invalid user ID', 'perfecty-push-notifications' );
+		}
+
+		return true;
+	}
+
+	private function validate_delete( $user_id ) {
+		if ( ! Uuid::isValid( $user_id ) ) {
+			return __( 'Invalid user ID', 'perfecty-push-notifications' );
 		}
 
 		return true;
@@ -218,7 +260,7 @@ class Perfecty_Push_Users {
 
 	private function validate_get_user( $user_id ) {
 		if ( ! Uuid::isValid( $user_id ) ) {
-			return __( 'Invalid player ID', 'perfecty-push-notifications' );
+			return __( 'Invalid user ID', 'perfecty-push-notifications' );
 		}
 
 		return true;

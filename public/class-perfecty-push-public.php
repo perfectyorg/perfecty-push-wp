@@ -89,26 +89,6 @@ class Perfecty_Push_Public {
 	public function register_rest_endpoints() {
 		$users = new Perfecty_Push_Users();
 
-		// backward compatible routes
-		register_rest_route(
-			'perfecty-push',
-			'/v1/register/',
-			array(
-				'methods'             => array( 'POST' ),
-				'callback'            => array( $users, 'register' ),
-				'permission_callback' => '__return_true',
-			)
-		);
-		register_rest_route(
-			'perfecty-push',
-			'/v1/user/active/',
-			array(
-				'methods'             => array( 'POST' ),
-				'callback'            => array( $users, 'update_preferences' ),
-				'permission_callback' => '__return_true',
-			)
-		);
-
 		// JS SDK friendly routes
 		register_rest_route(
 			'perfecty-push',
@@ -119,6 +99,16 @@ class Perfecty_Push_Public {
 				'permission_callback' => '__return_true',
 			)
 		);
+        register_rest_route(
+            'perfecty-push',
+            '/v1/public/users/(?P<user_id>[a-zA-Z0-9-]+)/unregister',
+            array(
+                'methods'             => array( 'POST' ),
+                'callback'            => array( $users, 'unregister' ),
+                'permission_callback' => '__return_true',
+                'args'                => array( 'user_id' => array() ),
+            )
+        );
 		register_rest_route(
 			'perfecty-push',
 			'/v1/public/users/(?P<user_id>[a-zA-Z0-9-]+)/preferences',

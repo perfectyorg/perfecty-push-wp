@@ -38,11 +38,6 @@
 					<br>
 				<div><?php echo esc_html( $item->key_p256dh ); ?></div>
 				</p>
-				<p>
-					<label for="is_active"><?php printf( esc_html__( 'Is active:', 'perfecty-push-notifications' ) ); ?> </label>
-					<br>
-				<div><?php echo $item->is_active == 1 ? esc_html__( 'Yes', 'perfecty-push-notifications' ) : esc_html__( 'No', 'perfecty-push-notifications' ); ?></div>					
-				</p>
 			</div>
 		</form>
 	</div>

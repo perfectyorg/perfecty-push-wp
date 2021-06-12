@@ -7,7 +7,7 @@ use Ramsey\Uuid\Uuid;
  */
 class Perfecty_Push_Lib_Db {
 
-	private static $allowed_users_fields         = 'id,uuid,wp_user_id,endpoint,key_auth,key_p256dh,remote_ip,is_active,created_at';
+	private static $allowed_users_fields         = 'id,uuid,wp_user_id,endpoint,key_auth,key_p256dh,remote_ip,created_at';
 	private static $allowed_notifications_fields = 'id,payload,total,succeeded,last_cursor,batch_size,status,is_taken,created_at,finished_at';
 	private static $allowed_logs_fields          = 'level,message,created_at';
 
@@ -155,17 +155,12 @@ class Perfecty_Push_Lib_Db {
 	/**
 	 * Return the current total users
 	 *
-	 * @param bool $only_active false to get all the users
 	 * @return int Total users
 	 */
-	public static function get_total_users( $only_active = false ) {
+	public static function get_total_users() {
 		global $wpdb;
 
-		$where = '';
-		if ( $only_active === true ) {
-			$where = ' WHERE is_active=1';
-		}
-		$total = $wpdb->get_var( 'SELECT COUNT(*) FROM ' . self::users_table() . $where );
+		$total = $wpdb->get_var( 'SELECT COUNT(*) FROM ' . self::users_table() );
 		return $total != null ? intval( $total ) : 0;
 	}
 
@@ -180,31 +175,10 @@ class Perfecty_Push_Lib_Db {
 	public static function get_users_stats() {
 		global $wpdb;
 
-		$total  = intval( $wpdb->get_var( 'SELECT COUNT(*) FROM ' . self::users_table() ) );
-		$active = intval( $wpdb->get_var( 'SELECT COUNT(*) FROM ' . self::users_table() . ' WHERE is_active=1' ) );
+		$total = intval( $wpdb->get_var( 'SELECT COUNT(*) FROM ' . self::users_table() ) );
 
 		return array(
-			'total'    => $total,
-			'active'   => $active,
-			'inactive' => $total - $active,
-		);
-	}
-
-	/**
-	 * Changes the is_active property for the subcription
-	 *
-	 * @param $user_id string id
-	 * @param $is_active bool True or false
-	 *
-	 * @return int|bool Number of rows updated or false
-	 */
-	public static function set_user_active( $user_id, $is_active ) {
-		global $wpdb;
-
-		return $wpdb->update(
-			self::users_table(),
-			array( 'is_active' => $is_active ),
-			array( 'id' => $user_id )
+			'total' => $total,
 		);
 	}
 
@@ -299,7 +273,6 @@ class Perfecty_Push_Lib_Db {
 				'endpoint'   => $user->endpoint,
 				'key_auth'   => $user->key_auth,
 				'key_p256dh' => $user->key_p256dh,
-				'is_active'  => $user->is_active,
 				'wp_user_id' => $user->wp_user_id,
 			),
 			array( 'id' => $user->id )
@@ -312,7 +285,7 @@ class Perfecty_Push_Lib_Db {
 	 * Delete user by id
 	 *
 	 * @param $user array User ids
-	 * @return int|bool Number of affected rows or null
+	 * @return int|null Number of affected rows or null
 	 */
 	public static function delete_users( $user_ids ) {
 		global $wpdb;
@@ -333,19 +306,17 @@ class Perfecty_Push_Lib_Db {
 	 * @param $size int Limit
 	 * @return array The result with the users
 	 */
-	public static function get_users( $offset, $size, $order_by = 'created_at', $order_asc = 'desc', $only_active = false, $mode = OBJECT ) {
+	public static function get_users( $offset, $size, $order_by = 'created_at', $order_asc = 'desc', $mode = OBJECT ) {
 		global $wpdb;
 
 		if ( strpos( self::$allowed_users_fields, $order_by ) === false ) {
 			throw new Exception( "The order by [$order_by] field is not allowed" );
 		}
-		$order_asc        = $order_asc === 'asc' ? 'asc' : 'desc';
-		$where_conditions = $only_active === false ? '' : ' WHERE is_active=1';
+		$order_asc = $order_asc === 'asc' ? 'asc' : 'desc';
 
 		$sql     = $wpdb->prepare(
 			'SELECT ' . self::$allowed_users_fields .
 			' FROM ' . self::users_table() .
-			$where_conditions .
 			' ORDER BY ' . $order_by . ' ' . $order_asc .
 			' LIMIT %d OFFSET %d',
 			$size,

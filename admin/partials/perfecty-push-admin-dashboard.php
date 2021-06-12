@@ -104,12 +104,6 @@
 			<div class="perfecty-push-stats-text">
 				<span><?php printf( esc_html__( 'Total users:', 'perfecty-push-notifications' ) ); ?> </span><span><?php echo esc_html( $users_stats['total'] ); ?></span>
 			</div>
-			<div class="perfecty-push-stats-text">
-				<span><?php printf( esc_html__( 'Active:', 'perfecty-push-notifications' ) ); ?> </span><span><?php echo esc_html( $users_stats['active'] ); ?></span>
-			</div>
-			<div class="perfecty-push-stats-text">
-				<span><?php printf( esc_html__( 'Inactive:', 'perfecty-push-notifications' ) ); ?> </span><span><?php echo esc_html( $users_stats['inactive'] ); ?></span>
-			</div>
 		</div>
 		<div>
 			<h3><?php printf( esc_html__( 'Notifications', 'perfecty-push-notifications' ) ); ?></h3>
