@@ -244,9 +244,6 @@ class Perfecty_Push {
 	 * @access   private
 	 */
 	private function define_global_hooks() {
-		$cron_check = new Perfecty_Push_Lib_Cron_Check();
-		$this->loader->add_action( 'perfecty_push_cron_check', $cron_check, 'schedule_cron_job' );
-
 		$global = new Perfecty_Push_Global();
 		$this->loader->add_action( 'plugins_loaded', $global, 'upgrade_check' );
 	}
@@ -261,10 +258,12 @@ class Perfecty_Push {
 	private function define_admin_hooks() {
 		$plugin_admin = new Perfecty_Push_Admin( $this->get_plugin_name(), $this->get_version() );
 
+		$this->loader->add_action( Perfecty_Push_Lib_Cron_Check::HOOK, Perfecty_Push_Lib_Cron_Check::class, 'tick' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'register_admin_menu' );
 		$this->loader->add_action( 'admin_init', $plugin_admin, 'register_options' );
+		$this->loader->add_action( 'admin_init', $plugin_admin, 'check_cron' );
 		$this->loader->add_action( 'perfecty_push_broadcast_notification_event', $plugin_admin, 'execute_broadcast_batch', 10, 1 );
 		$this->loader->add_action( 'add_meta_boxes', $plugin_admin, 'register_metaboxes' );
 		$this->loader->add_action( 'save_post', $plugin_admin, 'on_save_post' );
