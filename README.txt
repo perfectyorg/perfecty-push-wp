@@ -102,6 +102,7 @@ You can create an issue in our Github repo:
 * Push Server logs (DB Driver initially). Fixes [#30](https://github.com/perfectyorg/perfecty-push-wp/issues/30) and [#31](https://github.com/perfectyorg/perfecty-push-wp/issues/31)
 * Remove the users that have opted-out. Fixes [#37](https://github.com/perfectyorg/perfecty-push-wp/issues/37)
 * Add a cron monitor to check the notification jobs execution. Thanks to [@mociofiletto](https://profiles.wordpress.org/mociofiletto/). Fixes [#33](https://github.com/perfectyorg/perfecty-push-wp/issues/33)
+* Option to don't show the Bell/Widgets when asking permissions. Solves [#48](https://github.com/perfectyorg/perfecty-push-wp/issues/48)
 
 = 1.1.6 =
 * Increased payload size to 2.000 characters to support arabic characters. Issue [#46](https://github.com/perfectyorg/perfecty-push-wp/issues/46)

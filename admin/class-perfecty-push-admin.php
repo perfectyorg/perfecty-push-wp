@@ -224,17 +224,25 @@ class Perfecty_Push_Admin {
 		);
 
 		add_settings_field(
-			'widget_hide_bell_after_subscribe', // id
-			esc_html__( 'Hide bell after subscribing', 'perfecty-push-notifications' ), // title
-			array( $this, 'print_widget_hide_bell_after_subscribe' ), // callback
+			'service_worker_scope', // id
+			esc_html__( 'Service Worker Scope', 'perfecty-push-notifications' ), // title
+			array( $this, 'print_service_worker_scope' ), // callback
 			'perfecty-push-options', // page
 			'perfecty_push_widget_settings' // section
 		);
 
 		add_settings_field(
-			'service_worker_scope', // id
-			esc_html__( 'Service Worker Scope', 'perfecty-push-notifications' ), // title
-			array( $this, 'print_service_worker_scope' ), // callback
+			'widget_ask_permissions_directly', // id
+			esc_html__( 'Do not use widgets (ask permissions directly)', 'perfecty-push-notifications' ), // title
+			array( $this, 'print_widget_ask_permissions_directly' ), // callback
+			'perfecty-push-options', // page
+			'perfecty_push_widget_settings' // section
+		);
+
+		add_settings_field(
+			'widget_hide_bell_after_subscribe', // id
+			esc_html__( 'Hide bell after subscribing', 'perfecty-push-notifications' ), // title
+			array( $this, 'print_widget_hide_bell_after_subscribe' ), // callback
 			'perfecty-push-options', // page
 			'perfecty_push_widget_settings' // section
 		);
@@ -751,6 +759,11 @@ class Perfecty_Push_Admin {
 		} else {
 			$new_input['widget_hide_bell_after_subscribe'] = 0;
 		}
+		if ( isset( $input['widget_ask_permissions_directly'] ) ) {
+			$new_input['widget_ask_permissions_directly'] = 1;
+		} else {
+			$new_input['widget_ask_permissions_directly'] = 0;
+		}
 		if ( isset( $input['segmentation_enabled'] ) ) {
 			$new_input['segmentation_enabled'] = 1;
 		} else {
@@ -945,7 +958,25 @@ class Perfecty_Push_Admin {
 
 		printf(
 			'<input type="checkbox" id="perfecty_push[widget_hide_bell_after_subscribe]"' .
-			'name="perfecty_push[widget_hide_bell_after_subscribe]" %s />',
+			'name="perfecty_push[widget_hide_bell_after_subscribe]" %s class="perfecty-push-options-dialog-group"/>',
+			esc_html( $enabled )
+		);
+	}
+
+	/**
+	 * Print the ask permissions directly option
+	 *
+	 * @since 1.1.3
+	 */
+	public function print_widget_ask_permissions_directly() {
+		$options = get_option( 'perfecty_push' );
+		$value   = isset( $options['widget_ask_permissions_directly'] ) ? esc_attr( $options['widget_ask_permissions_directly'] ) : 0;
+
+		$enabled = $value == 1 ? 'checked="checked"' : '';
+
+		printf(
+			'<input type="checkbox" id="perfecty_push[widget_ask_permissions_directly]"' .
+			'name="perfecty_push[widget_ask_permissions_directly]" %s />',
 			esc_html( $enabled )
 		);
 	}
@@ -1031,7 +1062,7 @@ class Perfecty_Push_Admin {
 
 		printf(
 			'<input type="text" id="perfecty_push[dialog_title]"' .
-			'name="perfecty_push[dialog_title]" value="%s" />',
+			'name="perfecty_push[dialog_title]" value="%s" class="perfecty-push-options-dialog-group"/>',
 			esc_html( $value )
 		);
 	}
@@ -1047,7 +1078,7 @@ class Perfecty_Push_Admin {
 
 		printf(
 			'<input type="text" id="perfecty_push[dialog_submit]"' .
-			'name="perfecty_push[dialog_submit]" value="%s" />',
+			'name="perfecty_push[dialog_submit]" value="%s" class="perfecty-push-options-dialog-group"/>',
 			esc_html( $value )
 		);
 	}
@@ -1063,7 +1094,7 @@ class Perfecty_Push_Admin {
 
 		printf(
 			'<input type="text" id="perfecty_push[dialog_cancel]"' .
-			'name="perfecty_push[dialog_cancel]" value="%s" />',
+			'name="perfecty_push[dialog_cancel]" value="%s" class="perfecty-push-options-dialog-group"/>',
 			esc_html( $value )
 		);
 	}
@@ -1079,7 +1110,7 @@ class Perfecty_Push_Admin {
 
 		printf(
 			'<input type="text" id="perfecty_push[settings_title]"' .
-			'name="perfecty_push[settings_title]" value="%s" />',
+			'name="perfecty_push[settings_title]" value="%s" class="perfecty-push-options-dialog-group"/>',
 			esc_html( $value )
 		);
 	}
@@ -1095,7 +1126,7 @@ class Perfecty_Push_Admin {
 
 		printf(
 			'<input type="text" id="perfecty_push[settings_opt_in]"' .
-			'name="perfecty_push[settings_opt_in]" value="%s" />',
+			'name="perfecty_push[settings_opt_in]" value="%s" class="perfecty-push-options-dialog-group"/>',
 			esc_html( $value )
 		);
 	}
@@ -1181,7 +1212,7 @@ class Perfecty_Push_Admin {
 
 		printf(
 			'<input type="text" id="perfecty_push[settings_update_error]"' .
-			'name="perfecty_push[settings_update_error]" value="%s" />',
+			'name="perfecty_push[settings_update_error]" value="%s" class="perfecty-push-options-dialog-group"/>',
 			esc_html( $value )
 		);
 	}
