@@ -99,16 +99,16 @@ class Perfecty_Push_Public {
 				'permission_callback' => '__return_true',
 			)
 		);
-        register_rest_route(
-            'perfecty-push',
-            '/v1/public/users/(?P<user_id>[a-zA-Z0-9-]+)/unregister',
-            array(
-                'methods'             => array( 'POST' ),
-                'callback'            => array( $users, 'unregister' ),
-                'permission_callback' => '__return_true',
-                'args'                => array( 'user_id' => array() ),
-            )
-        );
+		register_rest_route(
+			'perfecty-push',
+			'/v1/public/users/(?P<user_id>[a-zA-Z0-9-]+)/unregister',
+			array(
+				'methods'             => array( 'POST' ),
+				'callback'            => array( $users, 'unregister' ),
+				'permission_callback' => '__return_true',
+				'args'                => array( 'user_id' => array() ),
+			)
+		);
 		register_rest_route(
 			'perfecty-push',
 			'/v1/public/users/(?P<user_id>[a-zA-Z0-9-]+)/preferences',
