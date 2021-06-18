@@ -72,6 +72,19 @@
 					}
 				}
 			);
+
+			$("#perfecty_push\\[widget_ask_permissions_directly\\]").change(function(e){
+				if (this.checked) {
+					$(".perfecty-push-options-dialog-group").closest('tr').hide();
+				} else {
+					$(".perfecty-push-options-dialog-group").closest('tr').show();
+				}
+			});
+
+			// once the plugin has loaded
+			if ($("#perfecty_push\\[widget_ask_permissions_directly\\]").is(':checked')) {
+				$(".perfecty-push-options-dialog-group").closest('tr').hide();
+			}
 		}
 	);
 })( jQuery );

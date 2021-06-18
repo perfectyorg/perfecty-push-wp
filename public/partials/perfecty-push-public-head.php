@@ -29,6 +29,11 @@ if ( isset( $options['widget_hide_bell_after_subscribe'] ) && $options['widget_h
 } else {
 	$perfecty_push_widget_hide_bell_after_subscribe = false;
 }
+if ( isset( $options['widget_ask_permissions_directly'] ) && $options['widget_ask_permissions_directly'] == 1 ) {
+	$perfecty_push_widget_ask_permissions_directly = true;
+} else {
+	$perfecty_push_widget_ask_permissions_directly = false;
+}
 
 ?>
 <script>
@@ -49,6 +54,7 @@ if ( isset( $options['widget_hide_bell_after_subscribe'] ) && $options['widget_h
 		serviceWorkerScope: "<?php echo PERFECTY_PUSH_SERVICE_WORKER_SCOPE; ?>",
 		loggerLevel: "<?php echo $perfecty_push_widget_debugging_enabled ? 'debug' : 'error'; ?>",
 		loggerVerbose: <?php echo $perfecty_push_widget_debugging_enabled ? 'true' : 'false'; ?>,
-		hideBellAfterSubscribe: <?php echo $perfecty_push_widget_hide_bell_after_subscribe ? 'true' : 'false'; ?>
+		hideBellAfterSubscribe: <?php echo $perfecty_push_widget_hide_bell_after_subscribe ? 'true' : 'false'; ?>,
+		askPermissionsDirectly: <?php echo $perfecty_push_widget_ask_permissions_directly ? 'true' : 'false'; ?>
 	}
 </script>
