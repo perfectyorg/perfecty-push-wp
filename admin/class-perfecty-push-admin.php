@@ -461,20 +461,22 @@ class Perfecty_Push_Admin {
 		}
 
 		if ( 'publish' == $new_status && $send_notification ) {
-			$body        = html_entity_decode( get_the_title( $post ) );
-			$url_to_open = get_the_permalink( $post );
-			// we use this to check if the post has a thumbnail because has_post_thumbnail could return true even if no post thumbnail is set
-			$featured_image_url = wp_get_attachment_url( get_post_thumbnail_id( $post->ID ) );
-			if ( ! empty( $featured_image_url ) ) {
-				$post_thumbnail = get_the_post_thumbnail_url( $post->ID );
-			} else {
-				$post_thumbnail = $this->get_first_image_url( $post );
+			$body               = html_entity_decode( get_the_title( $post ) );
+			$url_to_open        = get_the_permalink( $post );
+			$notification_title = ( $notification_title !== '' ) ? $notification_title : false;
+			$post_thumbnail     = '';
+			if ( $send_featured_img ) {
+				// we use this to check if the post has a thumbnail because has_post_thumbnail could return true even if no post thumbnail is set
+				$featured_image_url = wp_get_attachment_url( get_post_thumbnail_id( $post->ID ) );
+				if ( ! empty( $featured_image_url ) ) {
+					$post_thumbnail = get_the_post_thumbnail_url( $post->ID );
+				} else {
+					$post_thumbnail = $this->get_first_image_url( $post );
+				}
 			}
 
-			$post_thumbnail     = $send_featured_img ? $post_thumbnail : '';
-			$notification_title = ( $notification_title !== '' ) ? $notification_title : false;
-			$payload            = Perfecty_Push_Lib_Payload::build( $body, $notification_title, $post_thumbnail, $url_to_open );
-			$result             = Perfecty_Push_Lib_Push_Server::schedule_broadcast_async( $payload );
+			$payload = Perfecty_Push_Lib_Payload::build( $body, $notification_title, $post_thumbnail, $url_to_open );
+			$result  = Perfecty_Push_Lib_Push_Server::schedule_broadcast_async( $payload );
 
 			if ( $result === false ) {
 				error_log( esc_html__( 'Could not schedule the broadcast async, check the logs', 'perfecty-push-notifications' ) );
@@ -1144,7 +1146,7 @@ class Perfecty_Push_Admin {
 		preg_match_all( $regex, $content, $matches );
 		$matches = array_reverse( $matches );
 		// this is the image url of the first img embedded in content.
-		$img_url = $matches[0][0];
+		$img_url = $matches[0][0] ?? '';
 
 		// this is the image post id.
 		$post_img_id = $this->get_attachment_id( $img_url );
