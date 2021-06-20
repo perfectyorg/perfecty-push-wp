@@ -1,7 +1,7 @@
 (function( $ ) {
 	'use strict';
 	const { __ } = wp.i18n;
-	$( window ).load(
+	$( window ).on('load',
 		function(){
 			$( ".perfecty-push-confirm-action" ).click(
 				function(e){
