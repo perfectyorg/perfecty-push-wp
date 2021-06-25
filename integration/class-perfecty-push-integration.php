@@ -22,7 +22,7 @@ class Perfecty_Push_Integration {
 	/**
 	 * Send one notification to the WordPress user specified by $user_id
 	 *
-	 * @param int    $user_id WordPress User Id
+	 * @param int    $wp_user_id WordPress User Id
 	 * @param string $message Message to be sent
 	 * @param string $title Title of the message (default: site name)
 	 * @param string $image_url Url of the image to show (default: none)
@@ -31,9 +31,9 @@ class Perfecty_Push_Integration {
 	 * @throws ErrorException
 	 * @since 1.2.0
 	 */
-	public function notify( $user_id, $message, $title = '', $image_url = '', $url_to_open = '' ) {
+	public function notify( $wp_user_id, $message, $title = '', $image_url = '', $url_to_open = '' ) {
 		$payload = Perfecty_Push_Lib_Payload::build( $message, $title, $image_url, $url_to_open );
-		return Perfecty_Push_Lib_Push_Server::notify( $user_id, $payload );
+		return Perfecty_Push_Lib_Push_Server::notify( $wp_user_id, $payload );
 	}
 
 	/**

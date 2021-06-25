@@ -22,7 +22,7 @@ No hidden fees, no third-party dependencies and you own your data. 👏
 ## Features ✨
 
 - **Open Source**, send Push Notifications **from your server for free!**
-- PWA & AMP compatible
+- PWA compatible / AMP (Transitional)
 - Can be called by other plugins using the `Perfecty_Push_Integration` class
 - No third-party dependencies
 - Migrate users from other push services like OneSignal

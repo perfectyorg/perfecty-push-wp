@@ -1,10 +1,10 @@
 <?php
-$perfecty_push_dialog_title          = ! empty( $options['dialog_title'] ) ? $options['dialog_title'] : esc_html__( 'Do you want to receive notifications?', 'perfecty-push-notifications' );
-$perfecty_push_dialog_submit         = ! empty( $options['dialog_submit'] ) ? $options['dialog_submit'] : esc_html__( 'Continue', 'perfecty-push-notifications' );
-$perfecty_push_dialog_cancel         = ! empty( $options['dialog_cancel'] ) ? $options['dialog_cancel'] : esc_html__( 'Not now', 'perfecty-push-notifications' );
-$perfecty_push_settings_title        = ! empty( $options['settings_title'] ) ? $options['settings_title'] : esc_html__( 'Notifications preferences', 'perfecty-push-notifications' );
-$perfecty_push_settings_opt_in       = ! empty( $options['settings_opt_in'] ) ? $options['settings_opt_in'] : esc_html__( 'I want to receive notifications', 'perfecty-push-notifications' );
-$perfecty_push_settings_update_error = ! empty( $options['settings_update_error'] ) ? $options['settings_update_error'] : esc_html__( 'Could not change the preference, try again', 'perfecty-push-notifications' );
+$perfecty_push_dialog_title          = ! empty( $options['dialog_title'] ) ? $options['dialog_title'] : PERFECTY_PUSH_OPTIONS_DIALOG_TITLE;
+$perfecty_push_dialog_submit         = ! empty( $options['dialog_submit'] ) ? $options['dialog_submit'] : PERFECTY_PUSH_OPTIONS_DIALOG_CONTINUE;
+$perfecty_push_dialog_cancel         = ! empty( $options['dialog_cancel'] ) ? $options['dialog_cancel'] : PERFECTY_PUSH_OPTIONS_DIALOG_CANCEL;
+$perfecty_push_settings_title        = ! empty( $options['settings_title'] ) ? $options['settings_title'] : PERFECTY_PUSH_OPTIONS_SETTINGS_TITLE;
+$perfecty_push_settings_opt_in       = ! empty( $options['settings_opt_in'] ) ? $options['settings_opt_in'] : PERFECTY_PUSH_OPTIONS_SETTINGS_OPT_IN;
+$perfecty_push_settings_update_error = ! empty( $options['settings_update_error'] ) ? $options['settings_update_error'] : PERFECTY_PUSH_OPTIONS_SETTINGS_UPDATE_ERROR;
 $perfecty_push_nonce                 = wp_create_nonce( 'wp_rest' );
 $perfecty_push_server_url            = ! empty( $options['server_url'] ) ? $options['server_url'] : get_rest_url();
 
