@@ -28,7 +28,7 @@ class Perfecty_Push_Integration {
 	 * @param string $image_url Url of the image to show (default: none)
 	 * @param string $url_to_open Url to open (default: site url)
 	 * @return array Array with [total, succeeded]
-	 * @throws ErrorException
+	 * @throws Exception
 	 * @since 1.2.0
 	 */
 	public function notify( $wp_user_id, $message, $title = '', $image_url = '', $url_to_open = '' ) {

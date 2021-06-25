@@ -40,6 +40,32 @@ No hidden fees, no third-party dependencies and you own your data. 👏
 **Note**: The `gmp` extension is optional and recommended
 for better performance.
 
+## Documentation
+
+[https://docs.perfecty.org/](https://docs.perfecty.org/)
+
+## External integrations 🛸
+
+You can use and extend Perfecty Push Notifications from third party plugins or your own code.
+
+### Send notifications through Perfecty Push
+
+You can use the `Perfecty_Push_Integration` class to send Push Notifications from other plugins:
+
+- `Perfecty_Push_Integration::notify( $wp_user_id, $message, $title = '', $image_url = '', $url_to_open = '' )` Send a notification to a registered WordPress user. If the user has multiple devices, it will send the notification to all the devices the user has subscribed.
+
+- `Perfecty_Push_Integration::broadcast( $message, $title = '', $image_url = '', $url_to_open = '' )` Schedule a broadcast notification that will be sent to all the Push Notifications users.
+
+### Hooks
+
+- `perfecty_push_broadcast_scheduled($payload)` executed when a broadcast notification has been scheduled. You have access to the provided payload.
+  
+- `perfecty_push_wp_user_notified($payload, $wp_user_id)` executed when a notification has been sent to a WordPress user. You have access to the provided payload and WP User ID.
+
+### Filters
+
+- `perfecty_push_custom_payload($payload)` use this filter to customize the `$payload` array content. More information about the payload array [here](https://github.com/perfectyorg/perfecty-push-wp/blob/master/lib/class-perfecty-push-lib-payload.php).
+
 ## Local development 👨🏻‍💻
 
 To see it in action in your local development environment, you need a set of
@@ -121,7 +147,7 @@ cd wp-contents/plugins/perfecty-push/
 phpunit --filter test_schedule_broadcast_async
 ```
 
-## Troubleshooting
+## Troubleshooting 🛠
 
 **Not intended for production:** In case the plugins cannot be installed on your local installation do:
 
@@ -138,7 +164,7 @@ The bell icon SVG code is a Font Awesome icon, a MIT License.
 
 <span>Banner photo by <a href="https://unsplash.com/@nasa?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">NASA</a> on <a href="https://unsplash.com/s/photos/world?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">Unsplash</a></span>
 
-## Contributing
+## Contributing 🚀
 
 If you're interesting on contributing to this project, feel free to submit your
 suggestions as a PR or an issue directly to any of the projects repos.
