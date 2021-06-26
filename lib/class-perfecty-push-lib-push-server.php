@@ -38,8 +38,9 @@ class Perfecty_Push_Lib_Push_Server {
 	 * Get the Push Server instance
 	 *
 	 * @return object Web push server
+	 * @throws Throwable Bubbles the internal exceptions.
 	 */
-	public static function getPushServer() {
+	public static function get_push_server() {
 		if ( ! self::$auth ) {
 			Log::error( 'The VAPID auth keys were not found' );
 			return null;
@@ -49,7 +50,7 @@ class Perfecty_Push_Lib_Push_Server {
 			function ( $errno, $errstr, $errfile, $errline ) {
 				if ( strpos( $errstr, 'gmp extension is not loaded' ) !== false ) {
 					// we know this, however we capture the E_WARNING because we have previously
-					// informed the user about this in a nicer way
+					// informed the user about this in a nicer way.
 					return true;
 				}
 
@@ -60,7 +61,7 @@ class Perfecty_Push_Lib_Push_Server {
 		try {
 			$webpush = new WebPush( self::$auth );
 			$webpush->setReuseVAPIDHeaders( true );
-		} catch ( \Throwable $ex ) {
+		} catch ( Throwable $ex ) {
 			Log::error( 'Could not start the Push Server: ' . $ex->getMessage() . ', ' . $ex->getTraceAsString() );
 			Class_Perfecty_Push_Lib_Utils::show_message( esc_html( 'Could not start the Push Server, check the PHP error logs for more information.', 'perfecty-push-notifications' ), 'warning' );
 			Class_Perfecty_Push_Lib_Utils::disable();
@@ -277,7 +278,7 @@ class Perfecty_Push_Lib_Push_Server {
 		Log::debug( print_r( $payload, true ) );
 
 		if ( ! self::$webpush ) {
-			self::$webpush = self::getPushServer();
+			self::$webpush = self::get_push_server();
 		}
 
 		foreach ( $users as $item ) {

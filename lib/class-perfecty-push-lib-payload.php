@@ -25,13 +25,16 @@ class Perfecty_Push_Lib_Payload {
 		if ( ! $image ) {
 			$image = '';
 		}
+		$options             = get_option( 'perfecty_push', array() );
+		$require_interaction = isset( $options['notifications_interaction_required'] ) && $options['notifications_interaction_required'] == 1;
 
 		return array(
-			'title' => stripslashes( $title ),
-			'body'  => stripslashes( $body ),
-			'icon'  => $icon,
-			'image' => $image,
-			'extra' => array(
+			'title'               => stripslashes( $title ),
+			'body'                => stripslashes( $body ),
+			'icon'                => $icon,
+			'image'               => $image,
+			'require_interaction' => $require_interaction,
+			'extra'               => array(
 				'url_to_open' => $url_to_open,
 			),
 		);
