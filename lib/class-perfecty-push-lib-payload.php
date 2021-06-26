@@ -15,10 +15,10 @@ class Perfecty_Push_Lib_Payload {
 	 * @return array payload
 	 */
 	public static function build( $body, $title = '', $image = '', $url_to_open = '' ) {
-		$options             = get_option( 'perfecty_push', array() );
+		$options = get_option( 'perfecty_push', array() );
 
-		$icon_id             = isset( $options['notifications_default_icon'] ) ? esc_attr( $options['notifications_default_icon'] ) : '';
-		$icon_url            = wp_get_attachment_url( $icon_id );
+		$icon_id  = isset( $options['notifications_default_icon'] ) ? esc_attr( $options['notifications_default_icon'] ) : '';
+		$icon_url = wp_get_attachment_url( $icon_id );
 
 		$require_interaction = isset( $options['notifications_interaction_required'] ) && $options['notifications_interaction_required'] == 1;
 

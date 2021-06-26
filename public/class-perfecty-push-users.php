@@ -27,9 +27,10 @@ class Perfecty_Push_Users {
 	 */
 	public function register( $data ) {
 		// Request
-		$user      = $data['user'] ?? null;
-		$user_id   = $data['user_id'] ?? null;
-		$remote_ip = $this->get_remote_ip();
+		$user       = $data['user'] ?? null;
+		$user_id    = $data['user_id'] ?? null;
+		$first_time = $data['first_time'] ?? null;
+		$remote_ip  = $this->get_remote_ip();
 
 		// Validate the nonce
 		$nonce = isset( $_SERVER['HTTP_X_WP_NONCE'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_WP_NONCE'] ) ) : '';
@@ -44,7 +45,7 @@ class Perfecty_Push_Users {
 		$key_p256dh = $res[2];
 
 		// Process request
-		$validation = $this->validate( $endpoint, $key_auth, $key_p256dh, $remote_ip, $user_id );
+		$validation = $this->validate( $endpoint, $key_auth, $key_p256dh, $remote_ip, $user_id, $first_time );
 		if ( $validation === true ) {
 			// filter data
 			$endpoint   = esc_url( $endpoint );
@@ -52,6 +53,7 @@ class Perfecty_Push_Users {
 			$key_p256dh = sanitize_text_field( $key_p256dh );
 			$remote_ip  = sanitize_text_field( $remote_ip );
 			$user_id    = sanitize_text_field( $user_id );
+			$first_time = sanitize_text_field( $first_time );
 			$wp_user_id = is_user_logged_in() ? get_current_user_id() : null;
 
 			$user = Perfecty_Push_Lib_Db::get_user_by( $user_id, $key_auth, $key_p256dh );
@@ -73,6 +75,12 @@ class Perfecty_Push_Users {
 					return new WP_Error( 'failed_create', __( 'Could not subscribe the user', 'perfecty-push-notifications' ), array( 'status' => 500 ) );
 				}
 				$user = Perfecty_Push_Lib_Db::get_user( $result );
+
+				// Send a confirmation notification.
+				if ( $first_time ) {
+					$payload = Perfecty_Push_Lib_Payload::build( "Congratulations, you're now subscribed!" );
+					Perfecty_Push_Lib_Push_Server::send_notification( json_encode( $payload ), array( $user ) );
+				}
 			}
 
 			// The user was registered
@@ -208,7 +216,7 @@ class Perfecty_Push_Users {
 		return array( $endpoint, $key_auth, $key_p256dh );
 	}
 
-	private function validate( $endpoint, $key_auth, $key_p256dh, $remote_ip, $user_id ) {
+	private function validate( $endpoint, $key_auth, $key_p256dh, $remote_ip, $user_id, $first_time ) {
 		if ( ! $endpoint ) {
 			return __( 'No endpoint was provided in the request', 'perfecty-push-notifications' );
 		}
@@ -223,6 +231,9 @@ class Perfecty_Push_Users {
 		}
 		if ( $user_id && ! Uuid::isValid( $user_id ) ) {
 			return __( 'The user id is not a valid uuid', 'perfecty-push-notifications' );
+		}
+		if ( $first_time !== null && ! is_bool( $first_time ) ) {
+			return __( 'The first time parameter is not valid', 'perfecty-push-notifications' );
 		}
 
 		// At this point everything is valid

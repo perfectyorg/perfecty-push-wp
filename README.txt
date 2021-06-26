@@ -96,10 +96,11 @@ You can create an issue in our Github repo:
 == Changelog ==
 
 = 1.3.0 =
-* Show the default control texts in Settings. Fixes [#69](https://github.com/perfectyorg/perfecty-push-wp/issues/69).
-* Added the `perfecty_push_broadcast_scheduled($payload)`, `perfecty_push_wp_user_notified($payload, $wp_user_id)` hooks and the `perfecty_push_custom_payload($payload)` filter.
-* Added the option to enable fixed notifications, they don't fade after some seconds. Fixes [#66](https://github.com/perfectyorg/perfecty-push-wp/issues/66)
-* Select default Notification Icon from the Media Library [#68](https://github.com/perfectyorg/perfecty-push-wp/issues/68)
+* Default dialog texts in Settings. Fixes [#69](https://github.com/perfectyorg/perfecty-push-wp/issues/69).
+* Added hooks and filters for integration: `perfecty_push_broadcast_scheduled($payload)`, `perfecty_push_wp_user_notified($payload, $wp_user_id)` hooks and the `perfecty_push_custom_payload($payload)` filter.
+* Option to enable fixed notifications, don't hide after some seconds. Fixes [#66](https://github.com/perfectyorg/perfecty-push-wp/issues/66)
+* Default Icon from the Media Library [#68](https://github.com/perfectyorg/perfecty-push-wp/issues/68)
+* Send notification after subscribing. Fixes [#63](https://github.com/perfectyorg/perfecty-push-wp/issues/63)
 
 = 1.2.2 =
 * Point to the correct JS SDK commit hash
