@@ -27,19 +27,18 @@
   max-height: 250px;
 }
 
-.perfecty-push-view-payload-icon {
+.perfecty-push-default-icon-preview {
   width: 50px;
   height: 50px;
+}
+
+.perfecty-push-default-icon-preview-container {
+  display: none;
 }
 
 .perfecty-push-stats > div {
   float: left;
   margin: 20px;
-}
-
-.perfecty-push-send-notification-icon {
-  width: 50px;
-  height: 50px;
 }
 
 .perfecty-push-logs-table table tbody tr td{

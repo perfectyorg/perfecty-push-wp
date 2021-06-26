@@ -34,11 +34,10 @@
 	<div>
 		<span><?php printf( esc_html__( 'Icon:', 'perfecty-push-notifications' ) ); ?></span><br />
 		<?php
-		$icon_url = get_site_icon_url();
 		if ( empty( $icon_url ) ) {
-			echo '<i>' . esc_html__( 'Add a website icon in Appearance > Customize > Site Identity', 'perfecty-push-notifications' ) . '</i>';
+			echo '<i>' . esc_html__( 'Select icon in Perfecty Push > Settings > Default Icon', 'perfecty-push-notifications' ) . '</i>';
 		} else {
-			echo '<br/><img class="perfecty-push-send-notification-icon" src="' . esc_html( $icon_url ) . '" alt="icon"/>';
+			echo '<br/><img class="perfecty-push-default-icon-preview" src="' . esc_html( $icon_url ) . '" alt="icon"/>';
 		}
 		?>
 	</div>

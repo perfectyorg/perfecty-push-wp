@@ -97,12 +97,15 @@ class Perfecty_Push_Admin {
 		 * class.
 		 */
 
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/perfecty-push-admin.js', array( 'jquery', 'wp-i18n' ), $this->version, false );
+		if ( ! did_action( 'wp_enqueue_media' ) ) {
+			wp_enqueue_media();
+		}
 		if ( $hook_suffix === 'toplevel_page_perfecty-push' ) {
 			// only load it in the Dashboard page
 			// ChartJs has known conflict issues: https://github.com/chartjs/Chart.js/issues/3168.
 			wp_enqueue_script( 'chartjs', plugin_dir_url( __FILE__ ) . 'js/chart.bundle.min.js', array( 'jquery' ), '2.9.4', false );
 		}
+		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/perfecty-push-admin.js', array( 'jquery', 'wp-i18n' ), $this->version, false );
 		wp_enqueue_script( 'jquery-timepicker', plugin_dir_url( __FILE__ ) . 'js/jquery.timepicker.min.js', array( 'jquery' ), '1.3.5', false );
 		wp_enqueue_script( 'html5-fallback', plugin_dir_url( __FILE__ ) . 'js/html5-fallback.js', array( 'jquery-ui-datepicker', 'jquery-timepicker' ), $this->version, false );
 	}
@@ -238,14 +241,6 @@ class Perfecty_Push_Admin {
 		);
 
 		add_settings_field(
-			'notifications_interaction_required',
-			esc_html__( 'Fixed notifications (do not fade)', 'perfecty-push-notifications' ),
-			array( $this, 'print_notifications_interaction_required' ),
-			'perfecty-push-options',
-			'perfecty_push_widget_settings'
-		);
-
-		add_settings_field(
 			'widget_ask_permissions_directly',
 			esc_html__( 'Do not use widgets (ask permissions directly)', 'perfecty-push-notifications' ),
 			array( $this, 'print_widget_ask_permissions_directly' ),
@@ -353,6 +348,29 @@ class Perfecty_Push_Admin {
 			array( $this, 'print_logs_enabled' ),
 			'perfecty-push-options',
 			'perfecty_push_self_hosted_settings'
+		);
+
+		add_settings_section(
+			'perfecty_push_notifications_settings',
+			esc_html__( 'Notifications', 'perfecty-push-notifications' ),
+			array( $this, 'print_notifications_section' ),
+			'perfecty-push-options'
+		);
+
+		add_settings_field(
+			'notifications_interaction_required',
+			esc_html__( 'Fixed notifications (do not auto hide)', 'perfecty-push-notifications' ),
+			array( $this, 'print_notifications_interaction_required' ),
+			'perfecty-push-options',
+			'perfecty_push_notifications_settings'
+		);
+
+		add_settings_field(
+			'notifications_default_icon',
+			esc_html__( 'Default Icon', 'perfecty-push-notifications' ),
+			array( $this, 'print_notifications_default_icon' ),
+			'perfecty-push-options',
+			'perfecty_push_notifications_settings'
 		);
 
 		add_settings_section(
@@ -758,6 +776,9 @@ class Perfecty_Push_Admin {
 	 * @since 1.0.0
 	 */
 	public function print_send_notification_metabox( $item ) {
+		$options  = get_option( 'perfecty_push' );
+		$icon_id  = isset( $options['notifications_default_icon'] ) ? esc_attr( $options['notifications_default_icon'] ) : '';
+		$icon_url = wp_get_attachment_url( $icon_id );
 		require_once plugin_dir_path( __FILE__ ) . 'partials/perfecty-push-admin-send-notification-metabox.php';
 	}
 
@@ -885,6 +906,9 @@ class Perfecty_Push_Admin {
 		if ( isset( $input['batch_size'] ) ) {
 			$new_input['batch_size'] = intval( sanitize_text_field( $input['batch_size'] ) );
 		}
+		if ( isset( $input['notifications_default_icon'] ) ) {
+			$new_input['notifications_default_icon'] = intval( sanitize_text_field( $input['notifications_default_icon'] ) );
+		}
 
 		if ( empty( $options['vapid_public_key'] ) && empty( $options['vapid_private_key'] ) &&
 			! empty( $new_input['vapid_public_key'] ) && ! empty( $new_input['vapid_private_key'] ) ) {
@@ -909,6 +933,15 @@ class Perfecty_Push_Admin {
 	 */
 	public function print_self_hosted_section() {
 		print esc_html__( 'Configure how to connect your website with your self-hosted Perfecty Push Server.', 'perfecty-push-notifications' );
+	}
+
+	/**
+	 * Print the notifications section info
+	 *
+	 * @since 1.3.0
+	 */
+	public function print_notifications_section() {
+		print esc_html__( 'Customise the user notifications.', 'perfecty-push-notifications' );
 	}
 
 	/**
@@ -1072,6 +1105,26 @@ class Perfecty_Push_Admin {
 			'<input type="checkbox" id="perfecty_push[logs_enabled]"' .
 			'name="perfecty_push[logs_enabled]" %s />',
 			esc_html( $enabled )
+		);
+	}
+
+	/**
+	 * Print the default notification icon setting
+	 *
+	 * @since 1.3.0
+	 */
+	public function print_notifications_default_icon() {
+		$options = get_option( 'perfecty_push' );
+		$value   = isset( $options['notifications_default_icon'] ) ? esc_attr( $options['notifications_default_icon'] ) : '';
+
+		printf(
+			'<div class="perfecty-push-default-icon-preview-container"><img src="%s" class="perfecty-push-default-icon-preview"/></div>' .
+			'<input type="button" id="perfecty_push_default_icon_select" class="button" value="%s"/>' .
+			'<input type="hidden" id="perfecty_push[notifications_default_icon]"' .
+			'name="perfecty_push[notifications_default_icon]" value="%s"/>',
+			wp_get_attachment_url( $value ),
+			esc_html__( 'Select image', 'perfecty-push-wp' ),
+			esc_html( $value )
 		);
 	}
 

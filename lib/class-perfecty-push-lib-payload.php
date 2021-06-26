@@ -15,7 +15,13 @@ class Perfecty_Push_Lib_Payload {
 	 * @return array payload
 	 */
 	public static function build( $body, $title = '', $image = '', $url_to_open = '' ) {
-		$icon = get_site_icon_url();
+		$options             = get_option( 'perfecty_push', array() );
+
+		$icon_id             = isset( $options['notifications_default_icon'] ) ? esc_attr( $options['notifications_default_icon'] ) : '';
+		$icon_url            = wp_get_attachment_url( $icon_id );
+
+		$require_interaction = isset( $options['notifications_interaction_required'] ) && $options['notifications_interaction_required'] == 1;
+
 		if ( ! $title ) {
 			$title = get_bloginfo( 'name' );
 		}
@@ -25,13 +31,11 @@ class Perfecty_Push_Lib_Payload {
 		if ( ! $image ) {
 			$image = '';
 		}
-		$options             = get_option( 'perfecty_push', array() );
-		$require_interaction = isset( $options['notifications_interaction_required'] ) && $options['notifications_interaction_required'] == 1;
 
 		return array(
 			'title'               => stripslashes( $title ),
 			'body'                => stripslashes( $body ),
-			'icon'                => $icon,
+			'icon'                => $icon_url,
 			'image'               => $image,
 			'require_interaction' => $require_interaction,
 			'extra'               => array(
