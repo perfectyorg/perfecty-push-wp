@@ -101,6 +101,7 @@ You can create an issue in our Github repo:
 * Option to enable fixed notifications, don't hide after some seconds. Fixes [#66](https://github.com/perfectyorg/perfecty-push-wp/issues/66)
 * Default Icon from the Media Library [#68](https://github.com/perfectyorg/perfecty-push-wp/issues/68)
 * Send notification after subscribing. Fixes [#63](https://github.com/perfectyorg/perfecty-push-wp/issues/63)
+* Remove conflicting Service Workers for known providers, and custom expression. Fixes [#76](https://github.com/perfectyorg/perfecty-push-wp/issues/76)
 
 = 1.2.2 =
 * Point to the correct JS SDK commit hash

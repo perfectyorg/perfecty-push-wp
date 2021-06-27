@@ -83,10 +83,21 @@
 					}
 				}
 			);
-
-			// once the plugin has loaded.
 			if ($( "#perfecty_push\\[widget_ask_permissions_directly\\]" ).is( ':checked' )) {
 				$( ".perfecty-push-options-dialog-group" ).closest( 'tr' ).hide();
+			}
+
+			$( "#perfecty_push\\[unregister_conflicts\\]" ).change(
+				function(e){
+					if (this.checked) {
+						$( ".perfecty-push-options-unregister-conflicts-group" ).closest( 'tr' ).show();
+					} else {
+						$( ".perfecty-push-options-unregister-conflicts-group" ).closest( 'tr' ).hide();
+					}
+				}
+			);
+			if ( ! $( "#perfecty_push\\[unregister_conflicts\\]" ).is( ':checked' )) {
+				$( ".perfecty-push-options-unregister-conflicts-group" ).closest( 'tr' ).hide();
 			}
 
 			var perfecty_icon_choose;
@@ -115,7 +126,7 @@
 					perfecty_icon_choose.open();
 				}
 			);
-			if ($( '.perfecty-push-default-icon-preview' ).attr( 'src') !== "") {
+			if ($( '.perfecty-push-default-icon-preview' ).attr( 'src' ) !== "") {
 				$( '.perfecty-push-default-icon-preview-container' ).show();
 			}
 			

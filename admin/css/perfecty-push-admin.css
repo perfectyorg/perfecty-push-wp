@@ -45,3 +45,16 @@
   font-family: monospace;
 }
 
+.perfecty-push-settings-form input[type=text], .perfecty-push-settings-form textarea {
+  width: 400px;
+}
+
+.perfecty-push-settings-form .form-table{
+  margin-left: 30px;
+}
+
+.perfecty-push-options-unregister-conflicts-regex {
+  width: 400px;
+  color: gray;
+  font-style: italic;
+}
