@@ -344,7 +344,7 @@ class Perfecty_Push_Admin {
 
 		add_settings_section(
 			'perfecty_push_segmentation_settings',
-			esc_html__( 'Segmentation', 'perfecty-push-notifications' ),
+			esc_html__( 'Segmentation and Tracking', 'perfecty-push-notifications' ),
 			array( $this, 'print_segmentation_section' ),
 			'perfecty-push-options'
 		);
@@ -353,6 +353,14 @@ class Perfecty_Push_Admin {
 			'segmentation_enabled',
 			esc_html__( 'Enable and collect data from users', 'perfecty-push-notifications' ),
 			array( $this, 'print_segmentation_enabled' ),
+			'perfecty-push-options',
+			'perfecty_push_segmentation_settings'
+		);
+
+		add_settings_field(
+			'segmentation_tracking_utm',
+			esc_html__( 'UTM analytics', 'perfecty-push-notifications' ),
+			array( $this, 'print_segmentation_tracking_utm' ),
 			'perfecty-push-options',
 			'perfecty_push_segmentation_settings'
 		);
@@ -927,6 +935,9 @@ class Perfecty_Push_Admin {
 		if ( isset( $input['unregister_conflicts_expression'] ) ) {
 			$new_input['unregister_conflicts_expression'] = sanitize_text_field( $input['unregister_conflicts_expression'] );
 		}
+		if ( isset( $input['segmentation_tracking_utm'] ) ) {
+			$new_input['segmentation_tracking_utm'] = sanitize_text_field( $input['segmentation_tracking_utm'] );
+		}
 
 		if ( empty( $options['vapid_public_key'] ) && empty( $options['vapid_private_key'] ) &&
 			! empty( $new_input['vapid_public_key'] ) && ! empty( $new_input['vapid_private_key'] ) ) {
@@ -977,8 +988,26 @@ class Perfecty_Push_Admin {
 	 * @since 1.1.3
 	 */
 	public function print_segmentation_section() {
-		print esc_html__( 'Group users and advanced targeting.', 'perfecty-push-notifications' );
+		print esc_html__( 'Campaign targeting and behaviour tracking.', 'perfecty-push-notifications' );
 	}
+
+	/**
+	 * Print the Tracking UTM parameters
+	 *
+	 * @since 1.3.0
+	 */
+	public function print_segmentation_tracking_utm() {
+		$options = get_option( 'perfecty_push' );
+		$value   = isset( $options['segmentation_tracking_utm'] ) ? esc_attr( $options['segmentation_tracking_utm'] ) : '';
+
+		printf(
+			'Example: <div class="perfecty-push-options-unregister-conflicts-regex">%s</div><input type="text" id="perfecty_push[segmentation_tracking_utm]"' .
+			'name="perfecty_push[segmentation_tracking_utm]" value="%s"/>',
+			esc_html( 'utm_source=perfecty-push&utm_medium=web-push&utm_campaign=my-campaign-name' ),
+			esc_html( $value )
+		);
+	}
+
 
 	/**
 	 * Print the Vapid public key

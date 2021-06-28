@@ -97,11 +97,12 @@ You can create an issue in our Github repo:
 
 = 1.3.0 =
 * Default dialog texts in Settings. Fixes [#69](https://github.com/perfectyorg/perfecty-push-wp/issues/69).
-* Added hooks and filters for integration: `perfecty_push_broadcast_scheduled($payload)`, `perfecty_push_wp_user_notified($payload, $wp_user_id)` hooks and the `perfecty_push_custom_payload($payload)` filter.
-* Option to enable fixed notifications, don't hide after some seconds. Fixes [#66](https://github.com/perfectyorg/perfecty-push-wp/issues/66)
+* Added hooks and filters for external integrations: `perfecty_push_broadcast_scheduled($payload)`, `perfecty_push_wp_user_notified($payload, $wp_user_id)` hooks and the `perfecty_push_custom_payload($payload)` filter.
+* Option to enable fixed notifications that don't fade out. Fixes [#66](https://github.com/perfectyorg/perfecty-push-wp/issues/66)
 * Default Icon from the Media Library [#68](https://github.com/perfectyorg/perfecty-push-wp/issues/68)
 * Send notification after subscribing. Fixes [#63](https://github.com/perfectyorg/perfecty-push-wp/issues/63)
 * Remove conflicting Service Workers for known providers, and custom expression. Fixes [#76](https://github.com/perfectyorg/perfecty-push-wp/issues/76)
+* Google Analytics UTM suffix for Url to open. Fixes [#49](https://github.com/perfectyorg/perfecty-push-wp/issues/49)
 
 = 1.2.2 =
 * Point to the correct JS SDK commit hash

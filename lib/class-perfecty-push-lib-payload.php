@@ -32,6 +32,12 @@ class Perfecty_Push_Lib_Payload {
 			$image = '';
 		}
 
+		$utm = isset( $options['segmentation_tracking_utm'] ) ? $options['segmentation_tracking_utm'] : '';
+		if ( '' !== $utm ) {
+			$prefix      = strpos( $url_to_open, '?' ) === false ? '?' : '&';
+			$url_to_open = $url_to_open . $prefix . $utm;
+		}
+
 		return array(
 			'title'               => stripslashes( $title ),
 			'body'                => stripslashes( $body ),
