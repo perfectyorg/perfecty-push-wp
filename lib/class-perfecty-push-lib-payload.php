@@ -17,8 +17,7 @@ class Perfecty_Push_Lib_Payload {
 	public static function build( $body, $title = '', $image = '', $url_to_open = '' ) {
 		$options = get_option( 'perfecty_push', array() );
 
-		$icon_id  = isset( $options['notifications_default_icon'] ) ? esc_attr( $options['notifications_default_icon'] ) : '';
-		$icon_url = wp_get_attachment_url( $icon_id );
+		$icon_url = isset( $options['notifications_default_icon'] ) && ! empty( $options['notifications_default_icon'] ) ? wp_get_attachment_url( $options['notifications_default_icon'] ) : '';
 
 		$require_interaction = isset( $options['notifications_interaction_required'] ) && $options['notifications_interaction_required'] == 1;
 
