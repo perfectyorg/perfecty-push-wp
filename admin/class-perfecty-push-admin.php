@@ -217,6 +217,14 @@ class Perfecty_Push_Admin {
 		);
 
 		add_settings_field(
+			'visits_to_display_prompt',
+			esc_html__( 'Display after this number of visits', 'perfecty-push-notifications' ),
+			array( $this, 'print_visits_to_display_prompt' ),
+			'perfecty-push-options',
+			'perfecty_push_widget_settings'
+		);
+
+		add_settings_field(
 			'widget_ask_permissions_directly',
 			esc_html__( 'Do not use widgets (ask permissions directly)', 'perfecty-push-notifications' ),
 			array( $this, 'print_widget_ask_permissions_directly' ),
@@ -938,6 +946,9 @@ class Perfecty_Push_Admin {
 		if ( isset( $input['segmentation_tracking_utm'] ) ) {
 			$new_input['segmentation_tracking_utm'] = sanitize_text_field( $input['segmentation_tracking_utm'] );
 		}
+		if ( isset( $input['visits_to_display_prompt'] ) ) {
+			$new_input['visits_to_display_prompt'] = intval( sanitize_text_field( $input['visits_to_display_prompt'] ) );
+		}
 
 		if ( empty( $options['vapid_public_key'] ) && empty( $options['vapid_private_key'] ) &&
 			! empty( $new_input['vapid_public_key'] ) && ! empty( $new_input['vapid_private_key'] ) ) {
@@ -1129,6 +1140,24 @@ class Perfecty_Push_Admin {
 	}
 
 	/**
+	 * Print the visits to display prompt option
+	 *
+	 * @since 1.3.0
+	 */
+	public function print_visits_to_display_prompt() {
+		$options     = get_option( 'perfecty_push' );
+		$value       = isset( $options['visits_to_display_prompt'] ) && $options['visits_to_display_prompt'] ? esc_attr( $options['visits_to_display_prompt'] ) : '';
+		$placeholder = ! $value ? '0 (Immediately)' : '';
+
+		printf(
+			'<input type="text" id="perfecty_push[visits_to_display_prompt]"' .
+			'name="perfecty_push[visits_to_display_prompt]" value="%s" placeholder="%s"/>',
+			esc_html( $value ),
+			esc_html__( $placeholder, 'perfecty-push-notifications' )
+		);
+	}
+
+	/**
 	 * Print the ask permissions directly option
 	 *
 	 * @since 1.1.3
@@ -1179,7 +1208,7 @@ class Perfecty_Push_Admin {
 			'<input type="hidden" id="perfecty_push[notifications_default_icon]"' .
 			'name="perfecty_push[notifications_default_icon]" value="%s"/>',
 			wp_get_attachment_url( $value ),
-			esc_html__( 'Select image', 'perfecty-push-wp' ),
+			esc_html__( 'Select image', 'perfecty-push-notifications' ),
 			esc_html( $value )
 		);
 	}
