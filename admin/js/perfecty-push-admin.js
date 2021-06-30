@@ -85,6 +85,48 @@
 			if ($("#perfecty_push\\[widget_ask_permissions_directly\\]").is(':checked')) {
 				$(".perfecty-push-options-dialog-group").closest('tr').hide();
 			}
+			
+			// Send on publish metabox
+			var hide_custom_fields = function() {
+				$("#perfecty_push_send_featured_img").prop("disabled",true);
+				$("#perfecty_push_send_featured_img").hide();
+				$("#perfecty_push_send_featured_img_label").hide();
+				$("#perfecty_push_notification_custom_title").prop("disabled",true);
+				$("#perfecty_push_notification_custom_title").hide();
+				$("#perfecty_push_notification_custom_title_label").hide();
+				$("#perfecty_push_notification_custom_body").prop("disabled",true);
+				$("#perfecty_push_notification_custom_body").hide();
+				$("#perfecty_push_notification_custom_body_label").hide();
+			}
+			
+			var show_custom_fields = function() {
+				$("#perfecty_push_send_featured_img").show();
+				$("#perfecty_push_send_featured_img_label").show();
+				$("#perfecty_push_send_featured_img").prop("disabled",false);
+				$("#perfecty_push_notification_custom_title").show();
+				$("#perfecty_push_notification_custom_title_label").show();
+				$("#perfecty_push_notification_custom_title").prop("disabled",false);
+				$("#perfecty_push_notification_custom_body").show();
+				$("#perfecty_push_notification_custom_body_label").show();
+				$("#perfecty_push_notification_custom_body").prop("disabled",false);
+				
+			}
+			
+			if ( $( "#perfecty_push_customize_notification" ).is(':checked') ){
+				show_custom_fields();
+			} else {
+				hide_custom_fields();
+				}
+			$( "#perfecty_push_customize_notification" ).change(
+				function(e){
+					if (this.checked) {
+						show_custom_fields();
+					} else {
+						hide_custom_fields();
+					}
+				}
+			);
+			
 		}
 	);
 })( jQuery );
