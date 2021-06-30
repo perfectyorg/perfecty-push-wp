@@ -38,8 +38,9 @@ class Perfecty_Push_Lib_Push_Server {
 	 * Get the Push Server instance
 	 *
 	 * @return object Web push server
+	 * @throws Throwable Bubbles the internal exceptions.
 	 */
-	public static function getPushServer() {
+	public static function get_push_server() {
 		if ( ! self::$auth ) {
 			Log::error( 'The VAPID auth keys were not found' );
 			return null;
@@ -49,7 +50,7 @@ class Perfecty_Push_Lib_Push_Server {
 			function ( $errno, $errstr, $errfile, $errline ) {
 				if ( strpos( $errstr, 'gmp extension is not loaded' ) !== false ) {
 					// we know this, however we capture the E_WARNING because we have previously
-					// informed the user about this in a nicer way
+					// informed the user about this in a nicer way.
 					return true;
 				}
 
@@ -60,7 +61,7 @@ class Perfecty_Push_Lib_Push_Server {
 		try {
 			$webpush = new WebPush( self::$auth );
 			$webpush->setReuseVAPIDHeaders( true );
-		} catch ( \Throwable $ex ) {
+		} catch ( Throwable $ex ) {
 			Log::error( 'Could not start the Push Server: ' . $ex->getMessage() . ', ' . $ex->getTraceAsString() );
 			Class_Perfecty_Push_Lib_Utils::show_message( esc_html( 'Could not start the Push Server, check the PHP error logs for more information.', 'perfecty-push-notifications' ), 'warning' );
 			Class_Perfecty_Push_Lib_Utils::disable();
@@ -99,8 +100,11 @@ class Perfecty_Push_Lib_Push_Server {
 		require_once ABSPATH . '/wp-admin/includes/plugin.php';
 
 		if ( ! is_array( $payload ) ) {
-			throw new Exception( 'Payload should be an array' );
+			$error = 'Payload should be an array';
+			Log::error( $error );
+			throw new Exception( $error );
 		}
+		$payload = apply_filters( 'perfecty_push_custom_payload', $payload );
 		$payload = json_encode( $payload );
 
 		if ( Class_Perfecty_Push_Lib_Utils::is_disabled() ) {
@@ -133,6 +137,9 @@ class Perfecty_Push_Lib_Push_Server {
 			}
 			$result = wp_schedule_single_event( $scheduled_time, 'perfecty_push_broadcast_notification_event', array( $notification_id ) );
 			Log::info( 'Scheduling job id=' . $notification_id . ', result: ' . $result );
+
+			do_action( 'perfecty_push_broadcast_scheduled', $payload );
+
 			return $notification_id;
 		}
 	}
@@ -143,12 +150,24 @@ class Perfecty_Push_Lib_Push_Server {
 	 * @param $wp_user_id int WordPress User Id
 	 * @param $payload array|string Payload to be sent, json encoded or array
 	 * @return array Array with [total, succeeded]
-	 * @throws ErrorException
+	 * @throws Exception
 	 */
 	public static function notify( $wp_user_id, $payload ) {
+		if ( ! is_array( $payload ) ) {
+			$error = 'Payload should be an array';
+			Log::error( $error );
+			throw new Exception( $error );
+		}
+		$payload = apply_filters( 'perfecty_push_custom_payload', $payload );
+		$payload = json_encode( $payload );
+
 		$users = Perfecty_Push_Lib_Db::get_users_by_wp_user_id( $wp_user_id );
 
-		return self::send_notification( $payload, $users );
+		$result = self::send_notification( $payload, $users );
+
+		do_action( 'perfecty_push_wp_user_notified', $payload, $wp_user_id );
+
+		return $result;
 	}
 
 	/**
@@ -258,11 +277,8 @@ class Perfecty_Push_Lib_Push_Server {
 		Log::info( 'Sending notification to ' . count( $users ) . ' users' );
 		Log::debug( print_r( $payload, true ) );
 
-		if ( ! is_string( $payload ) ) {
-			$payload = json_encode( $payload );
-		}
 		if ( ! self::$webpush ) {
-			self::$webpush = self::getPushServer();
+			self::$webpush = self::get_push_server();
 		}
 
 		foreach ( $users as $item ) {

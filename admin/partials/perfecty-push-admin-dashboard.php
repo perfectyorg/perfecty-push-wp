@@ -94,7 +94,7 @@
 		'</a>'
 	);
 	?>
-	</a>!</p></div>
+	!</p></div>
 	<div style="width: 800px;">
 		<canvas id="daily-notifications"></canvas>
 	</div>

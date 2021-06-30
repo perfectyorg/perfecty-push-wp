@@ -108,6 +108,44 @@ class Perfecty_Push {
 		if ( ! defined( 'PERFECTY_PUSH_VAPID_PRIVATE_KEY' ) && $vapid_private_key ) {
 			define( 'PERFECTY_PUSH_VAPID_PRIVATE_KEY', $vapid_private_key );
 		}
+
+		/* Default control texts */
+		if ( ! defined( 'PERFECTY_PUSH_OPTIONS_DIALOG_TITLE' ) ) {
+			define(
+				'PERFECTY_PUSH_OPTIONS_DIALOG_TITLE',
+				esc_html__( 'Do you want to receive notifications?', 'perfecty-push-notifications' )
+			);
+		}
+		if ( ! defined( 'PERFECTY_PUSH_OPTIONS_DIALOG_CONTINUE' ) ) {
+			define(
+				'PERFECTY_PUSH_OPTIONS_DIALOG_CONTINUE',
+				esc_html__( 'Continue', 'perfecty-push-notifications' )
+			);
+		}
+		if ( ! defined( 'PERFECTY_PUSH_OPTIONS_DIALOG_CANCEL' ) ) {
+			define(
+				'PERFECTY_PUSH_OPTIONS_DIALOG_CANCEL',
+				esc_html__( 'Not now', 'perfecty-push-notifications' )
+			);
+		}
+		if ( ! defined( 'PERFECTY_PUSH_OPTIONS_SETTINGS_TITLE' ) ) {
+			define(
+				'PERFECTY_PUSH_OPTIONS_SETTINGS_TITLE',
+				esc_html__( 'Notifications preferences', 'perfecty-push-notifications' )
+			);
+		}
+		if ( ! defined( 'PERFECTY_PUSH_OPTIONS_SETTINGS_OPT_IN' ) ) {
+			define(
+				'PERFECTY_PUSH_OPTIONS_SETTINGS_OPT_IN',
+				esc_html__( 'I want to receive notifications', 'perfecty-push-notifications' )
+			);
+		}
+		if ( ! defined( 'PERFECTY_PUSH_OPTIONS_SETTINGS_UPDATE_ERROR' ) ) {
+			define(
+				'PERFECTY_PUSH_OPTIONS_SETTINGS_UPDATE_ERROR',
+				esc_html__( 'Could not change the preference, try again', 'perfecty-push-notifications' )
+			);
+		}
 	}
 
 	/**
@@ -227,7 +265,7 @@ class Perfecty_Push {
 			);
 		} elseif ( $plugin_activated == 1 ) {
 			error_log( 'VAPID Keys are missing' );
-			Class_Perfecty_Push_Lib_Utils::show_message( sprintf( esc_html( 'The VAPID keys are missing in Perfecty Push. Help: %1$s Generate the VAPID Keys. %2$s', 'perfecty-push-notifications' ), "<a href='https://github.com/perfectyorg/perfecty-push-wp/wiki/Troubleshooting#the-vapid-keys-are-missing-in-perfecty-push-generate-the-vapid-keys' target='_blank'>", '</a>' ), 'warning' );
+			Class_Perfecty_Push_Lib_Utils::show_message( sprintf( esc_html( 'The VAPID keys are missing in Perfecty Push. Help: %1$s Generate the VAPID Keys. %2$s', 'perfecty-push-notifications' ), "<a href='https://docs.perfecty.org/wp/troubleshooting/#the-vapid-keys-are-missing-in-perfecty-push-generate-the-vapid-keys' target='_blank'>", '</a>' ), 'warning' );
 			Class_Perfecty_Push_Lib_Utils::disable();
 			return false;
 		}

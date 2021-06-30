@@ -20,7 +20,7 @@ Features:
 
 - Self-hosted: total control of your information, and no need of third-party integrations.
 - Migrate users from other Push Notifications providers like OneSignal.
-- PWA & AMP Friendly (Tested with Super PWA and AMP for WP plugins).
+- PWA Friendly (Tested with Super PWA) and AMP plugins (Transitional mode).
 - Send Push Notifications on posts publishing. You can use the feature image of the post or customize the title.
 - Send custom Push Notifications: you can easily change the icon, the image or the URL to open.
 - See the stats in the Dashboard.
@@ -35,7 +35,7 @@ Requirements:
 
 ## Documentation
 
-[https://github.com/perfectyorg/perfecty-push-wp/wiki](https://github.com/perfectyorg/perfecty-push-wp/wiki)
+[https://docs.perfecty.org/](https://docs.perfecty.org/)
 
 ## Code
 
@@ -94,6 +94,11 @@ You can create an issue in our Github repo:
 8. Settings
 
 == Changelog ==
+
+= 1.3.0 =
+* Show the default control texts in Settings. Fixes [#69](https://github.com/perfectyorg/perfecty-push-wp/issues/69).
+* Added the `perfecty_push_broadcast_scheduled($payload)`, `perfecty_push_wp_user_notified($payload, $wp_user_id)` hooks and the `perfecty_push_custom_payload($payload)` filter.
+* Added the option to enable fixed notifications, they don't fade after some seconds. Fixes [#66](https://github.com/perfectyorg/perfecty-push-wp/issues/66)
 
 = 1.2.2 =
 * Point to the correct JS SDK commit hash
