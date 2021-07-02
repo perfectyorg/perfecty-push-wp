@@ -52,6 +52,9 @@ class Perfecty_Push_Activator {
 		if ( ! isset( $options['widget_enabled'] ) ) {
 			$options['widget_enabled'] = 1;
 		}
+		if ( ! isset( $options['customization_enabled'] ) ) {
+			$options['customization_enabled'] = 1;
+		}
 		if ( get_option( 'perfecty_push' ) == false ) {
 			if ( ! add_option( 'perfecty_push', $options ) ) {
 				error_log( 'Could not set the default options' );
