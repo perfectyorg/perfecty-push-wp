@@ -10,8 +10,11 @@
 }
 
 .perfecty-push-dialog-box {
-  display: block;
-  width: 450px;
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  justify-content: space-around;
+  width: 550px;
   background: white;
   padding: 15px;
   border-radius: 5px;
@@ -22,14 +25,20 @@
 
 @media only screen and (max-width: 370px) {
   .perfecty-push-dialog-box {
-    width: 320px;
+	width: 320px;
+	flex-wrap: wrap;
   }
 }
 
 @media only screen and (min-width: 370px) and (max-width: 425px) {
   .perfecty-push-dialog-box {
-    width: 350px;
+	width: 350px;
+	flex-wrap: wrap;
   }
+}
+
+.perfecty-push-dialog-box .perfecty-push-dialog-icon {
+  width: 100px;
 }
 
 .perfecty-push-dialog-container button{

@@ -97,12 +97,15 @@ class Perfecty_Push_Admin {
 		 * class.
 		 */
 
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/perfecty-push-admin.js', array( 'jquery', 'wp-i18n' ), $this->version, false );
+		if ( ! did_action( 'wp_enqueue_media' ) ) {
+			wp_enqueue_media();
+		}
 		if ( $hook_suffix === 'toplevel_page_perfecty-push' ) {
 			// only load it in the Dashboard page
 			// ChartJs has known conflict issues: https://github.com/chartjs/Chart.js/issues/3168.
 			wp_enqueue_script( 'chartjs', plugin_dir_url( __FILE__ ) . 'js/chart.bundle.min.js', array( 'jquery' ), '2.9.4', false );
 		}
+		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/perfecty-push-admin.js', array( 'jquery', 'wp-i18n' ), $this->version, false );
 		wp_enqueue_script( 'jquery-timepicker', plugin_dir_url( __FILE__ ) . 'js/jquery.timepicker.min.js', array( 'jquery' ), '1.3.5', false );
 		wp_enqueue_script( 'html5-fallback', plugin_dir_url( __FILE__ ) . 'js/html5-fallback.js', array( 'jquery-ui-datepicker', 'jquery-timepicker' ), $this->version, false );
 	}
@@ -214,33 +217,9 @@ class Perfecty_Push_Admin {
 		);
 
 		add_settings_field(
-			'unregister_conflicts',
-			esc_html__( 'Remove conflicting workers (Don\'t use it with PWA/AMP)', 'perfecty-push-notifications' ),
-			array( $this, 'print_unregister_conflicts' ),
-			'perfecty-push-options',
-			'perfecty_push_widget_settings'
-		);
-
-		add_settings_field(
-			'widget_debugging_enabled',
-			esc_html__( 'Enable debugging', 'perfecty-push-notifications' ),
-			array( $this, 'print_widget_debugging_enabled' ),
-			'perfecty-push-options',
-			'perfecty_push_widget_settings'
-		);
-
-		add_settings_field(
-			'service_worker_scope',
-			esc_html__( 'Service Worker Scope', 'perfecty-push-notifications' ),
-			array( $this, 'print_service_worker_scope' ),
-			'perfecty-push-options',
-			'perfecty_push_widget_settings'
-		);
-
-		add_settings_field(
-			'notifications_interaction_required',
-			esc_html__( 'Fixed notifications (do not fade)', 'perfecty-push-notifications' ),
-			array( $this, 'print_notifications_interaction_required' ),
+			'visits_to_display_prompt',
+			esc_html__( 'Display after this number of visits', 'perfecty-push-notifications' ),
+			array( $this, 'print_visits_to_display_prompt' ),
 			'perfecty-push-options',
 			'perfecty_push_widget_settings'
 		);
@@ -310,6 +289,114 @@ class Perfecty_Push_Admin {
 		);
 
 		add_settings_section(
+			'perfecty_push_javascript_sdk_settings',
+			esc_html__( 'Javascript SDK', 'perfecty-push-notifications' ),
+			array( $this, 'print_javascript_sdk_section' ),
+			'perfecty-push-options'
+		);
+
+		add_settings_field(
+			'service_worker_scope',
+			esc_html__( 'Service Worker Scope', 'perfecty-push-notifications' ),
+			array( $this, 'print_service_worker_scope' ),
+			'perfecty-push-options',
+			'perfecty_push_javascript_sdk_settings'
+		);
+
+		add_settings_field(
+			'unregister_conflicts',
+			esc_html__( 'Remove conflicting workers (Push Services only)', 'perfecty-push-notifications' ),
+			array( $this, 'print_unregister_conflicts' ),
+			'perfecty-push-options',
+			'perfecty_push_javascript_sdk_settings'
+		);
+
+		add_settings_field(
+			'unregister_conflicts_expression',
+			esc_html__( 'Custom conflict detection', 'perfecty-push-notifications' ),
+			array( $this, 'print_unregister_conflicts_expression' ),
+			'perfecty-push-options',
+			'perfecty_push_javascript_sdk_settings'
+		);
+
+		add_settings_field(
+			'widget_debugging_enabled',
+			esc_html__( 'Enable debugging', 'perfecty-push-notifications' ),
+			array( $this, 'print_widget_debugging_enabled' ),
+			'perfecty-push-options',
+			'perfecty_push_javascript_sdk_settings'
+		);
+
+		add_settings_section(
+			'perfecty_push_notifications_settings',
+			esc_html__( 'Notifications', 'perfecty-push-notifications' ),
+			array( $this, 'print_notifications_section' ),
+			'perfecty-push-options'
+		);
+
+		add_settings_field(
+			'notifications_interaction_required',
+			esc_html__( 'Fixed notifications (do not auto hide)', 'perfecty-push-notifications' ),
+			array( $this, 'print_notifications_interaction_required' ),
+			'perfecty-push-options',
+			'perfecty_push_notifications_settings'
+		);
+
+		add_settings_field(
+			'notifications_default_icon',
+			esc_html__( 'Default Icon', 'perfecty-push-notifications' ),
+			array( $this, 'print_notifications_default_icon' ),
+			'perfecty-push-options',
+			'perfecty_push_notifications_settings'
+		);
+
+		add_settings_section(
+			'perfecty_push_segmentation_settings',
+			esc_html__( 'Segmentation and Tracking', 'perfecty-push-notifications' ),
+			array( $this, 'print_segmentation_section' ),
+			'perfecty-push-options'
+		);
+
+		add_settings_field(
+			'segmentation_enabled',
+			esc_html__( 'Enable and collect data from users', 'perfecty-push-notifications' ),
+			array( $this, 'print_segmentation_enabled' ),
+			'perfecty-push-options',
+			'perfecty_push_segmentation_settings'
+		);
+
+		add_settings_field(
+			'segmentation_tracking_utm',
+			esc_html__( 'UTM analytics', 'perfecty-push-notifications' ),
+			array( $this, 'print_segmentation_tracking_utm' ),
+			'perfecty-push-options',
+			'perfecty_push_segmentation_settings'
+		);
+
+		add_settings_section(
+			'perfecty_push_metabox_settings', // id
+			esc_html__( 'Post publishing', 'perfecty-push-notifications' ), // title
+			array( $this, 'print_metabox_section' ), // callback
+			'perfecty-push-options' // page
+		);
+
+		add_settings_field(
+			'check_send_on_publish', // id
+			esc_html__( 'Always send a notification', 'perfecty-push-notifications' ), // title
+			array( $this, 'print_default_send_on_publish' ), // callback
+			'perfecty-push-options', // page
+			'perfecty_push_metabox_settings' // section
+		);
+
+		add_settings_field(
+			'customization_enabled', // id
+			esc_html__( 'Show custom options', 'perfecty-push-notifications' ), // title
+			array( $this, 'print_customization_enabled' ), // callback
+			'perfecty-push-options', // page
+			'perfecty_push_metabox_settings' // section
+		);
+
+		add_settings_section(
 			'perfecty_push_self_hosted_settings',
 			esc_html__( 'Self-hosted server', 'perfecty-push-notifications' ),
 			array( $this, 'print_self_hosted_section' ),
@@ -353,44 +440,6 @@ class Perfecty_Push_Admin {
 			array( $this, 'print_logs_enabled' ),
 			'perfecty-push-options',
 			'perfecty_push_self_hosted_settings'
-		);
-
-		add_settings_section(
-			'perfecty_push_segmentation_settings',
-			esc_html__( 'Segmentation', 'perfecty-push-notifications' ),
-			array( $this, 'print_segmentation_section' ),
-			'perfecty-push-options'
-		);
-
-		add_settings_field(
-			'segmentation_enabled',
-			esc_html__( 'Enable and collect data from users', 'perfecty-push-notifications' ),
-			array( $this, 'print_segmentation_enabled' ),
-			'perfecty-push-options',
-			'perfecty_push_segmentation_settings'
-		);
-
-		add_settings_section(
-			'perfecty_push_metabox_settings', // id
-			esc_html__( 'Post\'s metabox', 'perfecty-push-notifications' ), // title
-			array( $this, 'print_metabox_section' ), // callback
-			'perfecty-push-options' // page
-		);
-
-		add_settings_field(
-			'check_send_on_publish', // id
-			esc_html__( 'Check send on publish by default', 'perfecty-push-notifications' ), // title
-			array( $this, 'print_default_send_on_publish' ), // callback
-			'perfecty-push-options', // page
-			'perfecty_push_metabox_settings' // section
-		);
-
-		add_settings_field(
-			'customization_enabled', // id
-			esc_html__( 'Enable customization\'s fields in metabox', 'perfecty-push-notifications' ), // title
-			array( $this, 'print_customization_enabled' ), // callback
-			'perfecty-push-options', // page
-			'perfecty_push_metabox_settings' // section
 		);
 	}
 
@@ -758,6 +807,9 @@ class Perfecty_Push_Admin {
 	 * @since 1.0.0
 	 */
 	public function print_send_notification_metabox( $item ) {
+		$options  = get_option( 'perfecty_push' );
+		$icon_id  = isset( $options['notifications_default_icon'] ) ? esc_attr( $options['notifications_default_icon'] ) : '';
+		$icon_url = wp_get_attachment_url( $icon_id );
 		require_once plugin_dir_path( __FILE__ ) . 'partials/perfecty-push-admin-send-notification-metabox.php';
 	}
 
@@ -885,6 +937,18 @@ class Perfecty_Push_Admin {
 		if ( isset( $input['batch_size'] ) ) {
 			$new_input['batch_size'] = intval( sanitize_text_field( $input['batch_size'] ) );
 		}
+		if ( isset( $input['notifications_default_icon'] ) ) {
+			$new_input['notifications_default_icon'] = intval( sanitize_text_field( $input['notifications_default_icon'] ) );
+		}
+		if ( isset( $input['unregister_conflicts_expression'] ) ) {
+			$new_input['unregister_conflicts_expression'] = sanitize_text_field( $input['unregister_conflicts_expression'] );
+		}
+		if ( isset( $input['segmentation_tracking_utm'] ) ) {
+			$new_input['segmentation_tracking_utm'] = sanitize_text_field( $input['segmentation_tracking_utm'] );
+		}
+		if ( isset( $input['visits_to_display_prompt'] ) ) {
+			$new_input['visits_to_display_prompt'] = intval( sanitize_text_field( $input['visits_to_display_prompt'] ) );
+		}
 
 		if ( empty( $options['vapid_public_key'] ) && empty( $options['vapid_private_key'] ) &&
 			! empty( $new_input['vapid_public_key'] ) && ! empty( $new_input['vapid_private_key'] ) ) {
@@ -899,7 +963,16 @@ class Perfecty_Push_Admin {
 	 * @since 1.0.0
 	 */
 	public function print_dialog_section() {
-		print esc_html__( 'Preferences for the widgets shown in the front page.', 'perfecty-push-notifications' );
+		print esc_html__( 'The controls in your front page (bell control/opt-in box).', 'perfecty-push-notifications' );
+	}
+
+	/**
+	 * Print the general section info
+	 *
+	 * @since 1.3.0
+	 */
+	public function print_javascript_sdk_section() {
+		print esc_html__( 'Client SDK that handles the subscription/push notifications.', 'perfecty-push-notifications' );
 	}
 
 	/**
@@ -908,7 +981,16 @@ class Perfecty_Push_Admin {
 	 * @since 1.0.0
 	 */
 	public function print_self_hosted_section() {
-		print esc_html__( 'Configure how to connect your website with your self-hosted Perfecty Push Server.', 'perfecty-push-notifications' );
+		print esc_html__( 'Configure your self-hosted Perfecty Push Server.', 'perfecty-push-notifications' );
+	}
+
+	/**
+	 * Print the notifications section info
+	 *
+	 * @since 1.3.0
+	 */
+	public function print_notifications_section() {
+		print esc_html__( 'Notifications that the users receive (Mobile/Desktop).', 'perfecty-push-notifications' );
 	}
 
 	/**
@@ -917,8 +999,26 @@ class Perfecty_Push_Admin {
 	 * @since 1.1.3
 	 */
 	public function print_segmentation_section() {
-		print esc_html__( 'Define how the user segmentation works.', 'perfecty-push-notifications' );
+		print esc_html__( 'Campaign targeting and behaviour tracking.', 'perfecty-push-notifications' );
 	}
+
+	/**
+	 * Print the Tracking UTM parameters
+	 *
+	 * @since 1.3.0
+	 */
+	public function print_segmentation_tracking_utm() {
+		$options = get_option( 'perfecty_push' );
+		$value   = isset( $options['segmentation_tracking_utm'] ) ? esc_attr( $options['segmentation_tracking_utm'] ) : '';
+
+		printf(
+			'Example: <div class="perfecty-push-options-unregister-conflicts-regex">%s</div><input type="text" id="perfecty_push[segmentation_tracking_utm]"' .
+			'name="perfecty_push[segmentation_tracking_utm]" value="%s"/>',
+			esc_html( 'utm_source=perfecty-push&utm_medium=web-push&utm_campaign=my-campaign-name' ),
+			esc_html( $value )
+		);
+	}
+
 
 	/**
 	 * Print the Vapid public key
@@ -994,7 +1094,7 @@ class Perfecty_Push_Admin {
 		$options = get_option( 'perfecty_push' );
 		$value   = isset( $options['widget_enabled'] ) ? esc_attr( $options['widget_enabled'] ) : 0;
 
-		$enabled = $value == 1 ? 'checked="checked"' : '';
+		$enabled = $value ? 'checked="checked"' : '';
 
 		printf(
 			'<input type="checkbox" id="perfecty_push[widget_enabled]"' .
@@ -1012,7 +1112,7 @@ class Perfecty_Push_Admin {
 		$options = get_option( 'perfecty_push' );
 		$value   = isset( $options['widget_debugging_enabled'] ) ? esc_attr( $options['widget_debugging_enabled'] ) : 0;
 
-		$enabled = $value == 1 ? 'checked="checked"' : '';
+		$enabled = $value ? 'checked="checked"' : '';
 
 		printf(
 			'<input type="checkbox" id="perfecty_push[widget_debugging_enabled]"' .
@@ -1030,12 +1130,30 @@ class Perfecty_Push_Admin {
 		$options = get_option( 'perfecty_push' );
 		$value   = isset( $options['widget_hide_bell_after_subscribe'] ) ? esc_attr( $options['widget_hide_bell_after_subscribe'] ) : 0;
 
-		$enabled = $value == 1 ? 'checked="checked"' : '';
+		$enabled = $value ? 'checked="checked"' : '';
 
 		printf(
 			'<input type="checkbox" id="perfecty_push[widget_hide_bell_after_subscribe]"' .
 			'name="perfecty_push[widget_hide_bell_after_subscribe]" %s class="perfecty-push-options-dialog-group"/>',
 			esc_html( $enabled )
+		);
+	}
+
+	/**
+	 * Print the visits to display prompt option
+	 *
+	 * @since 1.3.0
+	 */
+	public function print_visits_to_display_prompt() {
+		$options     = get_option( 'perfecty_push' );
+		$value       = isset( $options['visits_to_display_prompt'] ) && $options['visits_to_display_prompt'] ? esc_attr( $options['visits_to_display_prompt'] ) : '';
+		$placeholder = ! $value ? '0 (Immediately)' : '';
+
+		printf(
+			'<input type="text" id="perfecty_push[visits_to_display_prompt]"' .
+			'name="perfecty_push[visits_to_display_prompt]" value="%s" placeholder="%s"/>',
+			esc_html( $value ),
+			esc_html__( $placeholder, 'perfecty-push-notifications' )
 		);
 	}
 
@@ -1048,7 +1166,7 @@ class Perfecty_Push_Admin {
 		$options = get_option( 'perfecty_push' );
 		$value   = isset( $options['widget_ask_permissions_directly'] ) ? esc_attr( $options['widget_ask_permissions_directly'] ) : 0;
 
-		$enabled = $value == 1 ? 'checked="checked"' : '';
+		$enabled = $value ? 'checked="checked"' : '';
 
 		printf(
 			'<input type="checkbox" id="perfecty_push[widget_ask_permissions_directly]"' .
@@ -1066,12 +1184,32 @@ class Perfecty_Push_Admin {
 		$options = get_option( 'perfecty_push' );
 		$value   = isset( $options['logs_enabled'] ) ? esc_attr( $options['logs_enabled'] ) : 0;
 
-		$enabled = $value == 1 ? 'checked="checked"' : '';
+		$enabled = $value ? 'checked="checked"' : '';
 
 		printf(
 			'<input type="checkbox" id="perfecty_push[logs_enabled]"' .
 			'name="perfecty_push[logs_enabled]" %s />',
 			esc_html( $enabled )
+		);
+	}
+
+	/**
+	 * Print the default notification icon setting
+	 *
+	 * @since 1.3.0
+	 */
+	public function print_notifications_default_icon() {
+		$options = get_option( 'perfecty_push' );
+		$value   = isset( $options['notifications_default_icon'] ) ? esc_attr( $options['notifications_default_icon'] ) : '';
+
+		printf(
+			'<div class="perfecty-push-default-icon-preview-container"><img src="%s" class="perfecty-push-default-icon-preview"/></div>' .
+			'<input type="button" id="perfecty_push_default_icon_select" class="button" value="%s"/>' .
+			'<input type="hidden" id="perfecty_push[notifications_default_icon]"' .
+			'name="perfecty_push[notifications_default_icon]" value="%s"/>',
+			wp_get_attachment_url( $value ),
+			esc_html__( 'Select image', 'perfecty-push-notifications' ),
+			esc_html( $value )
 		);
 	}
 
@@ -1084,7 +1222,7 @@ class Perfecty_Push_Admin {
 		$options = get_option( 'perfecty_push' );
 		$value   = isset( $options['segmentation_enabled'] ) ? esc_attr( $options['segmentation_enabled'] ) : 0;
 
-		$enabled = $value == 1 ? 'checked="checked"' : '';
+		$enabled = $value ? 'checked="checked"' : '';
 
 		printf(
 			'<input type="checkbox" id="perfecty_push[segmentation_enabled]"' .
@@ -1102,12 +1240,35 @@ class Perfecty_Push_Admin {
 		$options = get_option( 'perfecty_push' );
 		$value   = isset( $options['unregister_conflicts'] ) ? esc_attr( $options['unregister_conflicts'] ) : 0;
 
-		$enabled = $value == 1 ? 'checked="checked"' : '';
+		$enabled = $value ? 'checked="checked"' : '';
 
 		printf(
 			'<input type="checkbox" id="perfecty_push[unregister_conflicts]"' .
 			'name="perfecty_push[unregister_conflicts]" %s />',
 			esc_html( $enabled )
+		);
+	}
+
+	/**
+	 * Print the unregister_conflicts_expression option
+	 *
+	 * @since 1.3.0
+	 */
+	public function print_unregister_conflicts_expression() {
+		$options = get_option( 'perfecty_push' );
+		$value   = isset( $options['unregister_conflicts_expression'] ) ? esc_attr( $options['unregister_conflicts_expression'] ) : '';
+
+		printf(
+			'<div>Default expression:</div><div class="perfecty-push-options-unregister-conflicts-regex">%s</div>' .
+			'<textarea id="perfecty_push[unregister_conflicts_expression]"' .
+			'name="perfecty_push[unregister_conflicts_expression]" class="perfecty-push-options-unregister-conflicts-group" ' .
+			'placeholder="%s">%s</textarea>' .
+			'<div><a href="%s" target="_blank">%s</a></div>',
+			esc_html( PERFECTY_PUSH_UNREGISTER_CONFLICTS_EXPRESSION ),
+			esc_html__( 'Custom JS Regular Expression', 'perfecty-push-notifications' ),
+			esc_html( $value ),
+			'https://docs.perfecty.org/wp/conflict-resolution/',
+			esc_html__( 'More information', 'perfecty-push-notifications' )
 		);
 	}
 
@@ -1136,7 +1297,7 @@ class Perfecty_Push_Admin {
 		$options = get_option( 'perfecty_push' );
 		$value   = isset( $options['notifications_interaction_required'] ) ? esc_attr( $options['notifications_interaction_required'] ) : 0;
 
-		$enabled = $value == 1 ? 'checked="checked"' : '';
+		$enabled = $value ? 'checked="checked"' : '';
 
 		printf(
 			'<input type="checkbox" id="perfecty_push[notifications_interaction_required]"' .
@@ -1228,26 +1389,26 @@ class Perfecty_Push_Admin {
 	/**
 	 * Print the metabox options section
 	 *
-	 * @since 1.2.3
+	 * @since 1.3.0
 	 */
 	public function print_metabox_section() {
-		print esc_html__( 'Configure the post\'s send on publish metabox.', 'perfecty-push-notifications' );
+		print esc_html__( 'Configure how to send notifications after publishing a Post.', 'perfecty-push-notifications' );
 	}
 
 	/**
 	 * Print the check send on publish by default
 	 *
-	 * @since 1.2.3
+	 * @since 1.3.0
 	 */
 	public function print_default_send_on_publish() {
 		$options = get_option( 'perfecty_push' );
 		$value   = isset( $options['check_send_on_publish'] ) ? esc_attr( $options['check_send_on_publish'] ) : 0;
 
-		$enabled = 1 === $value ? 'checked="checked"' : '';
+		$enabled = $value ? 'checked="checked"' : '';
 
 		printf(
 			'<input type="checkbox" id="perfecty_push[check_send_on_publish]"' .
-			'name="perfecty_push[check_send_on_publish]" %s class="perfecty-push-options-dialog-group"/>',
+			'name="perfecty_push[check_send_on_publish]" %s/>',
 			esc_html( $enabled )
 		);
 	}
@@ -1255,17 +1416,17 @@ class Perfecty_Push_Admin {
 	/**
 	 * Print the use customization fields in metabox
 	 *
-	 * @since 1.2.3
+	 * @since 1.3.0
 	 */
 	public function print_customization_enabled() {
 		$options = get_option( 'perfecty_push' );
 		$value   = isset( $options['customization_enabled'] ) ? esc_attr( $options['customization_enabled'] ) : 0;
 
-		$enabled = 1 === $value ? 'checked="checked"' : '';
+		$enabled = $value ? 'checked="checked"' : '';
 
 		printf(
 			'<input type="checkbox" id="perfecty_push[customization_enabled]"' .
-			'name="perfecty_push[customization_enabled]" %s class="perfecty-push-options-dialog-group"/>',
+			'name="perfecty_push[customization_enabled]" %s/>',
 			esc_html( $enabled )
 		);
 	}

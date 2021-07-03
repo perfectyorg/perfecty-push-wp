@@ -13,7 +13,7 @@
 			?>
 		</p>
 	</div>
-	<form method="post" action="options.php">
+	<form method="post" action="options.php" class="perfecty-push-settings-form">
 		<?php
 		settings_fields( 'perfecty_group' );
 		do_settings_sections( 'perfecty-push-options' );

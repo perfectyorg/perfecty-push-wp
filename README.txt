@@ -96,9 +96,16 @@ You can create an issue in our Github repo:
 == Changelog ==
 
 = 1.3.0 =
-* Show the default control texts in Settings. Fixes [#69](https://github.com/perfectyorg/perfecty-push-wp/issues/69).
-* Added the `perfecty_push_broadcast_scheduled($payload)`, `perfecty_push_wp_user_notified($payload, $wp_user_id)` hooks and the `perfecty_push_custom_payload($payload)` filter.
-* Added the option to enable fixed notifications, they don't fade after some seconds. Fixes [#66](https://github.com/perfectyorg/perfecty-push-wp/issues/66)
+* Option to always send a Push Notification on Post publishing. Thanks to [@mociofiletto](https://profiles.wordpress.org/mociofiletto/). Fixes [#64](https://github.com/perfectyorg/perfecty-push-wp/issues/64)
+* Google Analytics UTM suffix for Url to open. Fixes [#49](https://github.com/perfectyorg/perfecty-push-wp/issues/49)
+* Send notification after subscribing. Fixes [#63](https://github.com/perfectyorg/perfecty-push-wp/issues/63)
+* Remove conflicting Service Workers for known providers, and custom expression. Fixes [#76](https://github.com/perfectyorg/perfecty-push-wp/issues/76)
+* Option to enable fixed notifications that don't fade out. Fixes [#66](https://github.com/perfectyorg/perfecty-push-wp/issues/66)
+* Display prompt after a number of visits. Default: Immediately. Fixes [#70](https://github.com/perfectyorg/perfecty-push-wp/issues/70)
+* Added hooks and filters for external integrations: `perfecty_push_broadcast_scheduled($payload)`, `perfecty_push_wp_user_notified($payload, $wp_user_id)` hooks and the `perfecty_push_custom_payload($payload)` filter.
+* Default Icon from the Media Library [#68](https://github.com/perfectyorg/perfecty-push-wp/issues/68)
+* Show icon in the Notifications prompt. Fixes [#71](https://github.com/perfectyorg/perfecty-push-wp/issues/71)
+* Default dialog texts in Settings. Fixes [#69](https://github.com/perfectyorg/perfecty-push-wp/issues/69).
 
 = 1.2.2 =
 * Point to the correct JS SDK commit hash

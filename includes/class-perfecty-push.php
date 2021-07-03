@@ -146,6 +146,12 @@ class Perfecty_Push {
 				esc_html__( 'Could not change the preference, try again', 'perfecty-push-notifications' )
 			);
 		}
+		if ( ! defined( 'PERFECTY_PUSH_UNREGISTER_CONFLICTS_EXPRESSION' ) ) {
+			define(
+				'PERFECTY_PUSH_UNREGISTER_CONFLICTS_EXPRESSION',
+				'(OneSignalSDKWorker|wonderpush-worker-loader|webpushr-sw|subscribers-com\/firebase-messaging-sw|gravitec-net-web-push-notifications|push_notification_sw)'
+			);
+		}
 	}
 
 	/**

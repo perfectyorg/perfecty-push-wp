@@ -1,7 +1,8 @@
 (function( $ ) {
 	'use strict';
 	const { __ } = wp.i18n;
-	$( window ).on('load',
+	$( window ).on(
+		'load',
 		function(){
 			$( ".perfecty-push-confirm-action" ).click(
 				function(e){
@@ -35,34 +36,34 @@
 					}
 				}
 			);
-			
+
 			$( "#form" ).submit(
 				function(e){
 					if ( $( "#perfecty-push-send-notification-schedule-notification" ).is( ":checked" ) ) {
-						var scheduledTime = new Date( $( "#perfecty-push-send-notification-scheduled-date" ).val() + 'T' + $( "#perfecty-push-send-notification-scheduled-time" ).val() );
-						var scheduledTimeEpoch = Math.round(scheduledTime.getTime() / 1000);
-						var currentTimeEpoch = Math.round(Date.now() / 1000);
-						var timeOffset = scheduledTimeEpoch - currentTimeEpoch;
-						$( "#perfecty-push-send-notification-timeoffset").val( timeOffset );					
+						var scheduledTime      = new Date( $( "#perfecty-push-send-notification-scheduled-date" ).val() + 'T' + $( "#perfecty-push-send-notification-scheduled-time" ).val() );
+						var scheduledTimeEpoch = Math.round( scheduledTime.getTime() / 1000 );
+						var currentTimeEpoch   = Math.round( Date.now() / 1000 );
+						var timeOffset         = scheduledTimeEpoch - currentTimeEpoch;
+						$( "#perfecty-push-send-notification-timeoffset" ).val( timeOffset );
 					}
 				}
 			);
-			
+
 			$( "#perfecty-push-send-notification-schedule-notification" ).change(
 				function(e){
 					if (this.checked) {
 						$( "#perfecty-push-send-notification-scheduled-date" ).removeAttr( "disabled" );
 						$( "#perfecty-push-send-notification-scheduled-time" ).removeAttr( "disabled" );
 
-						var now = new Date();
+						var now        = new Date();
 						var dateString = now.getFullYear().toString()
-							+ '-' + ( now.getMonth()+1 ).toString().padStart(2, '0') 
-							+ '-' + now.getDate().toString().padStart(2, '0');
-						$( "#perfecty-push-send-notification-scheduled-date" ).attr("min", dateString );
+							+ '-' + ( now.getMonth() + 1 ).toString().padStart( 2, '0' )
+							+ '-' + now.getDate().toString().padStart( 2, '0' );
+						$( "#perfecty-push-send-notification-scheduled-date" ).attr( "min", dateString );
 						$( "#perfecty-push-send-notification-scheduled-date" ).val( dateString );
-						var timeString = now.getHours().toString().padStart(2, '0') 
-							+ ":" + now.getMinutes().toString().padStart(2, '0')
-							+ ":" + now.getSeconds().toString().padStart(2, '0');
+						var timeString = now.getHours().toString().padStart( 2, '0' )
+							+ ":" + now.getMinutes().toString().padStart( 2, '0' )
+							+ ":" + now.getSeconds().toString().padStart( 2, '0' );
 							$( "#perfecty-push-send-notification-scheduled-time" ).val( timeString );
 					} else {
 						$( "#perfecty-push-send-notification-scheduled-date" ).val( '' );
@@ -73,17 +74,60 @@
 				}
 			);
 
-			$("#perfecty_push\\[widget_ask_permissions_directly\\]").change(function(e){
-				if (this.checked) {
-					$(".perfecty-push-options-dialog-group").closest('tr').hide();
-				} else {
-					$(".perfecty-push-options-dialog-group").closest('tr').show();
+			$( "#perfecty_push\\[widget_ask_permissions_directly\\]" ).change(
+				function(e){
+					if (this.checked) {
+						$( ".perfecty-push-options-dialog-group" ).closest( 'tr' ).hide();
+					} else {
+						$( ".perfecty-push-options-dialog-group" ).closest( 'tr' ).show();
+					}
 				}
-			});
+			);
+			if ($( "#perfecty_push\\[widget_ask_permissions_directly\\]" ).is( ':checked' )) {
+				$( ".perfecty-push-options-dialog-group" ).closest( 'tr' ).hide();
+			}
 
-			// once the plugin has loaded
-			if ($("#perfecty_push\\[widget_ask_permissions_directly\\]").is(':checked')) {
-				$(".perfecty-push-options-dialog-group").closest('tr').hide();
+			$( "#perfecty_push\\[unregister_conflicts\\]" ).change(
+				function(e){
+					if (this.checked) {
+						$( ".perfecty-push-options-unregister-conflicts-group" ).closest( 'tr' ).show();
+					} else {
+						$( ".perfecty-push-options-unregister-conflicts-group" ).closest( 'tr' ).hide();
+					}
+				}
+			);
+			if ( ! $( "#perfecty_push\\[unregister_conflicts\\]" ).is( ':checked' )) {
+				$( ".perfecty-push-options-unregister-conflicts-group" ).closest( 'tr' ).hide();
+			}
+
+			var perfecty_icon_choose;
+			$( '#perfecty_push_default_icon_select' ).on(
+				'click',
+				function(event) {
+					event.preventDefault();
+					perfecty_icon_choose = wp.media(
+						{
+							title: 'Select image to upload',
+							button: {
+								text: 'Use this image',
+							},
+							multiple: false
+						}
+					);
+					perfecty_icon_choose.on(
+						'select',
+						function() {
+							let attachment = perfecty_icon_choose.state().get( 'selection' ).first().toJSON();
+							$( '.perfecty-push-default-icon-preview-container' ).show();
+							$( '.perfecty-push-default-icon-preview' ).attr( 'src', attachment.url );
+							$( "#perfecty_push\\[notifications_default_icon\\]" ).val( attachment.id );
+						}
+					);
+					perfecty_icon_choose.open();
+				}
+			);
+			if ($( '.perfecty-push-default-icon-preview' ).attr( 'src' ) !== "") {
+				$( '.perfecty-push-default-icon-preview-container' ).show();
 			}
 			
 			// Send on publish metabox
