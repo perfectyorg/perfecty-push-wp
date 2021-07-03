@@ -62,6 +62,12 @@ class Perfecty_Push_Global {
 					$options['segmentation_enabled'] = 1;
 					update_option( 'perfecty_push', $options );
 				}
+				if ( version_compare( get_option( 'perfecty_push_version' ), '1.3.0', '<' ) && get_option( 'site_icon' ) ) {
+					// this is before 1.3.0
+					// we use the already defined icon.
+					$options['notifications_default_icon'] = get_option( 'site_icon' );
+					update_option( 'perfecty_push', $options );
+				}
 			}
 			update_option( 'perfecty_push_version', PERFECTY_PUSH_VERSION );
 		}
