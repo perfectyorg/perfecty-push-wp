@@ -96,6 +96,7 @@ You can create an issue in our Github repo:
 == Changelog ==
 
 = 1.3.0 =
+* Option to always send a Push Notification on Post publishing. Thanks to [@mociofiletto](https://profiles.wordpress.org/mociofiletto/). Fixes [#64](https://github.com/perfectyorg/perfecty-push-wp/issues/64)
 * Google Analytics UTM suffix for Url to open. Fixes [#49](https://github.com/perfectyorg/perfecty-push-wp/issues/49)
 * Send notification after subscribing. Fixes [#63](https://github.com/perfectyorg/perfecty-push-wp/issues/63)
 * Remove conflicting Service Workers for known providers, and custom expression. Fixes [#76](https://github.com/perfectyorg/perfecty-push-wp/issues/76)
