@@ -106,6 +106,7 @@ You can create an issue in our Github repo:
 * Default Icon from the Media Library [#68](https://github.com/perfectyorg/perfecty-push-wp/issues/68)
 * Show icon in the Notifications prompt. Fixes [#71](https://github.com/perfectyorg/perfecty-push-wp/issues/71)
 * Default dialog texts in Settings. Fixes [#69](https://github.com/perfectyorg/perfecty-push-wp/issues/69).
+* Always send featured image on Post publishing. Fixes [#65](https://github.com/perfectyorg/perfecty-push-wp/issues/65)
 
 = 1.2.2 =
 * Point to the correct JS SDK commit hash

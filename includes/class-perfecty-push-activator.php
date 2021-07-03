@@ -56,9 +56,7 @@ class Perfecty_Push_Activator {
 			// if the default icon is not set, we fallback to the site_icon.
 			$options['notifications_default_icon'] = get_option( 'site_icon' );
 		}
-		if ( ! isset( $options['customization_enabled'] ) ) {
-			$options['customization_enabled'] = 1;
-		}
+
 		if ( get_option( 'perfecty_push' ) == false ) {
 			if ( ! add_option( 'perfecty_push', $options ) ) {
 				error_log( 'Could not set the default options' );

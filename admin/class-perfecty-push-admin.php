@@ -321,7 +321,7 @@ class Perfecty_Push_Admin {
 
 		add_settings_field(
 			'widget_debugging_enabled',
-			esc_html__( 'Enable debugging', 'perfecty-push-notifications' ),
+			esc_html__( 'Enable Client Logs', 'perfecty-push-notifications' ),
 			array( $this, 'print_widget_debugging_enabled' ),
 			'perfecty-push-options',
 			'perfecty_push_javascript_sdk_settings'
@@ -374,26 +374,18 @@ class Perfecty_Push_Admin {
 		);
 
 		add_settings_section(
-			'perfecty_push_metabox_settings', // id
-			esc_html__( 'Post publishing', 'perfecty-push-notifications' ), // title
-			array( $this, 'print_metabox_section' ), // callback
-			'perfecty-push-options' // page
+			'perfecty_push_metabox_settings',
+			esc_html__( 'Post publishing', 'perfecty-push-notifications' ),
+			array( $this, 'print_metabox_section' ),
+			'perfecty-push-options'
 		);
 
 		add_settings_field(
-			'check_send_on_publish', // id
-			esc_html__( 'Always send a notification', 'perfecty-push-notifications' ), // title
-			array( $this, 'print_default_send_on_publish' ), // callback
-			'perfecty-push-options', // page
-			'perfecty_push_metabox_settings' // section
-		);
-
-		add_settings_field(
-			'customization_enabled', // id
-			esc_html__( 'Show custom options', 'perfecty-push-notifications' ), // title
-			array( $this, 'print_customization_enabled' ), // callback
-			'perfecty-push-options', // page
-			'perfecty_push_metabox_settings' // section
+			'check_send_on_publish',
+			esc_html__( 'Always send a notification', 'perfecty-push-notifications' ),
+			array( $this, 'print_default_send_on_publish' ),
+			'perfecty-push-options',
+			'perfecty_push_metabox_settings'
 		);
 
 		add_settings_section(
@@ -436,7 +428,7 @@ class Perfecty_Push_Admin {
 
 		add_settings_field(
 			'logs_enabled',
-			esc_html__( 'Enable logs', 'perfecty-push-notifications' ),
+			esc_html__( 'Enable Server Logs', 'perfecty-push-notifications' ),
 			array( $this, 'print_logs_enabled' ),
 			'perfecty-push-options',
 			'perfecty_push_self_hosted_settings'
@@ -479,21 +471,13 @@ class Perfecty_Push_Admin {
 		wp_nonce_field( 'perfecty_push_post_metabox', 'perfecty_push_post_metabox_nonce' );
 		$options               = get_option( 'perfecty_push', array() );
 		$check_send_on_publish = isset( $options['check_send_on_publish'] ) && $options['check_send_on_publish'] == 1;
-		$show_customiz_fields  = isset( $options['customization_enabled'] ) && $options['customization_enabled'] == 1;
 
 		$send_notification = ! empty( get_post_meta( $post->ID, '_perfecty_push_send_on_publish', true ) );
 
-		$send_featured_img_meta = get_metadata_raw( 'post', $post->ID, '_perfecty_push_send_featured_img', true );
-		if ( is_null( $send_featured_img_meta ) ) {
-			// new default value
-			$send_featured_img = true;
-		} else {
-			$send_featured_img = ! ( empty( get_post_meta( $post->ID, '_perfecty_push_send_featured_img', true ) ) );
-		}
 		$notification_title = get_post_meta( $post->ID, '_perfecty_push_notification_custom_title', true );
 		$notification_body  = get_post_meta( $post->ID, '_perfecty_push_notification_custom_body', true );
 
-		$is_customized = ! empty( trim( $notification_body ) ) || ! empty( trim( $notification_title ) ) || ! $send_featured_img;
+		$is_customized = ! empty( trim( $notification_body ) ) || ! empty( trim( $notification_title ) );
 
 		require_once plugin_dir_path( __FILE__ ) . 'partials/perfecty-push-admin-post-metabox.php';
 	}
@@ -527,15 +511,11 @@ class Perfecty_Push_Admin {
 		$send_notification = ! empty( $_POST['perfecty_push_send_on_publish'] );
 		update_post_meta( $post_id, '_perfecty_push_send_on_publish', $send_notification );
 
-		$send_featured_img = ! empty( $_POST['perfecty_push_send_featured_img'] );
-		update_post_meta( $post_id, '_perfecty_push_send_featured_img', $send_featured_img );
-
 		$notification_title = $_POST['perfecty_push_notification_custom_title'];
 		update_post_meta( $post_id, '_perfecty_push_notification_custom_title', esc_html( $notification_title ) );
 
 		$notification_body = $_POST['perfecty_push_notification_custom_body'];
 		update_post_meta( $post_id, '_perfecty_push_notification_custom_body', esc_html( $notification_body ) );
-
 	}
 
 	/**
@@ -552,35 +532,30 @@ class Perfecty_Push_Admin {
 		}
 
 		$send_notification = false;
-		$send_featured_img = false;
 		$is_customized     = false;
 		if ( isset( $_POST['perfecty_push_post_metabox_nonce'] ) &&
 			wp_verify_nonce( $_POST['perfecty_push_post_metabox_nonce'], 'perfecty_push_post_metabox' ) ) {
 			// we do this because on_transition_post_status is triggered before on_save_post by WordPress
 			$send_notification  = ! empty( $_POST['perfecty_push_send_on_publish'] );
-			$send_featured_img  = ! empty( $_POST['perfecty_push_send_featured_img'] );
 			$notification_title = $_POST['perfecty_push_notification_custom_title'];
 			$notification_body  = $_POST['perfecty_push_notification_custom_body'];
 		} else {
 			$send_notification  = ! empty( get_post_meta( $post->ID, '_perfecty_push_send_on_publish', true ) );
-			$send_featured_img  = ! empty( get_post_meta( $post->ID, '_perfecty_push_send_featured_img', true ) );
 			$notification_title = get_post_meta( $post->ID, '_perfecty_push_notification_custom_title', true );
 			$notification_body  = get_post_meta( $post->ID, '_perfecty_push_notification_custom_body', true );
 		}
 
 		if ( 'publish' == $new_status && $send_notification ) {
-			$body               = ( $notification_body !== '' ) ? $notification_body : html_entity_decode( get_the_title( $post ) );
+			$body               = trim( $notification_body ) ? $notification_body : html_entity_decode( get_the_title( $post ) );
 			$url_to_open        = get_the_permalink( $post );
-			$notification_title = ( $notification_title !== '' ) ? $notification_title : false;
-			$post_thumbnail     = '';
-			if ( $send_featured_img ) {
-				// we use this to check if the post has a thumbnail because has_post_thumbnail could return true even if no post thumbnail is set
-				$featured_image_url = wp_get_attachment_url( get_post_thumbnail_id( $post->ID ) );
-				if ( ! empty( $featured_image_url ) ) {
-					$post_thumbnail = get_the_post_thumbnail_url( $post->ID );
-				} else {
-					$post_thumbnail = $this->get_first_image_url( $post );
-				}
+			$notification_title = trim( $notification_title ) ? $notification_title : false;
+
+			// we use this to check if the post has a thumbnail because has_post_thumbnail could return true even if no post thumbnail is set.
+			$featured_image_url = wp_get_attachment_url( get_post_thumbnail_id( $post->ID ) );
+			if ( ! empty( $featured_image_url ) ) {
+				$post_thumbnail = get_the_post_thumbnail_url( $post->ID );
+			} else {
+				$post_thumbnail = $this->get_first_image_url( $post );
 			}
 
 			$payload = Perfecty_Push_Lib_Payload::build( $body, $notification_title, $post_thumbnail, $url_to_open );
@@ -592,7 +567,7 @@ class Perfecty_Push_Admin {
 			} else {
 				if ( isset( $_POST['perfecty_push_post_metabox_nonce'] ) ) {
 					// once we sent the notification, we reset the checkbox when the
-					// hook was triggered after clicking the save button
+					// hook was triggered after clicking the save button.
 					unset( $_POST['perfecty_push_send_on_publish'] );
 				}
 				update_post_meta( $post->ID, '_perfecty_push_send_on_publish', false );
@@ -896,11 +871,6 @@ class Perfecty_Push_Admin {
 			$new_input['check_send_on_publish'] = 1;
 		} else {
 			$new_input['check_send_on_publish'] = 0;
-		}
-		if ( isset( $input['customization_enabled'] ) ) {
-			$new_input['customization_enabled'] = 1;
-		} else {
-			$new_input['customization_enabled'] = 0;
 		}
 
 		// text
@@ -1412,25 +1382,6 @@ class Perfecty_Push_Admin {
 			esc_html( $enabled )
 		);
 	}
-
-	/**
-	 * Print the use customization fields in metabox
-	 *
-	 * @since 1.3.0
-	 */
-	public function print_customization_enabled() {
-		$options = get_option( 'perfecty_push' );
-		$value   = isset( $options['customization_enabled'] ) ? esc_attr( $options['customization_enabled'] ) : 0;
-
-		$enabled = $value ? 'checked="checked"' : '';
-
-		printf(
-			'<input type="checkbox" id="perfecty_push[customization_enabled]"' .
-			'name="perfecty_push[customization_enabled]" %s/>',
-			esc_html( $enabled )
-		);
-	}
-
 
 	/**
 	 * Get first image URL in post content
