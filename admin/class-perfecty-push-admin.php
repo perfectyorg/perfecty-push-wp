@@ -76,6 +76,24 @@ class Perfecty_Push_Admin {
 		wp_enqueue_style( 'jquery-ui', plugin_dir_url( __FILE__ ) . 'css/jquery-ui/themes/smoothness/jquery-ui.min.css', array(), '1.12.1', 'screen' );
 	}
 
+
+	/**
+	 * Print the WordPress directory plugin links
+	 *
+	 * @param array $actions Array with links.
+	 *
+	 * @return array
+	 * @since    1.3.2
+	 */
+	public function plugin_directory_links( $actions ) {
+		$links   = array(
+			'<a href="' . admin_url( 'admin.php?page=perfecty-push-options' ) . '">' . esc_html__( 'Settings', 'perfecty-push-notifications' ) . '</a>',
+			'<a href="https://docs.perfecty.org/" target="_blank">' . esc_html__( 'Documentation', 'perfecty-push-notifications' ) . '</a>',
+		);
+		$actions = array_merge( $actions, $links );
+		return $actions;
+	}
+
 	/**
 	 * Register the JavaScript for the admin area.
 	 *

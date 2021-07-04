@@ -87,7 +87,11 @@
 		// translators: %2$s is the closing a tag
 		// translators: %3$s is the opening a tag
 		// translators: %4$s is the closing a tag
-		esc_html__( 'Welcome to Perfecty Push. Start off by subscribing from the %1$s front page %2$s and send your first %3$s notification %4$s', 'perfecty-push-notifications' ),
+		// translators: %5$s is the closing a tag
+		// translators: %6$s is the closing a tag
+		esc_html__( 'Welcome to Perfecty Push. Start off by  reading the %1$sdocumentation%2$s, subscribe from the %3$sfront page%4$s and send your first %5$s notification%6$s', 'perfecty-push-notifications' ),
+		'<a href="https://docs.perfecty.org/" target="_blank">',
+		'</a>',
 		'<a href="' . esc_html( site_url() ) . '">',
 		'</a>',
 		'<a href="' . esc_html( admin_url( 'admin.php?page=perfecty-push-send-notification' ) ) . '">',

@@ -22,7 +22,7 @@
   font-weight: bold;
 }
 
-.perfecty-push-view-payload-image {
+.perfecty-push-view-payload-image, .perfecty-push-view-payload-icon {
   max-width: 250px;
   max-height: 250px;
 }

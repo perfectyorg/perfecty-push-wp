@@ -22,6 +22,18 @@
 		);
 		?>
 	</p>
+	<h2><?php printf( esc_html__( 'Documentation', 'perfecty-push-notifications' ) ); ?></h2>
+	<p>
+		<?php
+		printf(
+		// translators: %1$s is the opening a tag
+		// translators: %2$s is the closing a tag
+			esc_html__( 'Check the documentation site at %1$shttps://docs.perfecty.org/%2$s.', 'perfecty-push-notifications' ),
+			'<a href="https://docs.perfecty.org/" target="_blank">',
+			'</a>'
+		);
+		?>
+	</p>
 	<h2><?php printf( esc_html__( 'Did you like it?', 'perfecty-push-notifications' ) ); ?></h2>
 	<p>
 		<?php
@@ -34,18 +46,6 @@
 			'<a href="https://github.com/perfectyorg/perfecty-push-wp">',
 			'</a>',
 			'<a href="https://wordpress.org/plugins/perfecty-push-notifications/#reviews">',
-			'</a>'
-		);
-		?>
-	</p>
-	<h2><?php printf( esc_html__( 'Documentation', 'perfecty-push-notifications' ) ); ?></h2>
-	<p>
-		<?php
-		printf(
-			// translators: %1$s is the opening a tag
-			// translators: %2$s is the closing a tag
-			esc_html__( 'Check the documentation site at %1$shttps://docs.perfecty.org/%2$s.', 'perfecty-push-notifications' ),
-			'<a href="https://docs.perfecty.org/" target="_blank">',
 			'</a>'
 		);
 		?>
