@@ -95,6 +95,9 @@ You can create an issue in our Github repo:
 
 == Changelog ==
 
+= 1.3.3 =
+* Send logs to error_log() by default when logging is not even enabled. Fixes [#85](https://github.com/perfectyorg/perfecty-push-wp/issues/85)
+
 = 1.3.2 =
 * Add the plugin links shown in the WordPress Plugin installer
 * Icon max width in the Notification details.

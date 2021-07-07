@@ -217,6 +217,7 @@ class Perfecty_Push {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'lib/class-perfecty-push-lib-log.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'lib/log/class-perfecty-push-lib-log-writer.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'lib/log/class-perfecty-push-lib-log-db.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'lib/log/class-perfecty-push-lib-log-errorlog.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'lib/class-perfecty-push-lib-cron-check.php';
 		$this->loader = new Perfecty_Push_Loader();
 	}
@@ -228,10 +229,12 @@ class Perfecty_Push {
 		$options      = get_option( 'perfecty_push', array() );
 		$enabled_logs = isset( $options['logs_enabled'] ) && $options['logs_enabled'] == 1;
 
-		$logger = new Perfecty_Push_Lib_Log_Db();
-		Perfecty_Push_Lib_Log::init( $logger );
-		if ( ! $enabled_logs ) {
-			Perfecty_Push_Lib_Log::disable();
+		if ( $enabled_logs ) {
+			$logger = new Perfecty_Push_Lib_Log_Db();
+			Perfecty_Push_Lib_Log::init( $logger, Perfecty_Push_Lib_Log::DEBUG );
+		} else {
+			$logger = new Perfecty_Push_Lib_Log_ErrorLog();
+			Perfecty_Push_Lib_Log::init( $logger, Perfecty_Push_Lib_Log::INFO );
 		}
 	}
 
