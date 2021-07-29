@@ -91,7 +91,7 @@ class Perfecty_Push_Lib_Push_Server {
 	 * @return int | bool $notification_id if success, false otherwise
 	 * @throws Exception
 	 */
-	public static function schedule_broadcast_async( $payload, $scheduled_time = null ) {
+	public static function schedule_broadcast_async( $payload, $scheduled_time = null ,$category='' ) {
 		Log::info( 'Scheduling a broadcast notification' );
 		Log::debug( print_r( $payload, true ) );
 
@@ -122,12 +122,14 @@ class Perfecty_Push_Lib_Push_Server {
 			return false;
 		} else {
 			// Fallback to wp-cron
-			$total_users     = Perfecty_Push_Lib_Db::get_total_users();
-			$notification_id = Perfecty_Push_Lib_Db::create_notification( $payload, Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_SCHEDULED, $total_users, $batch_size );
+//-- LLM Modification de la selection des users en fonction des categories
+			$total_users     = Perfecty_Push_Lib_Db::get_total_users($category);
+			$notification_id = Perfecty_Push_Lib_Db::create_notification( $payload, Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_SCHEDULED, $total_users, $batch_size, $category );
 			if ( ! $notification_id ) {
 				Log::error( 'Could not schedule the notification.' );
 				return false;
 			}
+
 			if ( is_null( $scheduled_time ) ) {
 				$scheduled_time = time();
 			}
@@ -223,7 +225,7 @@ class Perfecty_Push_Lib_Push_Server {
 
 		// we get the next batch, starting from $last_cursor we take $batch_size elements
 		// we only fetch the active users (only_active)
-		$users = Perfecty_Push_Lib_Db::get_users( $notification->last_cursor, $notification->batch_size, 'created_at', 'desc' );
+		$users = Perfecty_Push_Lib_Db::get_users( $notification->last_cursor, $notification->batch_size, 'created_at', 'desc',OBJECT, $notification->wp_perfecty_push_category_id );
 
 		if ( count( $users ) == 0 ) {
 			Log::info( 'Job id=' . $notification_id . ' completed, released' );

@@ -24,6 +24,20 @@
 	</div>
 	<div>
 		<p>
+			<label for="perfecty-push-send-notification-action1"><?php printf( esc_html__( 'Action 1', 'perfecty-push-notifications' ) ); ?></label>
+			<br>
+			<input id="perfecty-push-send-notification-action1" name="perfecty-push-send-notification-action1" type="text" value="<?php echo esc_attr( $item['perfecty-push-send-notification-action1'] ); ?>" >
+		</p>
+	</div>
+	<div>
+		<p>
+			<label for="perfecty-push-send-notification-action2"><?php printf( esc_html__( 'Action 2', 'perfecty-push-notifications' ) ); ?></label>
+			<br>
+			<input id="perfecty-push-send-notification-action2" name="perfecty-push-send-notification-action2" type="text" value="<?php echo esc_attr( $item['perfecty-push-send-notification-action2'] ); ?>" >
+		</p>
+	</div>
+	<div>
+		<p>
 			<label for="perfecty-push-send-notification-url-to-open-custom"><?php printf( esc_html__( 'Url to open', 'perfecty-push-notifications' ) ); ?> <i>
 			  <?php printf( esc_html__( '(default: %s)', 'perfecty-push-notifications' ), esc_html( site_url() ) ); ?></i></label>
 			<br>
@@ -40,6 +54,18 @@
 			echo '<br/><img class="perfecty-push-default-icon-preview" src="' . esc_html( $icon_url ) . '" alt="icon"/>';
 		}
 		?>
+	</div>
+	<div>
+		<span><?php printf( esc_html__( 'Category:', 'perfecty-push-notifications' ) ); ?></span><br />
+		<select name="perfecty-push-send-notification-category">
+			<option value="">All users</option>
+			<?php
+				$categories=Perfecty_Push_Lib_Db::get_categories();
+				foreach($categories as $category){
+					echo'<option value="'.$category->id.'">'.$category->name.'</option>';
+				}
+			?>
+		</select>
 	</div>
 	<div>
 		<p>

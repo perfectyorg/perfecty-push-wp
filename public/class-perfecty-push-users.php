@@ -84,8 +84,10 @@ class Perfecty_Push_Users {
 			}
 
 			// The user was registered
+		//-- LLM Modification : envoi des abonnements
 			$response = array(
 				'uuid' => $user->uuid,
+				'subscriptions' => Perfecty_Push_Lib_Db::get_subscriptions( $user )
 			);
 			return (object) $response;
 		} else {
@@ -118,6 +120,7 @@ class Perfecty_Push_Users {
 		if ( $user !== null ) {
 			$result = array(
 				'uuid' => $user->uuid,
+				'subscriptions' => Perfecty_Push_Lib_Db::get_subscriptions( $user )
 			);
 		}
 		return (object) $result;
@@ -182,6 +185,50 @@ class Perfecty_Push_Users {
 		if ( $user == null ) {
 			return new WP_Error( 'bad_request', __( 'user id not found', 'perfecty-push-notifications' ), array( 'status' => 404 ) );
 		}
+		// FIXME Temporary disabled functionality
+		$result = true;
+
+		if ( $result === false ) {
+			return new WP_Error( 'failed_update', __( 'Could not change the user', 'perfecty-push-notifications' ), array( 'status' => 500 ) );
+		} else {
+			$response = array(
+				'is_active' => $is_active,
+			);
+			return (object) $response;
+		}
+	}
+
+	public function update_subscription_preferences( $data ) {
+		$is_active = $data['is_active'] ?? null;
+		$user_id   = $data['user_id'] ?? null;
+		$notification   = $data['notificationID'] ?? null;
+		$checked   = $data['checked'] ?? null;
+
+		// Validate the nonce.
+		$nonce = isset( $_SERVER['HTTP_X_WP_NONCE'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_WP_NONCE'] ) ) : '';
+		if ( wp_verify_nonce( $nonce, 'wp_rest' ) === false ) {
+			$this->terminate();
+		}
+
+		if ( $notification == null ) {
+			return new WP_Error( 'bad_request', __( 'user id not found', 'perfecty-push-notifications' ), array( 'status' => 404 ) );
+		}
+		// $validation = $this->validate_set_user_active( $is_active, $user_id );
+		// if ( $validation !== true ) {
+			// return new WP_Error( 'bad_request', $validation, array( 'status' => 400 ) );
+		// }
+
+		$user = Perfecty_Push_Lib_Db::get_user_by_uuid( $user_id );
+		if ( $user == null ) {
+			return new WP_Error( 'bad_request', __( 'user id not found', 'perfecty-push-notifications' ), array( 'status' => 404 ) );
+		}
+		
+		if($checked==true){
+			$result=Perfecty_Push_Lib_Db::create_subscriptions($user,$notification);
+		}else{
+			$result=Perfecty_Push_Lib_Db::delete_subscriptions($user,$notification);			
+		}
+
 		// FIXME Temporary disabled functionality
 		$result = true;
 
