@@ -65,7 +65,7 @@ class Perfecty_Push_Admin_Notifications_Table extends WP_List_Table {
 
 	function column_status( $item ) {
 		if ( $item['status'] == Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_SCHEDULED ) {
-			$timestamp = Perfecty_Push_Lib_Db::get_notification_scheduled_time( $item['id'] );
+			$timestamp = Perfecty_Push_Lib_Push_Server::get_notification_scheduled_time( $item['id'] );
 			return sprintf(
 				'%s %s',
 				$item['status'],
