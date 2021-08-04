@@ -100,6 +100,10 @@
 				</p>
 			</div>
 		</form>
+<?php		
+	//-- LLM récupération des résultats si actions...
+?>
+		
 	</div>
 	<a href="?page=<?php echo esc_html( $page ); ?>"><?php printf( esc_html__( 'Back', 'perfecty-push-notifications' ) ); ?></a>
 </div>

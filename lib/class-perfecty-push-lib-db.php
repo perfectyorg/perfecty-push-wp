@@ -8,7 +8,8 @@ use Ramsey\Uuid\Uuid;
 class Perfecty_Push_Lib_Db {
 
 	private static $allowed_users_fields         = 'id,uuid,wp_user_id,endpoint,key_auth,key_p256dh,remote_ip,created_at';
-	private static $allowed_notifications_fields = 'id,payload,total,succeeded,last_cursor,batch_size,status,is_taken,created_at,finished_at';
+	private static $allowed_notifications_fields = 'id,payload,total,succeeded,last_cursor,batch_size,status,is_taken,created_at,finished_at,wp_perfecty_push_category_id';
+	private static $allowed_categories_fields 	 = 'id,name,created_at';
 	private static $allowed_logs_fields          = 'level,message,created_at';
 
 	public const NOTIFICATIONS_STATUS_SCHEDULED = 'scheduled';
@@ -32,6 +33,18 @@ class Perfecty_Push_Lib_Db {
 	private static function logs_table() {
 		return self::with_prefix( 'perfecty_push_logs' );
 	}
+	
+	private static function categories_table() {
+		return self::with_prefix( 'perfecty_push_categories' );
+	}
+	
+	private static function categories_users_table() {
+		return self::with_prefix( 'perfecty_push_categories_users' );
+	}
+	
+	private static function replys_table() {
+		return self::with_prefix( 'perfecty_push_replys' );
+	}
 
 	/**
 	 * Creates the tables in the WordPress DB and register the DB version
@@ -47,6 +60,9 @@ class Perfecty_Push_Lib_Db {
 		$charset             = $wpdb->get_charset_collate();
 		$user_table          = self::users_table();
 		$notifications_table = self::notifications_table();
+		$replys_table = self::replys_table();
+		$categories_table = self::categories_table();
+		$categories_users_table = self::categories_users_table();
 		$logs_table          = self::logs_table();
 
 		// We execute the queries per table
@@ -77,6 +93,8 @@ class Perfecty_Push_Lib_Db {
           is_taken tinyint(1) DEFAULT 0 NOT NULL,
           created_at datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
           finished_at datetime NULL,
+		  options TEXT NULL,
+		  wp_perfecty_push_category_id INT NULL,
           PRIMARY KEY  (id)
         ) $charset;";
 		dbDelta( $sql );
@@ -87,6 +105,37 @@ class Perfecty_Push_Lib_Db {
           created_at datetime DEFAULT CURRENT_TIMESTAMP NOT NULL
         ) $charset;";
 		dbDelta( $sql );
+		
+			$sql = "CREATE TABLE $categories_table (
+			  id int(11) NOT NULL AUTO_INCREMENT,
+			  name varchar(255) NOT NULL,
+			  created_at datetime NOT NULL DEFAULT current_timestamp(),
+			  PRIMARY KEY  (id)
+			) $charset;";
+			dbDelta( $sql );
+
+
+			$sql = "CREATE TABLE $categories_users_table (
+			  id int(11) NOT NULL AUTO_INCREMENT,
+			  created_at datetime NOT NULL DEFAULT current_timestamp(),
+			  modified_at timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+			  wp_perfecty_push_category_id int(11) NOT NULL,
+			  wp_perfecty_push_user_id int(11) NOT NULL,
+			  status VARCHAR(3) NULL DEFAULT 'off',
+			  PRIMARY KEY  (id)
+			) $charset;";
+			dbDelta( $sql );
+
+
+			$sql = "CREATE TABLE $replys_table (
+			  id int(11) NOT NULL AUTO_INCREMENT,
+			  wp_perfecty_push_user_id int(11) NOT NULL,
+			  wp_perfecty_push_notification_id int(11) NOT NULL,
+			  created_at datetime NOT NULL DEFAULT current_timestamp(),
+			  val varchar(255) NOT NULL,
+			  PRIMARY KEY  (id)
+			) $charset;";
+			dbDelta( $sql );
 
 		if ( $db_version != PERFECTY_PUSH_DB_VERSION ) {
 			if ( $db_version == 1 ) {
@@ -157,10 +206,14 @@ class Perfecty_Push_Lib_Db {
 	 *
 	 * @return int Total users
 	 */
-	public static function get_total_users() {
+	public static function get_total_users($category='') {
 		global $wpdb;
 
-		$total = $wpdb->get_var( 'SELECT COUNT(*) FROM ' . self::users_table() );
+		if($category!=''){
+			$total = $wpdb->get_var( $wpdb->prepare('SELECT COUNT(*) FROM '.self::categories_users_table().' WHERE wp_perfecty_push_category_id=%d AND status="ON"  AND wp_perfecty_push_user_id in (SELECT id FROM  ' . self::users_table().')',$category ));
+		}else{
+			$total = $wpdb->get_var( 'SELECT COUNT(*) FROM ' . self::users_table() );
+		}
 		return $total != null ? intval( $total ) : 0;
 	}
 
@@ -306,7 +359,7 @@ class Perfecty_Push_Lib_Db {
 	 * @param $size int Limit
 	 * @return array The result with the users
 	 */
-	public static function get_users( $offset, $size, $order_by = 'created_at', $order_asc = 'desc', $mode = OBJECT ) {
+	public static function get_users( $offset, $size, $order_by = 'created_at', $order_asc = 'desc', $mode = OBJECT, $category=null ) {
 		global $wpdb;
 
 		if ( strpos( self::$allowed_users_fields, $order_by ) === false ) {
@@ -314,9 +367,14 @@ class Perfecty_Push_Lib_Db {
 		}
 		$order_asc = $order_asc === 'asc' ? 'asc' : 'desc';
 
+		$whereCategory='';
+		if(($category!=null)&&($category!='')&&($category!='0')){
+			$whereCategory=' WHERE id in (SELECT wp_perfecty_push_user_id FROM '. self::categories_users_table() .' WHERE wp_perfecty_push_category_id="'.$category.'" AND status="ON")';
+		}
 		$sql     = $wpdb->prepare(
 			'SELECT ' . self::$allowed_users_fields .
 			' FROM ' . self::users_table() .
+			$whereCategory .
 			' ORDER BY ' . $order_by . ' ' . $order_asc .
 			' LIMIT %d OFFSET %d',
 			$size,
@@ -355,8 +413,10 @@ class Perfecty_Push_Lib_Db {
 	 *
 	 * @return $inserted_id or false if error
 	 */
-	public static function create_notification( $payload, $status = self::NOTIFICATIONS_STATUS_SCHEDULED, $total = 0, $batch_size = 30 ) {
+	public static function create_notification( $payload, $status = self::NOTIFICATIONS_STATUS_SCHEDULED, $total = 0, $batch_size = 30, $category='' ) {
 		global $wpdb;
+
+
 
 		$result = $wpdb->insert(
 			self::notifications_table(),
@@ -365,6 +425,7 @@ class Perfecty_Push_Lib_Db {
 				'status'     => $status,
 				'total'      => $total,
 				'batch_size' => $batch_size,
+				'wp_perfecty_push_category_id' => $category,
 			)
 		);
 
@@ -372,8 +433,16 @@ class Perfecty_Push_Lib_Db {
 			error_log( 'Could not create the notification: ' . print_r( $payload, true ) );
 			return $result;
 		}
-
 		$inserted_id = $wpdb->insert_id;
+
+		$payload=str_replace('**NOTIFICATIONID**',$inserted_id,$payload);
+
+		$result = $wpdb->update(
+			self::notifications_table(),
+			array('payload'=> $payload),
+			array('id'=>$inserted_id)
+		);
+
 		return $inserted_id;
 	}
 
@@ -383,6 +452,97 @@ class Perfecty_Push_Lib_Db {
 	 * @param $notification_id int Notification id
 	 * @return object|null Notification or null
 	 */
+	 
+	public static function get_subscriptions($user){
+		global $wpdb;
+
+		$sql    = $wpdb->prepare(
+			'SELECT *'.
+			' FROM  '.self::categories_users_table() . ''.
+			' WHERE  '.self::categories_users_table() . '.wp_perfecty_push_user_id=%d',
+			$user->id
+		);
+		$abonnementsResults = $wpdb->get_results( $sql,OBJECT  );
+		$abonnements=[];
+		foreach($abonnementsResults as $abonnement){
+			$abonnements[$abonnement->wp_perfecty_push_category_id]=$abonnement->status;
+		}
+
+		$sql    = $wpdb->prepare(
+			'SELECT id,name,created_at'.
+			' FROM ' . self::categories_table(). ''
+		);
+		$categories = $wpdb->get_results( $sql,OBJECT  );
+
+		$subscriptions=[];
+		foreach($categories as $cat){
+			$subscriptions[]=[
+				'id'=>$cat->id,
+				'title'=>$cat->name,
+				'status'=>((isset($abonnements[$cat->id])&&($abonnements[$cat->id]=="ON"))?"checked":"")
+			];
+		}
+
+		return $subscriptions;
+	}
+
+	public static function update_subscriptions($user, $category_id,$val ){
+		// $response = array(
+			// 'is_active' => $is_active,
+		// );
+		// return (object) $response;
+
+		global $wpdb;
+		$sql    = $wpdb->prepare(
+			'SELECT id,status'.
+			' FROM ' . self::categories_users_table().
+			' WHERE wp_perfecty_push_category_id=%d AND	wp_perfecty_push_user_id=%d',
+			$category_id,
+			$user
+		);
+		// return "ok";
+		$abonnement = $wpdb->get_row( $sql,OBJECT  );
+		// var_dump($user);
+		if(!is_null($abonnement)){
+			if($abonnement->status==$val){
+				//-- Already fine
+				return "already subscripted";
+			}else{
+				//-- Update the row with $val
+				$result = $wpdb->update(
+					self::categories_users_table(),
+					array(
+						'status'      => $val,
+					),
+					array( 'id' => $abonnement->id )
+				);
+
+				return $result;
+			}
+		}else{
+			$result = $wpdb->insert(
+				self::categories_users_table(),
+				array(
+					'wp_perfecty_push_user_id'       => $user,
+					'wp_perfecty_push_category_id'   => $category_id,
+					'status'   => $val,
+				)
+			);
+			// var_dump($result);
+			return $result;
+		}
+
+	}
+	public static function create_subscriptions($user, $category_id ){
+		$result = self::update_subscriptions($user->id, $category_id ,'ON');
+		return true;
+	}
+	public static function delete_subscriptions($user, $category_id ){
+		$result =self::update_subscriptions($user->id, $category_id ,'OFF');		
+		return true;
+	}
+	 
+	 
 	public static function get_notification( $notification_id ) {
 		global $wpdb;
 
@@ -773,4 +933,84 @@ class Perfecty_Push_Lib_Db {
 		$results = $wpdb->get_results( $sql, $mode );
 		return $results;
 	}
+	
+	public static function get_admin_categories( $offset, $size, $order_by = 'created_at', $order_asc = 'desc', $mode = OBJECT ) {
+		global $wpdb;
+
+		if ( strpos( self::$allowed_categories_fields, $order_by ) === false ) {
+			throw new Exception( "The order by [$order_by] field is not alllowed" );
+		}
+		$order_asc = $order_asc === 'asc' ? 'asc' : 'desc';
+
+		$sql     = $wpdb->prepare(
+			'SELECT ' . self::$allowed_categories_fields .
+			' FROM ' . self::categories_table() .
+			' ORDER BY ' . $order_by . ' ' . $order_asc .
+			' LIMIT %d OFFSET %d',
+			$size,
+			$offset
+		);
+		$results = $wpdb->get_results( $sql, $mode );
+		return $results;
+	}
+	
+	public static function get_categories($mode = OBJECT) {
+		global $wpdb;
+
+		$sql = $wpdb->prepare(
+			'SELECT *'.
+			' FROM ' . self::categories_table()
+		);
+		$results = $wpdb->get_results( $sql, $mode );
+		return $results;
+	}
+	
+	public static function delete_categories( $categories_ids ) {
+		global $wpdb;
+
+		if ( ! is_array( $categories_ids ) ) {
+			error_log( 'Wrong parameter, category ids must be an array' );
+			return false;
+		}
+		$ids = implode( ',', $categories_ids );
+
+		// First delete categories_users.
+			$wpdb->query( 'DELETE FROM ' . self::categories_users_table() . " WHERE wp_perfecty_push_category_id IN ($ids)" );
+
+		return $wpdb->query( 'DELETE FROM ' . self::categories_table() . " WHERE id IN ($ids)" );
+	}
+	
+	public static function delete_category( $category_id ) {
+		global $wpdb;
+
+		// First delete categories_users.
+			$wpdb->query( 'DELETE FROM ' . self::categories_users_table() . " WHERE wp_perfecty_push_category_id IN ($category_id)" );
+
+		return $wpdb->query( 'DELETE FROM ' . self::categories_table() . " WHERE id IN ($category_id)" );
+	}
+
+	public static function get_categories_total() {
+		global $wpdb;
+		$total = $wpdb->get_var( 'SELECT COUNT(id) FROM ' . self::categories_table() );
+		return intval( $total );
+	}
+	public static function create_category( $name='' ) {
+		global $wpdb;
+
+		$result = $wpdb->insert(
+			self::categories_table(),
+			array(
+				'name'    => $name,
+			)
+		);
+
+		if ( $result === false ) {
+			error_log( 'Could not create the category: ' . print_r( $name, true ) );
+			return $result;
+		}
+		$inserted_id = $wpdb->insert_id;
+		return $inserted_id;
+	}
+
+	
 }

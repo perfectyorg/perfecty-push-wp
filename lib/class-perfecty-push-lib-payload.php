@@ -14,7 +14,7 @@ class Perfecty_Push_Lib_Payload {
 	 * @param string $url_to_open Url to open
 	 * @return array payload
 	 */
-	public static function build( $body, $title = '', $image = '', $url_to_open = '' ) {
+	public static function build( $body, $title = '', $image = '', $url_to_open = '',$category='', $actions=''  ) {
 		$options = get_option( 'perfecty_push', array() );
 
 		$icon_url = isset( $options['notifications_default_icon'] ) && ! empty( $options['notifications_default_icon'] ) ? wp_get_attachment_url( $options['notifications_default_icon'] ) : '';
@@ -37,7 +37,7 @@ class Perfecty_Push_Lib_Payload {
 			$url_to_open = $url_to_open . $prefix . $utm;
 		}
 
-		return array(
+		$payload=array(
 			'title'               => stripslashes( $title ),
 			'body'                => stripslashes( $body ),
 			'icon'                => $icon_url,
@@ -45,7 +45,15 @@ class Perfecty_Push_Lib_Payload {
 			'require_interaction' => $require_interaction,
 			'extra'               => array(
 				'url_to_open' => $url_to_open,
+				'notification' => '**NOTIFICATIONID**'
 			),
 		);
+		if($category!=''){
+			$payload['extra']['category'] = $category;
+		}
+		if($actions!=''){
+			$payload['extra']['actions'] = $actions;
+		}
+		return $payload;
 	}
 }

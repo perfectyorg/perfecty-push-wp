@@ -178,6 +178,15 @@ class Perfecty_Push_Admin {
 			'perfecty-push-users',
 			array( $this, 'print_users_page' )
 		);
+		
+		add_submenu_page(
+			'perfecty-push',
+			esc_html__( 'Categories', 'perfecty-push-notifications' ),
+			esc_html__( 'Categories', 'perfecty-push-notifications' ),
+			'manage_options',
+			'perfecty-push-categories',
+			array( $this, 'print_categories_page' )
+		);
 
 		add_submenu_page(
 			'perfecty-push',
@@ -645,6 +654,40 @@ class Perfecty_Push_Admin {
 	public function print_options_page() {
 		require_once plugin_dir_path( __FILE__ ) . 'partials/perfecty-push-admin-options.php';
 	}
+	
+	public function print_categories_page() {
+		$page = esc_html( sanitize_key( $_REQUEST['page'] ) );
+		
+		if ( isset( $_GET['action'] ) && $_GET['action'] == 'add' ) {
+			
+			$default = array(
+				'perfecty-push-add-category-name' => '',
+			);
+
+			if ( isset( $_REQUEST['nonce'] ) && wp_verify_nonce( $_REQUEST['nonce'], 'perfecty_push_categories_add' ) ) {
+				$item = shortcode_atts( $default, $_REQUEST );
+
+				if ( $item['perfecty-push-add-category-name']!='' ) {
+					// filter
+					$item['perfecty-push-add-category-name']       = sanitize_text_field( $item['perfecty-push-add-category-name'] );
+					$categorieCreated=Perfecty_Push_Lib_Db::create_category($item['perfecty-push-add-category-name'] );					
+					$notice = esc_html__( 'Category saved', 'perfecty-push-notifications' );;
+					$item = $default;
+				} else {
+					$notice = esc_html__( 'The name is required', 'perfecty-push-notifications' );;
+				}
+			} else {
+				$item = $default;
+			}
+			require_once plugin_dir_path( __FILE__ ) . 'partials/perfecty-push-admin-categories-add.php';
+			return;
+		
+		}
+
+		$table    = new Perfecty_Push_Admin_Categories_Table();
+		$affected = $table->prepare_items();						  
+		require_once plugin_dir_path( __FILE__ ) . 'partials/perfecty-push-admin-categories.php';
+	}
 
 	/**
 	 * Renders the notifications page
@@ -709,11 +752,13 @@ class Perfecty_Push_Admin {
 			'perfecty-push-send-notification-url-to-open' => '',
 			'perfecty-push-send-notification-image'       => '',
 			'perfecty-push-send-notification-timeoffset'  => '',
+			'perfecty-push-send-notification-action1'  => '',
+			'perfecty-push-send-notification-action2'  => '',
+			'perfecty-push-send-notification-category'  => '',
 		);
 
 		if ( isset( $_REQUEST['nonce'] ) && wp_verify_nonce( $_REQUEST['nonce'], 'perfecty_push_send_notification' ) ) {
 			$item = shortcode_atts( $default, $_REQUEST );
-
 			$validation_result = $this->validate_notification_message( $item );
 			if ( $validation_result === true ) {
 				// filter
@@ -722,13 +767,31 @@ class Perfecty_Push_Admin {
 				$item['perfecty-push-send-notification-url-to-open'] = sanitize_text_field( $item['perfecty-push-send-notification-url-to-open'] );
 				$item['perfecty-push-send-notification-image']       = sanitize_text_field( $item['perfecty-push-send-notification-image'] );
 				$item['perfecty-push-send-notification-timeoffset']  = sanitize_text_field( $item['perfecty-push-send-notification-timeoffset'] );
+				
+				$item['perfecty-push-send-notification-category']  = sanitize_text_field( $item['perfecty-push-send-notification-category'] );
 
-				$payload        = Perfecty_Push_Lib_Payload::build( $item['perfecty-push-send-notification-message'], $item['perfecty-push-send-notification-title'], $item['perfecty-push-send-notification-image'], $item['perfecty-push-send-notification-url-to-open'] );
+				$item['perfecty-push-send-notification-actions']=[];
+				if($item['perfecty-push-send-notification-action1']!=''){
+					$item['perfecty-push-send-notification-actions'][]=["action"=>sanitize_title($item['perfecty-push-send-notification-action1']),"title"=>sanitize_text_field( $item['perfecty-push-send-notification-action1'] )];
+				}
+				if($item['perfecty-push-send-notification-action2']!=''){
+					$item['perfecty-push-send-notification-actions'][]=["action"=>sanitize_title($item['perfecty-push-send-notification-action2']),"title"=>sanitize_text_field( $item['perfecty-push-send-notification-action2'] )];
+					// $item['perfecty-push-send-notification-actions'][sanitize_title($item['perfecty-push-send-notification-action2'])]=sanitize_text_field( $item['perfecty-push-send-notification-action2'] );
+				}
+				// var_dump(count($item['perfecty-push-send-notification-actions']));
+				if(count($item['perfecty-push-send-notification-actions'])<1){
+					$item['perfecty-push-send-notification-actions']='';
+				}
+				
+				// var_dump($item['perfecty-push-send-notification-actions']);
+
+
+				$payload        = Perfecty_Push_Lib_Payload::build( $item['perfecty-push-send-notification-message'], $item['perfecty-push-send-notification-title'], $item['perfecty-push-send-notification-image'], $item['perfecty-push-send-notification-url-to-open'],$item['perfecty-push-send-notification-category'],$item['perfecty-push-send-notification-actions'] );
 				$timeoffset     = intval( $item['perfecty-push-send-notification-timeoffset'] );
 				$scheduled_time = self::calculate_scheduled_time_from_offset( $timeoffset );
 
 				// send notification
-				$result = Perfecty_Push_Lib_Push_Server::schedule_broadcast_async( $payload, $scheduled_time );
+				$result = Perfecty_Push_Lib_Push_Server::schedule_broadcast_async( $payload, $scheduled_time ,$item['perfecty-push-send-notification-category'] );
 
 				if ( $result === false ) {
 					  $notice = esc_html__( 'Could not schedule the notification, check the logs', 'perfecty-push-notifications' );
