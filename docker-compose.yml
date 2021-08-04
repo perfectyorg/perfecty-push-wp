@@ -36,4 +36,3 @@ services:
 
 networks:
   perfecty-net:
-    name: perfecty-net

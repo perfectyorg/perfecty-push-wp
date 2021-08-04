@@ -51,7 +51,7 @@
 				<div>
 				<?php
 				if ( $item->status == Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_SCHEDULED ) {
-					$timestamp = Perfecty_Push_Lib_Db::get_notification_scheduled_time( $item->id );
+					$timestamp = Perfecty_Push_Lib_Push_Server::get_notification_scheduled_time( $item->id );
 					echo esc_html( $item->status ) . ' ' . esc_html__( 'at', 'perfecty-push-notifications' ) . ' ' . get_date_from_gmt( date( 'Y-m-d H:i:s', $timestamp ), 'Y-m-d H:i:s' );
 				} else {
 					echo esc_html( $item->status );

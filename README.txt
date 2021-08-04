@@ -3,7 +3,7 @@ Contributors: rwngallego, mociofiletto
 Donate link: https://github.com/perfectyorg
 Tags: Push Notifications, Web Push Notifications, Notifications, User engagement
 Requires at least: 5.0
-Tested up to: 5.7
+Tested up to: 5.8
 Stable tag: 1.3.2
 Requires PHP: 7.2
 License: GPLv2 or later
@@ -97,6 +97,8 @@ You can create an issue in our Github repo:
 
 = 1.3.3 =
 * Send logs to error_log() by default when logging is not even enabled. Fixes [#85](https://github.com/perfectyorg/perfecty-push-wp/issues/85)
+* Tested up to WordPress 5.8
+* Unleashing mechanism for stalled notification jobs. Fixes [#86](https://github.com/perfectyorg/perfecty-push-wp/issues/86)
 
 = 1.3.2 =
 * Add the plugin links shown in the WordPress Plugin installer

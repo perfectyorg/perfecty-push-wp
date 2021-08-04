@@ -421,11 +421,11 @@ class PushServerTest extends WP_UnitTestCase {
 		// there should not be any execution afterwards
 		$next_after_execution = wp_next_scheduled( 'perfecty_push_broadcast_notification_event', array( $notification_id ) );
 
-		// should have been marked as failed
+		// the notification status should be the same (scheduled)
 		$notification = Perfecty_Push_Lib_Db::get_notification( $notification_id );
 
 		$this->assertSame( false, $res );
-		$this->assertSame( 'failed', $notification->status );
+		$this->assertSame( 'scheduled', $notification->status );
 		$this->assertFalse( $next_after_execution );
 	}
 }
