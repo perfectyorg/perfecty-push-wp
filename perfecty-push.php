@@ -39,7 +39,7 @@ define( 'PERFECTY_PUSH_VERSION', '1.3.2' );
 /**
  * DB Version of the plugin
  */
-define( 'PERFECTY_PUSH_DB_VERSION', 4 );
+define( 'PERFECTY_PUSH_DB_VERSION', 5 );
 
 /**
  * The basename of the plugin
