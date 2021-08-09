@@ -14,8 +14,6 @@ use Minishlink\WebPush\WebPush;
 class LoggerTest extends WP_UnitTestCase
 {
 
-    private $mocked_vapid_callback = "md5";
-
     public function setUp()
     {
         parent::setUp();
@@ -33,6 +31,8 @@ class LoggerTest extends WP_UnitTestCase
      */
     public function test_logger_enabled()
     {
+    	$writter = new Perfecty_Push_Lib_Log_Db();
+    	Perfecty_Push_Lib_Log::init($writter, Perfecty_Push_Lib_Log::DEBUG);
         Perfecty_Push_Lib_Log::enable();
         Perfecty_Push_Lib_Log::debug("debug message");
         Perfecty_Push_Lib_Log::info("info message");
@@ -77,7 +77,6 @@ class LoggerTest extends WP_UnitTestCase
         Perfecty_Push_Lib_Log::error("error message");
         $logs = Perfecty_Push_Lib_Db::get_logs(0, 10);
 
-        var_dump($logs);
         $this->assertSame(0, count($logs));
     }
 }

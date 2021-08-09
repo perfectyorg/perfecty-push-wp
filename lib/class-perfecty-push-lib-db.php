@@ -8,7 +8,7 @@ use Ramsey\Uuid\Uuid;
 class Perfecty_Push_Lib_Db {
 
 	private static $allowed_users_fields         = 'id,uuid,wp_user_id,endpoint,key_auth,key_p256dh,remote_ip,created_at';
-	private static $allowed_notifications_fields = 'id,payload,total,succeeded,last_cursor,batch_size,status,is_taken,created_at,finished_at';
+	private static $allowed_notifications_fields = 'id,payload,total,succeeded,last_cursor,batch_size,status,is_taken,created_at,finished_at,last_execution_at';
 	private static $allowed_logs_fields          = 'level,message,created_at';
 
 	public const NOTIFICATIONS_STATUS_SCHEDULED = 'scheduled';
@@ -76,6 +76,7 @@ class Perfecty_Push_Lib_Db {
           status varchar(15) DEFAULT 'scheduled' NOT NULL,
           is_taken tinyint(1) DEFAULT 0 NOT NULL,
           created_at datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
+          last_execution_at datetime NULL,
           finished_at datetime NULL,
           PRIMARY KEY  (id)
         ) $charset;";
@@ -396,6 +397,27 @@ class Perfecty_Push_Lib_Db {
 	}
 
 	/**
+	 * Get notifications that are stalled:
+	 * - Status = "Running"
+	 * - Not taken
+	 * - Last execution > 30 seconds
+	 *
+	 * @return array The result
+	 */
+	public static function get_notifications_stalled() {
+		global $wpdb;
+
+		$sql = $wpdb->prepare(
+			'SELECT ' . self::$allowed_notifications_fields .
+			' FROM ' . self::notifications_table() .
+			' WHERE status = %s AND is_taken = %d AND last_execution_at <= NOW() - INTERVAL 30 SECOND',
+			self::NOTIFICATIONS_STATUS_RUNNING,
+			0
+		);
+		return $wpdb->get_results( $sql );
+	}
+
+	/**
 	 * Get notifications
 	 *
 	 * @param $offset int Offset
@@ -556,13 +578,14 @@ class Perfecty_Push_Lib_Db {
 		$result = $wpdb->update(
 			self::notifications_table(),
 			array(
-				'payload'     => $notification->payload,
-				'total'       => $notification->total,
-				'succeeded'   => $notification->succeeded,
-				'last_cursor' => $notification->last_cursor,
-				'batch_size'  => $notification->batch_size,
-				'status'      => $notification->status,
-				'is_taken'    => $notification->is_taken,
+				'payload'           => $notification->payload,
+				'total'             => $notification->total,
+				'succeeded'         => $notification->succeeded,
+				'last_cursor'       => $notification->last_cursor,
+				'batch_size'        => $notification->batch_size,
+				'status'            => $notification->status,
+				'is_taken'          => $notification->is_taken,
+				'last_execution_at' => $notification->last_execution_at,
 			),
 			array( 'id' => $notification->id )
 		);
@@ -672,7 +695,7 @@ class Perfecty_Push_Lib_Db {
 		// First delete scheduled events.
 		foreach ( $notification_ids as $nid ) {
 			$args = array( intval( $nid ) );
-			wp_clear_scheduled_hook( 'perfecty_push_broadcast_notification_event', $args );
+			wp_clear_scheduled_hook( Perfecty_Push_Lib_Push_Server::BROADCAST_HOOK, $args );
 		}
 		return $wpdb->query( 'DELETE FROM ' . self::notifications_table() . " WHERE id IN ($ids)" );
 	}
@@ -693,18 +716,6 @@ class Perfecty_Push_Lib_Db {
 			array( 'id' => $notification_id )
 		);
 
-		return $result;
-	}
-
-	/**
-	 * Get scheduled time
-	 *
-	 * @param $notification_id int Notification id
-	 * @return int|bool Scheduled Unix timestamp for the notification or false
-	 */
-	public static function get_notification_scheduled_time( $notification_id ) {
-		$args   = array( intval( $notification_id ) );
-		$result = wp_next_scheduled( 'perfecty_push_broadcast_notification_event', $args );
 		return $result;
 	}
 
