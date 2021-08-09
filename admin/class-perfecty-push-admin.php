@@ -306,6 +306,22 @@ class Perfecty_Push_Admin {
 			'perfecty_push_widget_settings'
 		);
 
+		add_settings_field(
+			'settings_send_welcome_message',
+			esc_html__( 'Send a confirmation notification after subsribe', 'perfecty-push-notifications' ),
+			array( $this, 'print_settings_send_welcome_message' ),
+			'perfecty-push-options',
+			'perfecty_push_widget_settings'
+		);
+
+		add_settings_field(
+			'settings_welcome_message',
+			esc_html__( 'Confirmation notification text', 'perfecty-push-notifications' ),
+			array( $this, 'print_settings_welcome_message' ),
+			'perfecty-push-options',
+			'perfecty_push_widget_settings'
+		);
+
 		add_settings_section(
 			'perfecty_push_javascript_sdk_settings',
 			esc_html__( 'Javascript SDK', 'perfecty-push-notifications' ),
@@ -890,6 +906,11 @@ class Perfecty_Push_Admin {
 		} else {
 			$new_input['check_send_on_publish'] = 0;
 		}
+		if ( isset( $input['settings_send_welcome_message'] ) ) {
+			$new_input['settings_send_welcome_message'] = 1;
+		} else {
+			$new_input['settings_send_welcome_message'] = 0;
+		}
 
 		// text
 		if ( isset( $input['service_worker_scope'] ) ) {
@@ -912,6 +933,9 @@ class Perfecty_Push_Admin {
 		}
 		if ( isset( $input['settings_update_error'] ) ) {
 			$new_input['settings_update_error'] = sanitize_text_field( $input['settings_update_error'] );
+		}
+		if ( isset( $input['settings_welcome_message'] ) ) {
+			$new_input['settings_welcome_message'] = sanitize_text_field( $input['settings_welcome_message'] );
 		}
 		if ( isset( $input['vapid_public_key'] ) ) {
 			$new_input['vapid_public_key'] = sanitize_text_field( $input['vapid_public_key'] );
@@ -1483,6 +1507,40 @@ class Perfecty_Push_Admin {
 		printf(
 			'<input type="text" id="perfecty_push[settings_update_error]"' .
 			'name="perfecty_push[settings_update_error]" value="%s" class="perfecty-push-options-dialog-group"/>',
+			esc_html( $value )
+		);
+	}
+
+	/**
+	 * Print the settings_send_welcome_message option
+	 *
+	 * @since 1.3.4
+	 */
+	public function print_settings_send_welcome_message() {
+		$options = get_option( 'perfecty_push' );
+		$value   = isset( $options['settings_send_welcome_message'] ) ? esc_attr( $options['settings_send_welcome_message'] ) : 0;
+
+		$enabled = $value ? 'checked="checked"' : '';
+
+		printf(
+			'<input type="checkbox" id="perfecty_push[settings_send_welcome_message]"' .
+			'name="perfecty_push[settings_send_welcome_message]" %s />',
+			esc_html( $enabled )
+		);
+	}
+
+	/**
+	 * Print the settings_welcome_message option
+	 *
+	 * @since 1.3.4
+	 */
+	public function print_settings_welcome_message() {
+		$options = get_option( 'perfecty_push' );
+		$value   = isset( $options['settings_welcome_message'] ) && ! empty( $options['settings_welcome_message'] ) ? esc_attr( $options['settings_welcome_message'] ) : PERFECTY_PUSH_OPTIONS_SETTINGS_WELCOME_MESSAGE;
+
+		printf(
+			'<input type="text" id="perfecty_push[settings_welcome_message]"' .
+			'name="perfecty_push[settings_welcome_message]" value="%s" class="perfecty-push-options-dialog-group"/>',
 			esc_html( $value )
 		);
 	}
