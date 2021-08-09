@@ -12,6 +12,7 @@ use Perfecty_Push_Lib_Log as Log;
 class Perfecty_Push_Lib_Push_Server {
 
 	public const DEFAULT_BATCH_SIZE = 30;
+	public const BROADCAST_HOOK     = 'perfecty_push_broadcast_notification_event';
 
 	private static $auth;
 	private static $webpush;
@@ -135,7 +136,7 @@ class Perfecty_Push_Lib_Push_Server {
 				$date           = new DateTime( $scheduled_time );
 				$scheduled_time = $date->getTimestamp();
 			}
-			$result = wp_schedule_single_event( $scheduled_time, 'perfecty_push_broadcast_notification_event', array( $notification_id ) );
+			$result = wp_schedule_single_event( $scheduled_time, self::BROADCAST_HOOK, array( $notification_id ) );
 			Log::info( 'Scheduling job id=' . $notification_id . ', result: ' . $result );
 
 			do_action( 'perfecty_push_broadcast_scheduled', $payload );
@@ -182,6 +183,32 @@ class Perfecty_Push_Lib_Push_Server {
 	}
 
 	/**
+	 * Get scheduled time
+	 *
+	 * @param $notification_id int Notification id
+	 * @return int|bool Scheduled Unix timestamp for the notification or false
+	 */
+	public static function get_notification_scheduled_time( $notification_id ) {
+		$args   = array( intval( $notification_id ) );
+		$result = wp_next_scheduled( self::BROADCAST_HOOK, $args );
+		return $result;
+	}
+
+	/**
+	 * Get the job notifications that are stalled and
+	 * schedule the execution automatically
+	 */
+	public static function unleash_stalled() {
+		$running = Perfecty_Push_Lib_Db::get_notifications_stalled();
+		foreach ( $running as $item ) {
+			if ( ! wp_next_scheduled( self::BROADCAST_HOOK, array( $item->id ) ) ) {
+				wp_schedule_single_event( time(), self::BROADCAST_HOOK, array( $item->id ) );
+				Log::info( 'An stalled notification job was unleashed, id = ' . $item->id );
+			}
+		}
+	}
+
+	/**
 	 * Execute one broadcast batch
 	 *
 	 * @param int $notification_id Notification id
@@ -199,9 +226,7 @@ class Perfecty_Push_Lib_Push_Server {
 
 		// if it has been taken but not released, that means a wrong state
 		if ( $notification->is_taken ) {
-			Log::error( 'Halted, notification taken but not released, notification_id: ' . $notification_id );
-			Perfecty_Push_Lib_Db::mark_notification_failed( $notification_id );
-			Perfecty_Push_Lib_Db::untake_notification( $notification_id );
+			Log::error( 'Halted, notification job already taken, notification_id: ' . $notification_id );
 			return false;
 		}
 
@@ -238,13 +263,14 @@ class Perfecty_Push_Lib_Push_Server {
 		// we send one batch
 		$result = self::send_notification( $notification->payload, $users );
 		if ( is_array( $result ) ) {
-			$notification               = Perfecty_Push_Lib_Db::get_notification( $notification_id );
-			$total_batch                = $result[0];
-			$succeeded                  = $result[1];
-			$notification->last_cursor += $total_batch;
-			$notification->succeeded   += $succeeded;
-			$notification->is_taken     = 0;
-			$result                     = Perfecty_Push_Lib_Db::update_notification( $notification );
+			$notification                    = Perfecty_Push_Lib_Db::get_notification( $notification_id );
+			$total_batch                     = $result[0];
+			$succeeded                       = $result[1];
+			$notification->last_cursor      += $total_batch;
+			$notification->succeeded        += $succeeded;
+			$notification->is_taken          = 0;
+			$notification->last_execution_at = current_time( 'mysql', 1 );
+			$result                          = Perfecty_Push_Lib_Db::update_notification( $notification );
 
 			Log::info( 'Notification batch for id=' . $notification_id . ' sent. Cursor: ' . $notification->last_cursor . ', Total: ' . $total_batch . ', Succeeded: ' . $succeeded );
 			if ( ! $result ) {
@@ -259,9 +285,12 @@ class Perfecty_Push_Lib_Push_Server {
 		}
 
 		// execute the next batch
-		$result = wp_schedule_single_event( time(), 'perfecty_push_broadcast_notification_event', array( $notification_id ) );
-		Log::info( 'Scheduling next batch for id=' . $notification_id . ' . Result: ' . $result );
-
+		if ( ! wp_next_scheduled( self::BROADCAST_HOOK, array( $notification_id ) ) ) {
+			$result = wp_schedule_single_event( time(), self::BROADCAST_HOOK, array( $notification_id ) );
+			Log::info( 'Scheduling next batch for id=' . $notification_id . ' . Result: ' . $result );
+		} else {
+			Log::warning( "Don't schedule next batch, it's already scheduled, id=" . $notification_id );
+		}
 		return true;
 	}
 
