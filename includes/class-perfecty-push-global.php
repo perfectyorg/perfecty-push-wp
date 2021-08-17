@@ -68,6 +68,12 @@ class Perfecty_Push_Global {
 					$options['notifications_default_icon'] = get_option( 'site_icon' );
 					update_option( 'perfecty_push', $options );
 				}
+				if ( version_compare( get_option( 'perfecty_push_version' ), '1.3.4', '<' ) ) {
+					// this is before 1.3.4
+					// we set it as true by default
+					$options['settings_send_welcome_message'] = 1;
+					update_option( 'perfecty_push', $options );
+				}
 			}
 			update_option( 'perfecty_push_version', PERFECTY_PUSH_VERSION );
 		}

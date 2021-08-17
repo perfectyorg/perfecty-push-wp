@@ -52,6 +52,9 @@ class Perfecty_Push_Activator {
 		if ( ! isset( $options['widget_enabled'] ) ) {
 			$options['widget_enabled'] = 1;
 		}
+		if ( ! isset( $options['settings_send_welcome_message'] ) ) {
+			$options['settings_send_welcome_message'] = 1;
+		}
 		if ( empty( $options['notifications_default_icon'] ) && get_option( 'site_icon' ) ) {
 			// if the default icon is not set, we fallback to the site_icon.
 			$options['notifications_default_icon'] = get_option( 'site_icon' );

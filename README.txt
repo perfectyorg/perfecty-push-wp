@@ -95,6 +95,9 @@ You can create an issue in our Github repo:
 
 == Changelog ==
 
+= 1.3.4 =
+* Custom welcome message that can be enabled/disabled. Thanks to [@mociofiletto](https://profiles.wordpress.org/mociofiletto/). Fixes [#91](https://github.com/perfectyorg/perfecty-push-wp/issues/91)
+
 = 1.3.3 =
 * Unleashing mechanism for stalled notification jobs. Fixes [#86](https://github.com/perfectyorg/perfecty-push-wp/issues/86)
 * Send logs to error_log() by default when logging is not even enabled. Fixes [#85](https://github.com/perfectyorg/perfecty-push-wp/issues/85)

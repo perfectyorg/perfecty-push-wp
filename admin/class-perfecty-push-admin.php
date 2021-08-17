@@ -308,7 +308,7 @@ class Perfecty_Push_Admin {
 
 		add_settings_field(
 			'settings_send_welcome_message',
-			esc_html__( 'Send a confirmation notification after subsribe', 'perfecty-push-notifications' ),
+			esc_html__( 'Send a confirmation notification after subscribe', 'perfecty-push-notifications' ),
 			array( $this, 'print_settings_send_welcome_message' ),
 			'perfecty-push-options',
 			'perfecty_push_widget_settings'

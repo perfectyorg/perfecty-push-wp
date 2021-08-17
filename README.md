@@ -72,7 +72,7 @@ To see it in action in your local development environment, you need a set of
 services which Wordpress relies on. You start off by creating the docker image:
 
 ```
-docker build -t custom-wordpress:5.7-php7.3-apache .
+docker build -t custom-wordpress:5.8-php7.3-apache .
 ```
 
 Then start all the services and run the setup:
