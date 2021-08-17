@@ -77,8 +77,9 @@ class Perfecty_Push_Users {
 				$user = Perfecty_Push_Lib_Db::get_user( $result );
 
 				// Send a confirmation notification.
-				if ( $first_time ) {
-					$payload = Perfecty_Push_Lib_Payload::build( "Congratulations, you're now subscribed!" );
+				$options = get_option( 'perfecty_push' );
+				if ( $first_time && ( 1 === $options['settings_send_welcome_message'] ) ) {
+					$payload = isset( $options['settings_welcome_message'] ) && ! empty( $options['settings_welcome_message'] ) ? esc_attr( $options['settings_welcome_message'] ) : PERFECTY_PUSH_OPTIONS_SETTINGS_WELCOME_MESSAGE;
 					Perfecty_Push_Lib_Push_Server::send_notification( json_encode( $payload ), array( $user ) );
 				}
 			}

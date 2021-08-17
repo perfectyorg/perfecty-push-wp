@@ -146,6 +146,12 @@ class Perfecty_Push {
 				esc_html__( 'Could not change the preference, try again', 'perfecty-push-notifications' )
 			);
 		}
+		if ( ! defined( 'PERFECTY_PUSH_OPTIONS_SETTINGS_WELCOME_MESSAGE' ) ) {
+			define(
+				'PERFECTY_PUSH_OPTIONS_SETTINGS_WELCOME_MESSAGE',
+				esc_html__( 'Congratulations, you\'re now subscribed!', 'perfecty-push-notifications' )
+			);
+		}
 		if ( ! defined( 'PERFECTY_PUSH_UNREGISTER_CONFLICTS_EXPRESSION' ) ) {
 			define(
 				'PERFECTY_PUSH_UNREGISTER_CONFLICTS_EXPRESSION',
