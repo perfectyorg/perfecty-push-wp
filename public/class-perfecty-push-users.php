@@ -154,10 +154,7 @@ class Perfecty_Push_Users {
 		if ( $result === false ) {
 			return new WP_Error( 'failed_delete', __( 'Could not delete the user', 'perfecty-push-notifications' ), array( 'status' => 500 ) );
 		} else {
-			$response = array(
-				'result' => true,
-			);
-			return (object) $response;
+			return new WP_REST_Response( null, 200 );
 		}
 	}
 

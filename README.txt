@@ -95,8 +95,11 @@ You can create an issue in our Github repo:
 
 == Changelog ==
 
-= 1.3.4 =
-* Custom welcome message that can be enabled/disabled. Thanks to [@mociofiletto](https://profiles.wordpress.org/mociofiletto/). Fixes [#91](https://github.com/perfectyorg/perfecty-push-wp/issues/91)
+= 1.4.0 =
+* Performance improvement, send ~10.000 notifications/minute in a 2 GB RAM/1vCPU server. Related: [#81](https://github.com/perfectyorg/perfecty-push-wp/issues/81) and [#86](https://github.com/perfectyorg/perfecty-push-wp/issues/86)
+* Parallel flushing size parameter was added with a default value of 100 notifications.
+* Custom welcome message that can be enabled/disabled. Thanks to [@mociofiletto](https://profiles.wordpress.org/mociofiletto/). Related [#91](https://github.com/perfectyorg/perfecty-push-wp/issues/91)
+* Added the 'perfecty-push' suffix to the `server_url` option.
 
 = 1.3.3 =
 * Unleashing mechanism for stalled notification jobs. Fixes [#86](https://github.com/perfectyorg/perfecty-push-wp/issues/86)

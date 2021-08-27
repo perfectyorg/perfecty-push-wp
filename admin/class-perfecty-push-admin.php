@@ -461,6 +461,14 @@ class Perfecty_Push_Admin {
 		);
 
 		add_settings_field(
+			'parallel_flushing_size',
+			esc_html__( 'Parallel flushing size', 'perfecty-push-notifications' ),
+			array( $this, 'print_parallel_flushing_size' ),
+			'perfecty-push-options',
+			'perfecty_push_self_hosted_settings'
+		);
+
+		add_settings_field(
 			'logs_enabled',
 			esc_html__( 'Enable Server Logs', 'perfecty-push-notifications' ),
 			array( $this, 'print_logs_enabled' ),
@@ -949,6 +957,9 @@ class Perfecty_Push_Admin {
 		if ( isset( $input['batch_size'] ) ) {
 			$new_input['batch_size'] = intval( sanitize_text_field( $input['batch_size'] ) );
 		}
+		if ( isset( $input['parallel_flushing_size'] ) ) {
+			$new_input['parallel_flushing_size'] = intval( sanitize_text_field( $input['parallel_flushing_size'] ) );
+		}
 		if ( isset( $input['notifications_default_icon'] ) ) {
 			$new_input['notifications_default_icon'] = intval( sanitize_text_field( $input['notifications_default_icon'] ) );
 		}
@@ -1024,7 +1035,8 @@ class Perfecty_Push_Admin {
 		$value   = isset( $options['segmentation_tracking_utm'] ) ? esc_attr( $options['segmentation_tracking_utm'] ) : '';
 
 		printf(
-			'Example: <div class="perfecty-push-options-unregister-conflicts-regex">%s</div><input type="text" id="perfecty_push[segmentation_tracking_utm]"' .
+			'Example: <div class="perfecty-push-options-unregister-conflicts-regex">%s</div>' .
+			'<input type="text" id="perfecty_push[segmentation_tracking_utm]"' .
 			'name="perfecty_push[segmentation_tracking_utm]" value="%s"/>',
 			esc_html( 'utm_source=perfecty-push&utm_medium=web-push&utm_campaign=my-campaign-name' ),
 			esc_html( $value )
@@ -1077,7 +1089,7 @@ class Perfecty_Push_Admin {
 			'<input type="text" id="perfecty_push[server_url]"' .
 			'name="perfecty_push[server_url]" value="%s" placeholder="%s"/>',
 			esc_html( $value ),
-			get_rest_url()
+			get_rest_url( null, 'perfecty-push' )
 		);
 	}
 
@@ -1092,8 +1104,32 @@ class Perfecty_Push_Admin {
 
 		printf(
 			'<input type="text" id="perfecty_push[batch_size]"' .
-			'name="perfecty_push[batch_size]" value="%s"/>',
-			esc_html( $value )
+			'name="perfecty_push[batch_size]" value="%s"/>' .
+			'<div>%s <a href="%s" target="_blank">%s</div>',
+			esc_html( $value ),
+			esc_html( 'High values require a longer script execution time. See: ' ),
+			'https://docs.perfecty.org/wp/performance-improvements/#adjusting-the-batch_size-parameter',
+			'Batch size'
+		);
+	}
+
+	/**
+	 * Print the parallel_flushing_size option
+	 *
+	 * @since 1.4.0
+	 */
+	public function print_parallel_flushing_size() {
+		$options = get_option( 'perfecty_push' );
+		$value   = isset( $options['parallel_flushing_size'] ) ? esc_attr( $options['parallel_flushing_size'] ) : '';
+
+		printf(
+			'<input type="text" id="perfecty_push[parallel_flushing_size]"' .
+			'name="perfecty_push[parallel_flushing_size]" value="%s"/>' .
+			'<div>%s <a href="%s" target="_blank">%s</div>',
+			esc_html( $value ),
+			esc_html( 'Notifications to send in parallel. Please read: ' ),
+			'https://docs.perfecty.org/wp/performance-improvements/#adjusting-the-parallel_flushing_size-parameter',
+			'Parallel flushing'
 		);
 	}
 
@@ -1514,7 +1550,7 @@ class Perfecty_Push_Admin {
 	/**
 	 * Print the settings_send_welcome_message option
 	 *
-	 * @since 1.3.4
+	 * @since 1.4.0
 	 */
 	public function print_settings_send_welcome_message() {
 		$options = get_option( 'perfecty_push' );
@@ -1532,7 +1568,7 @@ class Perfecty_Push_Admin {
 	/**
 	 * Print the settings_welcome_message option
 	 *
-	 * @since 1.3.4
+	 * @since 1.4.0
 	 */
 	public function print_settings_welcome_message() {
 		$options = get_option( 'perfecty_push' );

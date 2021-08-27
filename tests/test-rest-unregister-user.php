@@ -37,12 +37,8 @@ class RestUnregisterUserTest extends WP_UnitTestCase {
 		$res         = $users->unregister( $data );
         $deleted_user = Perfecty_Push_Lib_Db::get_user( $id );
 
-		$this->assertSame(
-            (array) $res,
-            array(
-			    'result' => true
-			)
-		);
+		$this->assertSame($res->data, null);
+		$this->assertSame(200, $res->get_status());
 		$this->assertSame(null, $deleted_user);
 	}
 

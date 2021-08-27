@@ -22,6 +22,7 @@ No hidden fees, no third-party dependencies and you own your data. 👏
 ## Features ✨
 
 - **Open Source**, send Push Notifications **from your server for free!**
+- 10.000 notifications/minute in a 2 GB, 1vCPU host. Can achieve better performance with better specs.
 - PWA compatible / AMP (Transitional)
 - Can be called by other plugins using the `Perfecty_Push_Integration` class
 - No third-party dependencies
