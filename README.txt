@@ -4,7 +4,7 @@ Donate link: https://github.com/perfectyorg
 Tags: Push Notifications, Web Push Notifications, Notifications, User engagement
 Requires at least: 5.0
 Tested up to: 5.8
-Stable tag: 1.3.3
+Stable tag: 1.4.0
 Requires PHP: 7.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -97,7 +97,7 @@ You can create an issue in our Github repo:
 
 = 1.4.0 =
 * Performance improvement, send ~10.000 notifications/minute in a 2 GB RAM/1vCPU server. Related: [#81](https://github.com/perfectyorg/perfecty-push-wp/issues/81) and [#86](https://github.com/perfectyorg/perfecty-push-wp/issues/86)
-* Parallel flushing size parameter was added with a default value of 100 notifications.
+* Parallel flushing size parameter was added with a default value of 50 notifications.
 * Custom welcome message that can be enabled/disabled. Thanks to [@mociofiletto](https://profiles.wordpress.org/mociofiletto/). Related [#91](https://github.com/perfectyorg/perfecty-push-wp/issues/91)
 * Added the 'perfecty-push' suffix to the `server_url` option.
 

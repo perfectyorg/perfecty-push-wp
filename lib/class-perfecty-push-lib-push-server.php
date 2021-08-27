@@ -52,7 +52,7 @@ class Perfecty_Push_Lib_Push_Server {
 		}
 
 		$options                = get_option( 'perfecty_push' );
-		$parallel_flushing_size = isset( $options['parallel_flushing_size'] ) ? esc_attr( $options['parallel_flushing_size'] ) : self::DEFAULT_PARALLEL_FLUSHING_SIZE;
+		$parallel_flushing_size = isset( $options['parallel_flushing_size'] ) ? (int) esc_attr( $options['parallel_flushing_size'] ) : self::DEFAULT_PARALLEL_FLUSHING_SIZE;
 
 		set_error_handler(
 			function ( $errno, $errstr, $errfile, $errline ) {
@@ -123,7 +123,7 @@ class Perfecty_Push_Lib_Push_Server {
 
 		$options              = get_option( 'perfecty_push' );
 		$use_action_scheduler = isset( $options['use_action_scheduler'] ) ? esc_attr( $options['use_action_scheduler'] ) : false;
-		$batch_size           = isset( $options['batch_size'] ) ? esc_attr( $options['batch_size'] ) : self::DEFAULT_BATCH_SIZE;
+		$batch_size           = isset( $options['batch_size'] ) ? (int) esc_attr( $options['batch_size'] ) : self::DEFAULT_BATCH_SIZE;
 
 		if ( is_plugin_active( 'action-scheduler' ) || $use_action_scheduler ) {
 			// Execute using action scheduler: https://actionscheduler.org/usage/
@@ -226,7 +226,7 @@ class Perfecty_Push_Lib_Push_Server {
 	 */
 	public static function time_limit_exceeded( $start_time ) {
 		$elapsed_time = microtime( true ) - $start_time;
-		if ( self::$max_time !== 0 && ( $elapsed_time * 100 / self::$max_time ) > 80 ) {
+		if ( self::$max_time != 0 && ( $elapsed_time * 100 / self::$max_time ) > 80 ) {
 			return true;
 		} else {
 			return false;

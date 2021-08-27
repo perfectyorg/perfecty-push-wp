@@ -80,8 +80,8 @@ class Perfecty_Push_Users {
 				$options              = get_option( 'perfecty_push' );
 				$send_welcome_message = isset( $options['settings_send_welcome_message'] ) && $options['settings_send_welcome_message'] == 1;
 				if ( $first_time && $send_welcome_message ) {
-					$message = isset( $options['settings_welcome_message'] ) && ! empty( $options['settings_welcome_message'] ) ? $options['settings_welcome_message'] : PERFECTY_PUSH_OPTIONS_SETTINGS_WELCOME_MESSAGE;
-					$payload = Perfecty_Push_Lib_Payload::build( $message );
+					$message = isset( $options['settings_welcome_message'] ) && ! empty( $options['settings_welcome_message'] ) ? esc_attr( $options['settings_welcome_message'] ) : PERFECTY_PUSH_OPTIONS_SETTINGS_WELCOME_MESSAGE;
+					$payload = Perfecty_Push_Lib_Payload::build( html_entity_decode( $message, ENT_QUOTES ) );
 					Perfecty_Push_Lib_Push_Server::send_notification( json_encode( $payload ), array( $user ) );
 				}
 			}
