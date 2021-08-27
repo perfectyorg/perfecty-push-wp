@@ -93,7 +93,7 @@ class Perfecty_Push_Public {
 		// JS SDK friendly routes
 		register_rest_route(
 			'perfecty-push',
-			'/v1/public/users',
+			'/v1/push/users',
 			array(
 				'methods'             => array( 'POST' ),
 				'callback'            => array( $users, 'register' ),
@@ -102,7 +102,7 @@ class Perfecty_Push_Public {
 		);
 		register_rest_route(
 			'perfecty-push',
-			'/v1/public/users/(?P<user_id>[a-zA-Z0-9-]+)/unregister',
+			'/v1/push/users/(?P<user_id>[a-zA-Z0-9-]+)/unregister',
 			array(
 				'methods'             => array( 'POST' ),
 				'callback'            => array( $users, 'unregister' ),
@@ -112,7 +112,7 @@ class Perfecty_Push_Public {
 		);
 		register_rest_route(
 			'perfecty-push',
-			'/v1/public/users/(?P<user_id>[a-zA-Z0-9-]+)/preferences',
+			'/v1/push/users/(?P<user_id>[a-zA-Z0-9-]+)/preferences',
 			array(
 				'methods'             => array( 'POST' ),
 				'callback'            => array( $users, 'update_preferences' ),
@@ -122,7 +122,7 @@ class Perfecty_Push_Public {
 		);
 		register_rest_route(
 			'perfecty-push',
-			'/v1/public/users/(?P<user_id>[a-zA-Z0-9-]+)',
+			'/v1/push/users/(?P<user_id>[a-zA-Z0-9-]+)',
 			array(
 				'methods'             => array( 'GET' ),
 				'callback'            => array( $users, 'get_user' ),

@@ -46,6 +46,9 @@ class Perfecty_Push_Activator {
 		if ( empty( $options['batch_size'] ) ) {
 			$options['batch_size'] = Perfecty_Push_Lib_Push_Server::DEFAULT_BATCH_SIZE;
 		}
+		if ( empty( $options['parallel_flushing_size'] ) ) {
+			$options['parallel_flushing_size'] = Perfecty_Push_Lib_Push_Server::DEFAULT_PARALLEL_FLUSHING_SIZE;
+		}
 		if ( empty( $options['service_worker_scope'] ) ) {
 			$options['service_worker_scope'] = '/perfecty/push';
 		}

@@ -6,7 +6,7 @@ $perfecty_push_settings_title                  = ! empty( $options['settings_tit
 $perfecty_push_settings_opt_in                 = ! empty( $options['settings_opt_in'] ) ? $options['settings_opt_in'] : PERFECTY_PUSH_OPTIONS_SETTINGS_OPT_IN;
 $perfecty_push_settings_update_error           = ! empty( $options['settings_update_error'] ) ? $options['settings_update_error'] : PERFECTY_PUSH_OPTIONS_SETTINGS_UPDATE_ERROR;
 $perfecty_push_nonce                           = wp_create_nonce( 'wp_rest' );
-$perfecty_push_server_url                      = ! empty( $options['server_url'] ) ? $options['server_url'] : get_rest_url();
+$perfecty_push_server_url                      = ! empty( $options['server_url'] ) ? $options['server_url'] : get_rest_url( null, 'perfecty-push' );
 $perfecty_push_unregister_conflicts_expression = ! empty( $options['unregister_conflicts_expression'] ) ? $options['unregister_conflicts_expression'] : PERFECTY_PUSH_UNREGISTER_CONFLICTS_EXPRESSION;
 $perfecty_push_prompt_icon_url                 = isset( $options['notifications_default_icon'] ) && ! empty( $options['notifications_default_icon'] ) ? wp_get_attachment_url( $options['notifications_default_icon'] ) : '';
 $perfecty_push_visits_to_display_prompt        = isset( $options['visits_to_display_prompt'] ) && $options['visits_to_display_prompt'] ? $options['visits_to_display_prompt'] : 0;
@@ -48,7 +48,7 @@ if ( isset( $options['widget_ask_permissions_directly'] ) && $options['widget_as
 		settingsTitle: "<?php echo $perfecty_push_settings_title; ?>",
 		settingsOptIn: "<?php echo $perfecty_push_settings_opt_in; ?>",
 		settingsUpdateError: "<?php echo $perfecty_push_settings_update_error; ?>",
-		serverUrl: "<?php echo $perfecty_push_server_url; ?>perfecty-push",
+		serverUrl: "<?php echo $perfecty_push_server_url; ?>",
 		vapidPublicKey: "<?php echo PERFECTY_PUSH_VAPID_PUBLIC_KEY; ?>",
 		token: "<?php echo $perfecty_push_nonce; ?>",
 		tokenHeader: "X-WP-Nonce",

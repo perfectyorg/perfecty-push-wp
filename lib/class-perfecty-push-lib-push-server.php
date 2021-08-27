@@ -11,12 +11,14 @@ use Perfecty_Push_Lib_Log as Log;
  */
 class Perfecty_Push_Lib_Push_Server {
 
-	public const DEFAULT_BATCH_SIZE = 30;
-	public const BROADCAST_HOOK     = 'perfecty_push_broadcast_notification_event';
+	public const DEFAULT_BATCH_SIZE             = 1500;
+	public const DEFAULT_PARALLEL_FLUSHING_SIZE = 50;
+	public const BROADCAST_HOOK                 = 'perfecty_push_broadcast_notification_event';
 
 	private static $auth;
 	private static $webpush;
 	private static $vapid_generator;
+	private static $max_time;
 
 	/**
 	 * Bootstraps the Push Server.
@@ -24,8 +26,9 @@ class Perfecty_Push_Lib_Push_Server {
 	 * @param $auth array Vapid Keys
 	 * @param $vapid_generator Callable Method that generates the vapid keys
 	 * @param $webpush object Web push server
+	 * @param $max_time int Max execution time in seconds, default: php_ini.max_execution_time
 	 */
-	public static function bootstrap( $auth, $vapid_generator, $webpush = null ) {
+	public static function bootstrap( $auth, $vapid_generator, $webpush = null, $max_time = null ) {
 		if ( ! is_callable( $vapid_generator ) ) {
 			Log::error( "$vapid_generator must be a callable function" );
 		}
@@ -33,6 +36,7 @@ class Perfecty_Push_Lib_Push_Server {
 		self::$auth            = $auth;
 		self::$vapid_generator = $vapid_generator;
 		self::$webpush         = $webpush;
+		self::$max_time        = $max_time == null ? (int) ini_get( 'max_execution_time' ) : $max_time;
 	}
 
 	/**
@@ -47,6 +51,9 @@ class Perfecty_Push_Lib_Push_Server {
 			return null;
 		}
 
+		$options                = get_option( 'perfecty_push' );
+		$parallel_flushing_size = isset( $options['parallel_flushing_size'] ) ? esc_attr( $options['parallel_flushing_size'] ) : self::DEFAULT_PARALLEL_FLUSHING_SIZE;
+
 		set_error_handler(
 			function ( $errno, $errstr, $errfile, $errline ) {
 				if ( strpos( $errstr, 'gmp extension is not loaded' ) !== false ) {
@@ -60,7 +67,7 @@ class Perfecty_Push_Lib_Push_Server {
 			}
 		);
 		try {
-			$webpush = new WebPush( self::$auth );
+			$webpush = new WebPush( self::$auth, array( 'batchSize' => $parallel_flushing_size ) );
 			$webpush->setReuseVAPIDHeaders( true );
 		} catch ( Throwable $ex ) {
 			Log::error( 'Could not start the Push Server: ' . $ex->getMessage() . ', ' . $ex->getTraceAsString() );
@@ -72,6 +79,7 @@ class Perfecty_Push_Lib_Push_Server {
 
 		return $webpush;
 	}
+
 	/**
 	 * Creates the VAPI keys
 	 *
@@ -209,6 +217,23 @@ class Perfecty_Push_Lib_Push_Server {
 	}
 
 	/**
+	 * Returns true if the time has exceeded 80% of the maximum execution time
+	 *
+	 * @param $start_time float Start time in seconds (float)
+	 *
+	 * @return bool
+	 * @since 1.4.0
+	 */
+	public static function time_limit_exceeded( $start_time ) {
+		$elapsed_time = microtime( true ) - $start_time;
+		if ( self::$max_time !== 0 && ( $elapsed_time * 100 / self::$max_time ) > 80 ) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/**
 	 * Execute one broadcast batch
 	 *
 	 * @param int $notification_id Notification id
@@ -248,49 +273,69 @@ class Perfecty_Push_Lib_Push_Server {
 
 		// we get the next batch, starting from $last_cursor we take $batch_size elements
 		// we only fetch the active users (only_active)
-		$users = Perfecty_Push_Lib_Db::get_users( $notification->last_cursor, $notification->batch_size, 'created_at', 'desc' );
+		$total_succeeded = 0;
+		$cursor          = $notification->last_cursor;
+		$start_time      = microtime( true );
+		while ( true ) {
+			$users  = Perfecty_Push_Lib_Db::get_users( $cursor, $notification->batch_size );
+			$count  = count( $users );
+			$cursor = $cursor + $count;
 
-		if ( count( $users ) == 0 ) {
-			Log::info( 'Job id=' . $notification_id . ' completed, released' );
-			$result = Perfecty_Push_Lib_Db::mark_notification_completed_untake( $notification_id );
-			if ( ! $result ) {
-				Log::error( "Could not mark the notification job $notification_id as completed" );
-				return false;
+			if ( $count == 0 ) {
+				Log::info( 'Job id=' . $notification_id . ' completed, released' );
+				$result = Perfecty_Push_Lib_Db::mark_notification_completed_untake( $notification_id );
+				if ( ! $result ) {
+					Log::error( "Could not mark the notification job $notification_id as completed" );
+					break;
+				}
+				break;
 			}
-			return true;
+
+			$succeeded = self::send_notification( $notification->payload, $users );
+			if ( $succeeded !== 0 ) {
+				Log::info( "Completed batch, successful: $succeeded, cursor: $cursor" );
+				$total_succeeded += $succeeded;
+			} else {
+				Log::error( 'Error executing one batch for id=' . $notification_id );
+				Perfecty_Push_Lib_Db::mark_notification_failed( $notification_id );
+				Perfecty_Push_Lib_Db::untake_notification( $notification_id );
+				break;
+			}
+
+			// check that we don't exceed 80% of max_execution_time
+			// in case we do, we split the execution to a next cron cycle to avoid the termination of the script
+			// if max_execution_time=0, we never split
+			if ( self::time_limit_exceeded( $start_time ) ) {
+				Log::warning( 'Time execution is reaching 80% of max_execution_time, moving to next cycle' );
+				break;
+			}
 		}
 
-		// we send one batch
-		$result = self::send_notification( $notification->payload, $users );
-		if ( is_array( $result ) ) {
+		if ( $total_succeeded != 0 ) {
 			$notification                    = Perfecty_Push_Lib_Db::get_notification( $notification_id );
-			$total_batch                     = $result[0];
-			$succeeded                       = $result[1];
-			$notification->last_cursor      += $total_batch;
-			$notification->succeeded        += $succeeded;
+			$notification->last_cursor       = $cursor;
+			$notification->succeeded        += $total_succeeded;
 			$notification->is_taken          = 0;
 			$notification->last_execution_at = current_time( 'mysql', 1 );
 			$result                          = Perfecty_Push_Lib_Db::update_notification( $notification );
 
-			Log::info( 'Notification batch for id=' . $notification_id . ' sent. Cursor: ' . $notification->last_cursor . ', Total: ' . $total_batch . ', Succeeded: ' . $succeeded );
+			Log::info( 'Notification cycle for id=' . $notification_id . ' sent. Cursor: ' . $notification->last_cursor . ', Succeeded: ' . $total_succeeded );
 			if ( ! $result ) {
 				Log::error( 'Could not update the notification after sending one batch' );
 				return false;
 			}
-		} else {
-			Log::error( 'Error executing one batch for id=' . $notification_id . ', result: ' . $result );
-			Perfecty_Push_Lib_Db::mark_notification_failed( $notification_id );
-			Perfecty_Push_Lib_Db::untake_notification( $notification_id );
-			return false;
+
+			if ( $notification->status === Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_RUNNING ) {
+				// execute the next batch
+				if ( ! wp_next_scheduled( self::BROADCAST_HOOK, array( $notification_id ) ) ) {
+					$result = wp_schedule_single_event( time(), self::BROADCAST_HOOK, array( $notification_id ) );
+					Log::info( 'Scheduling next batch for id=' . $notification_id . ' . Result: ' . $result );
+				} else {
+					Log::warning( "Don't schedule next batch, it's already scheduled, id=" . $notification_id );
+				}
+			}
 		}
 
-		// execute the next batch
-		if ( ! wp_next_scheduled( self::BROADCAST_HOOK, array( $notification_id ) ) ) {
-			$result = wp_schedule_single_event( time(), self::BROADCAST_HOOK, array( $notification_id ) );
-			Log::info( 'Scheduling next batch for id=' . $notification_id . ' . Result: ' . $result );
-		} else {
-			Log::warning( "Don't schedule next batch, it's already scheduled, id=" . $notification_id );
-		}
 		return true;
 	}
 
@@ -299,7 +344,7 @@ class Perfecty_Push_Lib_Push_Server {
 	 *
 	 * @param $payload array|string Payload to be sent, json encoded or array
 	 * @param $users array List of users
-	 * @return array Array with [total, succeeded]
+	 * @return int Total succeeded notifications sent
 	 * @throws ErrorException
 	 */
 	public static function send_notification( $payload, $users ) {
@@ -321,7 +366,6 @@ class Perfecty_Push_Lib_Push_Server {
 			self::$webpush->queueNotification( $push_user, $payload );
 		}
 
-		$total     = count( $users );
 		$succeeded = 0;
 		foreach ( self::$webpush->flush() as $report ) {
 			if ( $report->isSuccess() ) {
@@ -344,6 +388,6 @@ class Perfecty_Push_Lib_Push_Server {
 				}
 			}
 		}
-		return array( $total, $succeeded );
+		return $succeeded;
 	}
 }

@@ -102,7 +102,7 @@ class PushServerTest extends WP_UnitTestCase {
 		);
 		$result        = Perfecty_Push_Lib_Push_Server::send_notification( 'this_is_the_payload', $users );
 
-		$this->assertSame( array( 1, 1 ), $result );
+		$this->assertSame( 1, $result );
 	}
 
     /**
@@ -148,7 +148,7 @@ class PushServerTest extends WP_UnitTestCase {
         );
         $result        = Perfecty_Push_Lib_Push_Server::send_notification( 'this_is_the_payload', $users );
 
-        $this->assertSame( array( 1, 0 ), $result );
+        $this->assertSame( 0, $result );
     }
 
 	/**
@@ -198,7 +198,7 @@ class PushServerTest extends WP_UnitTestCase {
 
         $user_after = Perfecty_Push_Lib_Db::get_user($id);
 
-        $this->assertSame( array( 1, 0 ), $result );
+        $this->assertSame( 0, $result );
         $this->assertNotSame(null, $user_before);
         $this->assertSame(null, $user_after);
 	}
@@ -240,7 +240,7 @@ class PushServerTest extends WP_UnitTestCase {
 
         $user_after = Perfecty_Push_Lib_Db::get_user($id);
 
-        $this->assertSame( array( 1, 0 ), $result );
+        $this->assertSame( 0, $result );
         $this->assertNotSame(null, $user_before);
         $this->assertEquals(null, $user_after);
     }
@@ -288,7 +288,7 @@ class PushServerTest extends WP_UnitTestCase {
 		$mocked_server
 		->shouldReceive(
 			array(
-				'flush' => array( $mocked_server_result, $mocked_server_result ),
+				'flush' => array( $mocked_server_result, $mocked_server_result),
 			)
 		)
 		->once()
@@ -304,19 +304,16 @@ class PushServerTest extends WP_UnitTestCase {
 		Perfecty_Push_Lib_Db::create_user( 'my_endpoint_url', 'my_key_auth', 'my_p256dh_key', '127.0.0.1' );
 		Perfecty_Push_Lib_Db::create_user( 'my_endpoint_url2', 'my_key_auth2', 'my_p256dh_key2', '127.0.0.1' );
 		$notification_id = Perfecty_Push_Lib_Push_Server::schedule_broadcast_async( $payload );
-
-		// fire execution
-		// TODO We should not wait for two consecutive cron cycles to mark the notification as completed
-		$res = Perfecty_Push_Lib_Push_Server::execute_broadcast_batch( $notification_id );
-		// the next execution should have been scheduled as a single event, $next_after_first_execution should NOT be false
-		$next_after_first_execution = wp_next_scheduled( 'perfecty_push_broadcast_notification_event', array( $notification_id ) );
-
-		// here we assume that the cron has kicked in and cleared the previous event
+		// simulate the cron doing its job
 		wp_clear_scheduled_hook( 'perfecty_push_broadcast_notification_event', array( $notification_id ) );
 
-		$res = Perfecty_Push_Lib_Push_Server::execute_broadcast_batch( $notification_id );
-		// there should not be any scheduled events afterwards, $next_after_second_execution should BE false
-		$next_after_second_execution = wp_next_scheduled( 'perfecty_push_broadcast_notification_event', array( $notification_id ) );
+		// fire execution that send all the notifications
+		$res_first = Perfecty_Push_Lib_Push_Server::execute_broadcast_batch( $notification_id );
+		// no additional jobs should have been scheduled
+		$next_after_first_execution = wp_next_scheduled( 'perfecty_push_broadcast_notification_event', array( $notification_id ) );
+
+		// check that subsequent calls do nothing
+		$res_false = Perfecty_Push_Lib_Push_Server::execute_broadcast_batch( $notification_id );
 
 		// assertions
 		$notification = Perfecty_Push_Lib_Db::get_notification( $notification_id );
@@ -325,15 +322,15 @@ class PushServerTest extends WP_UnitTestCase {
 			'total'       => 2,
 			'succeeded'   => 2,
 			'last_cursor' => 2,
-			'batch_size'  => 30,
+			'batch_size'  => 1500,
 			'status'      => 'completed',
 			'is_taken'    => 0,
 		);
 
 		$this->assertArraySubset( $expected, (array) $notification );
-		$this->assertNotFalse( $res );
-		$this->assertNotFalse( $next_after_first_execution );
-		$this->assertFalse( $next_after_second_execution );
+		$this->assertNotFalse( $res_first);
+		$this->assertFalse( $res_false );
+		$this->assertFalse( $next_after_first_execution );
 	}
 
 	/**
@@ -350,10 +347,12 @@ class PushServerTest extends WP_UnitTestCase {
 
 		$mocked_server = Mockery::mock( 'webpush' );
 		$mocked_server
-		->shouldReceive(
-			array(
-				'flush' => array( $mocked_server_result, $mocked_server_result ), // first batch, 2 items
-			)
+		->shouldReceive('flush')
+		-> andReturnUsing(
+			function() use ( $mocked_server_result ) {
+				sleep(2);
+				return array( $mocked_server_result, $mocked_server_result ); // first batch, 2 items
+			}
 		)
 		->once()
 		->shouldReceive(
@@ -373,17 +372,29 @@ class PushServerTest extends WP_UnitTestCase {
 		$options               = get_option( 'perfecty_push' );
 		$options['batch_size'] = 2;
 		update_option( 'perfecty_push', $options );
-		Perfecty_Push_Lib_Push_Server::bootstrap( array(), $this->mocked_vapid_callback, $mocked_server );
+		Perfecty_Push_Lib_Push_Server::bootstrap( array(), $this->mocked_vapid_callback, $mocked_server, 2 );
 		Perfecty_Push_Lib_Db::create_user( 'my_endpoint_url', 'my_key_auth', 'my_p256dh_key', '127.0.0.1' );
 		Perfecty_Push_Lib_Db::create_user( 'my_endpoint_url2', 'my_key_auth2', 'my_p256dh_key2', '127.0.0.1' );
 		Perfecty_Push_Lib_Db::create_user( 'my_endpoint_url3', 'my_key_auth3', 'my_p256dh_key3', '127.0.0.1' );
 		$notification_id = Perfecty_Push_Lib_Push_Server::schedule_broadcast_async( $payload );
+		// simulate the cron doing its job
+		wp_clear_scheduled_hook( 'perfecty_push_broadcast_notification_event', array( $notification_id ) );
 
-		// fire execution
-		// TODO We should not wait for three consecutive cron cycles to mark the notification as completed
-		$res = Perfecty_Push_Lib_Push_Server::execute_broadcast_batch( $notification_id );
-		$res = Perfecty_Push_Lib_Push_Server::execute_broadcast_batch( $notification_id );
-		$res = Perfecty_Push_Lib_Push_Server::execute_broadcast_batch( $notification_id );
+		// fire execution, it should execute the first 2, with a time limit exceeded warning
+		$res_first = Perfecty_Push_Lib_Push_Server::execute_broadcast_batch( $notification_id );
+		// the next execution should have been scheduled as a single event, $next_after_first_execution should NOT be false
+		$next_after_first_execution = wp_next_scheduled( 'perfecty_push_broadcast_notification_event', array( $notification_id ) );
+
+		// simulate the cron doing its job
+		wp_clear_scheduled_hook( 'perfecty_push_broadcast_notification_event', array( $notification_id ) );
+		// second execution, the rest of the remaining entries to send
+		$res_second = Perfecty_Push_Lib_Push_Server::execute_broadcast_batch( $notification_id );
+
+		// there should not be a third execution
+		$next_after_second_execution = wp_next_scheduled( 'perfecty_push_broadcast_notification_event', array( $notification_id ) );
+
+		// we simulate another execution, should return false
+		$res_false = Perfecty_Push_Lib_Push_Server::execute_broadcast_batch( $notification_id );
 
 		$notification = Perfecty_Push_Lib_Db::get_notification( $notification_id );
 		$expected     = array(
@@ -396,8 +407,12 @@ class PushServerTest extends WP_UnitTestCase {
 			'is_taken'    => 0,
 		);
 
+		$this->assertNotFalse( $next_after_first_execution );
+		$this->assertFalse( $next_after_second_execution );
 		$this->assertArraySubset( $expected, (array) $notification );
-		$this->assertNotFalse( $res );
+		$this->assertNotFalse( $res_first );
+		$this->assertNotFalse( $res_second );
+		$this->assertFalse( $res_false );
 	}
 
 	/**

@@ -11,7 +11,7 @@ class Perfecty_Push_Lib_Cron_Check {
 	private const FAILURES_COUNT  = 'perfecty_push_cron_failures';
 	private const SCHEDULE_OFFSET = 60; // 60 seconds
 	private const MAX_DIFF        = 60; // 60 seconds
-	private const THRESHOLD       = 5; // consider error after 5 failures
+	private const THRESHOLD       = 10; // consider error after this number of failures
 
 	/**
 	 * Runs the ticker and checks if the executions are correctly done

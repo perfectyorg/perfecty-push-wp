@@ -356,7 +356,7 @@ class Perfecty_Push_Lib_Db {
 	 *
 	 * @return $inserted_id or false if error
 	 */
-	public static function create_notification( $payload, $status = self::NOTIFICATIONS_STATUS_SCHEDULED, $total = 0, $batch_size = 30 ) {
+	public static function create_notification( $payload, $status = self::NOTIFICATIONS_STATUS_SCHEDULED, $total = 0, $batch_size = Perfecty_Push_Lib_Push_Server::DEFAULT_BATCH_SIZE ) {
 		global $wpdb;
 
 		$result = $wpdb->insert(
