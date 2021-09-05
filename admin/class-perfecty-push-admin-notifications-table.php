@@ -1,5 +1,7 @@
 <?php
 
+use Perfecty_Push_Lib_Log as Log;
+
 if ( ! class_exists( 'WP_List_Table' ) ) {
 	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
 }
@@ -33,6 +35,9 @@ class Perfecty_Push_Admin_Notifications_Table extends WP_List_Table {
 		if ( $item['status'] == Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_RUNNING || $item['status'] == Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_SCHEDULED ) {
 			$actions['cancel'] = sprintf( '<a href="#" class="perfecty-push-confirm-action" data-page="%s" data-action="%s" data-id="%d" data-nonce="%s">%s</a>', $page, 'cancel', $item['id'], $action_nonce, esc_html__( 'Cancel', 'perfecty-push-notifications' ) );
 		}
+		if ( $item['status'] == Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_CANCELED || $item['status'] == Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_FAILED ) {
+			$actions['retry'] = sprintf( '<a href="#" class="perfecty-push-confirm-action" data-page="%s" data-action="%s" data-id="%d" data-nonce="%s">%s</a>', $page, 'retry', $item['id'], $action_nonce, esc_html__( 'Retry', 'perfecty-push-notifications' ) );
+		}
 
 		return sprintf(
 			'%s %s',
@@ -65,11 +70,10 @@ class Perfecty_Push_Admin_Notifications_Table extends WP_List_Table {
 
 	function column_status( $item ) {
 		if ( $item['status'] == Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_SCHEDULED ) {
-			$timestamp = Perfecty_Push_Lib_Push_Server::get_notification_scheduled_time( $item['id'] );
 			return sprintf(
 				'%s %s',
 				$item['status'],
-				'<br />' . esc_html__( 'at', 'perfecty-push-notifications' ) . ' ' . get_date_from_gmt( date( 'Y-m-d H:i:s', $timestamp ), 'Y-m-d H:i:s' )
+				'<br />' . esc_html__( 'at', 'perfecty-push-notifications' ) . ' ' . get_date_from_gmt( $item['scheduled_at'] )
 			);
 		} else {
 			return $item['status'];
@@ -122,7 +126,7 @@ class Perfecty_Push_Admin_Notifications_Table extends WP_List_Table {
 
 	function process_bulk_action() {
 		$action = $this->current_action();
-		if ( in_array( $action, array( 'delete', 'cancel' ) ) ) {
+		if ( in_array( $action, array( 'delete', 'cancel', 'retry' ) ) ) {
 			$nonce = 'bulk-' . $this->_args['plural'];
 			if ( ! isset( $_REQUEST['_wpnonce'] ) || ! wp_verify_nonce( $_REQUEST['_wpnonce'], $nonce ) ) {
 				wp_die( esc_html__( 'Could not verify the action', 'perfecty-push-notifications' ) );
@@ -141,19 +145,42 @@ class Perfecty_Push_Admin_Notifications_Table extends WP_List_Table {
 					Perfecty_Push_Lib_Db::delete_notifications( $ids );
 					break;
 				case 'cancel':
-					$this->mark_notifications_failed( $ids );
+					$this->mark_notifications_cancel( $ids );
+					break;
+				case 'retry':
+					$this->retry_notifications( $ids );
 					break;
 			}
 		}
 	}
 
-	function mark_notifications_failed( $ids ) {
+	function mark_notifications_cancel( $ids ) {
 		foreach ( $ids as $id ) {
-			$notification = Perfecty_Push_Lib_Db::get_notification( $id );
-			if ( $notification->status === Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_RUNNING ) {
-				Perfecty_Push_Lib_Db::mark_notification_failed( $id );
-				Perfecty_Push_Lib_Db::untake_notification( $id );
-			}
+			$notification              = Perfecty_Push_Lib_Db::get_notification( $id );
+			$notification->status      = Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_CANCELED;
+			$notification->finished_at = current_time( 'mysql', 1 );
+			$notification->is_taken    = 0;
+			Perfecty_Push_Lib_Db::update_notification( $notification );
+
+			$scheduled_date = DateTime::createFromFormat( 'Y-m-d H:i:s', $notification->scheduled_at );
+			Perfecty_Push_Lib_Push_Server::unschedule_job( $id, $scheduled_date->getTimestamp() );
+			Log::info( 'Cancelling job id=' . $id );
+		}
+	}
+
+	function retry_notifications( $ids ) {
+		foreach ( $ids as $id ) {
+			$scheduled_time                  = time();
+			$notification                    = Perfecty_Push_Lib_Db::get_notification( $id );
+			$notification->status            = Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_RUNNING;
+			$notification->is_taken          = 0;
+			$notification->finished_at       = null;
+			$notification->last_execution_at = current_time( 'mysql', 1 );
+			$notification->scheduled_at      = date( 'Y-m-d H:i:s', $scheduled_time );
+			Perfecty_Push_Lib_Db::update_notification( $notification );
+
+			Perfecty_Push_Lib_Push_Server::schedule_job( $id, $scheduled_time );
+			Log::info( 'Retrying job id=' . $id );
 		}
 	}
 

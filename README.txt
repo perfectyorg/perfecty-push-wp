@@ -95,6 +95,9 @@ You can create an issue in our Github repo:
 
 == Changelog ==
 
+= 1.4.1 =
+* Improvements to the job management section and the job stats. Related [#104](https://github.com/perfectyorg/perfecty-push-wp/issues/104), [#102](https://github.com/perfectyorg/perfecty-push-wp/issues/102)
+
 = 1.4.0 =
 * Performance improvement, send ~10.000 notifications/minute in a 2 GB RAM/1vCPU server. Related: [#81](https://github.com/perfectyorg/perfecty-push-wp/issues/81) and [#86](https://github.com/perfectyorg/perfecty-push-wp/issues/86)
 * Parallel flushing size parameter was added with a default value of 50 notifications.

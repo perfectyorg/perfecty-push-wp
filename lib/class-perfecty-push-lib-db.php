@@ -8,11 +8,12 @@ use Ramsey\Uuid\Uuid;
 class Perfecty_Push_Lib_Db {
 
 	private static $allowed_users_fields         = 'id,uuid,wp_user_id,endpoint,key_auth,key_p256dh,remote_ip,created_at';
-	private static $allowed_notifications_fields = 'id,payload,total,succeeded,last_cursor,batch_size,status,is_taken,created_at,finished_at,last_execution_at';
+	private static $allowed_notifications_fields = 'id,payload,total,succeeded,failed,last_cursor,batch_size,status,is_taken,created_at,finished_at,last_execution_at,scheduled_at';
 	private static $allowed_logs_fields          = 'level,message,created_at';
 
 	public const NOTIFICATIONS_STATUS_SCHEDULED = 'scheduled';
 	public const NOTIFICATIONS_STATUS_RUNNING   = 'running';
+	public const NOTIFICATIONS_STATUS_CANCELED  = 'canceled';
 	public const NOTIFICATIONS_STATUS_FAILED    = 'failed';
 	public const NOTIFICATIONS_STATUS_COMPLETED = 'completed';
 
@@ -58,8 +59,6 @@ class Perfecty_Push_Lib_Db {
           endpoint varchar(500) NOT NULL,
           key_auth varchar(100) NOT NULL UNIQUE,
           key_p256dh varchar(100) NOT NULL UNIQUE,
-          is_active tinyint(1) DEFAULT 1 NOT NULL,
-          disabled tinyint(1) DEFAULT 0 NOT NULL,
           created_at datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
           PRIMARY KEY  (id),
           UNIQUE KEY users_uuid_uk (uuid)
@@ -71,12 +70,14 @@ class Perfecty_Push_Lib_Db {
           payload varchar(2000) NOT NULL,
           total int(11) DEFAULT 0 NOT NULL,
           succeeded int(11) DEFAULT 0 NOT NULL,
+          failed int(11) DEFAULT 0 NOT NULL,
           last_cursor int(11) DEFAULT 0 NOT NULL,
           batch_size int(11) DEFAULT 0 NOT NULL,
           status varchar(15) DEFAULT 'scheduled' NOT NULL,
           is_taken tinyint(1) DEFAULT 0 NOT NULL,
           created_at datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
           last_execution_at datetime NULL,
+          scheduled_at datetime NULL,
           finished_at datetime NULL,
           PRIMARY KEY  (id)
         ) $charset;";
@@ -98,6 +99,10 @@ class Perfecty_Push_Lib_Db {
 				if ( $wpdb->get_var( "SHOW INDEX FROM $user_table WHERE Key_name='endpoint'" ) !== null ) {
 					$wpdb->query( "ALTER TABLE $user_table DROP INDEX endpoint" );
 				}
+			}
+			if ( $db_version == 5) {
+				// the counters have been adjusted, we migrate the old stats
+				$wpdb->query( "UPDATE $notifications_table SET failed = total - succeeded" );
 			}
 
 			update_option( 'perfecty_push_db_version', PERFECTY_PUSH_DB_VERSION );
@@ -353,19 +358,22 @@ class Perfecty_Push_Lib_Db {
 	 * @param $status string one of the NOTIFICATIONS_STATUS_* values
 	 * @param $total int Total users
 	 * @param $batch_size int Batch size
+	 * @param $scheduled_at DateTime Scheduled at
 	 *
 	 * @return $inserted_id or false if error
 	 */
-	public static function create_notification( $payload, $status = self::NOTIFICATIONS_STATUS_SCHEDULED, $total = 0, $batch_size = Perfecty_Push_Lib_Push_Server::DEFAULT_BATCH_SIZE ) {
+	public static function create_notification( $payload, $status = self::NOTIFICATIONS_STATUS_SCHEDULED, $total = 0, $batch_size = Perfecty_Push_Lib_Push_Server::DEFAULT_BATCH_SIZE, $scheduled_at = null ) {
 		global $wpdb;
 
-		$result = $wpdb->insert(
+		$scheduled_at = $scheduled_at == null ? null : date( 'Y-m-d H:i:s', $scheduled_at );
+		$result       = $wpdb->insert(
 			self::notifications_table(),
 			array(
-				'payload'    => $payload,
-				'status'     => $status,
-				'total'      => $total,
-				'batch_size' => $batch_size,
+				'payload'      => $payload,
+				'status'       => $status,
+				'total'        => $total,
+				'batch_size'   => $batch_size,
+				'scheduled_at' => $scheduled_at,
 			)
 		);
 
@@ -410,8 +418,11 @@ class Perfecty_Push_Lib_Db {
 		$sql = $wpdb->prepare(
 			'SELECT ' . self::$allowed_notifications_fields .
 			' FROM ' . self::notifications_table() .
-			' WHERE status = %s AND is_taken = %d AND last_execution_at <= NOW() - INTERVAL 30 SECOND',
+			' WHERE (status = %s AND is_taken = %d AND last_execution_at <= NOW() - INTERVAL 30 SECOND)' .
+			' OR (status = %s AND is_taken = %d AND scheduled_at <= NOW() - INTERVAL 30 SECOND)',
 			self::NOTIFICATIONS_STATUS_RUNNING,
+			0,
+			self::NOTIFICATIONS_STATUS_SCHEDULED,
 			0
 		);
 		return $wpdb->get_results( $sql );
@@ -470,13 +481,14 @@ class Perfecty_Push_Lib_Db {
 	public static function get_notifications_stats() {
 		global $wpdb;
 
-		$total     = intval( $wpdb->get_var( 'SELECT SUM(total) FROM ' . self::notifications_table() . " WHERE status !='" . self::NOTIFICATIONS_STATUS_RUNNING . "'" ) );
-		$succeeded = intval( $wpdb->get_var( 'SELECT SUM(succeeded) FROM ' . self::notifications_table() . " WHERE status !='" . self::NOTIFICATIONS_STATUS_RUNNING . "'" ) );
+		$total     = intval( $wpdb->get_var( 'SELECT SUM(total) FROM ' . self::notifications_table() . " WHERE status !='" . self::NOTIFICATIONS_STATUS_SCHEDULED . "'" ) );
+		$succeeded = intval( $wpdb->get_var( 'SELECT SUM(succeeded) FROM ' . self::notifications_table() . " WHERE status !='" . self::NOTIFICATIONS_STATUS_SCHEDULED . "'" ) );
+		$failed    = intval( $wpdb->get_var( 'SELECT SUM(failed) FROM ' . self::notifications_table() . " WHERE status !='" . self::NOTIFICATIONS_STATUS_SCHEDULED . "'" ) );
 
 		return array(
 			'total'     => $total,
 			'succeeded' => $succeeded,
-			'failed'    => $total - $succeeded,
+			'failed'    => $failed,
 		);
 	}
 
@@ -496,12 +508,14 @@ class Perfecty_Push_Lib_Db {
 		$running   = intval( $wpdb->get_var( 'SELECT COUNT(*) FROM ' . self::notifications_table() . ' WHERE status = \'' . self::NOTIFICATIONS_STATUS_RUNNING . '\'' ) );
 		$failed    = intval( $wpdb->get_var( 'SELECT COUNT(*) FROM ' . self::notifications_table() . ' WHERE status = \'' . self::NOTIFICATIONS_STATUS_FAILED . '\'' ) );
 		$completed = intval( $wpdb->get_var( 'SELECT COUNT(*) FROM ' . self::notifications_table() . ' WHERE status = \'' . self::NOTIFICATIONS_STATUS_COMPLETED . '\'' ) );
+		$canceled  = intval( $wpdb->get_var( 'SELECT COUNT(*) FROM ' . self::notifications_table() . ' WHERE status = \'' . self::NOTIFICATIONS_STATUS_CANCELED . '\'' ) );
 
 		return array(
 			'scheduled' => $scheduled,
 			'running'   => $running,
 			'failed'    => $failed,
 			'completed' => $completed,
+			'canceled'  => $canceled,
 		);
 	}
 
@@ -520,7 +534,7 @@ class Perfecty_Push_Lib_Db {
 
 		$table   = self::notifications_table();
 		$sql     = $wpdb->prepare(
-			"SELECT DATE_FORMAT(created_at, \"%%Y-%%m-%%d\") as `date`, SUM(total-succeeded) as failed, SUM(succeeded) as succeeded
+			"SELECT DATE_FORMAT(created_at, \"%%Y-%%m-%%d\") as `date`, SUM(failed) as failed, SUM(succeeded) as succeeded
                     FROM $table
                     WHERE status != %s && status != %s
                     GROUP BY `date`
@@ -581,11 +595,14 @@ class Perfecty_Push_Lib_Db {
 				'payload'           => $notification->payload,
 				'total'             => $notification->total,
 				'succeeded'         => $notification->succeeded,
+				'failed'            => $notification->failed,
 				'last_cursor'       => $notification->last_cursor,
 				'batch_size'        => $notification->batch_size,
 				'status'            => $notification->status,
 				'is_taken'          => $notification->is_taken,
 				'last_execution_at' => $notification->last_execution_at,
+				'scheduled_at'      => $notification->scheduled_at,
+				'finished_at'       => $notification->finished_at,
 			),
 			array( 'id' => $notification->id )
 		);
@@ -606,6 +623,27 @@ class Perfecty_Push_Lib_Db {
 			self::notifications_table(),
 			array(
 				'status' => self::NOTIFICATIONS_STATUS_RUNNING,
+			),
+			array( 'id' => $notification_id )
+		);
+
+		return $result;
+	}
+
+	/**
+	 * Mark the notification as canceled
+	 *
+	 * @param $notification_id int Notification id
+	 * @return int|bool Number of rows updated or false
+	 */
+	public static function mark_notification_canceled( $notification_id ) {
+		global $wpdb;
+
+		$result = $wpdb->update(
+			self::notifications_table(),
+			array(
+				'status'      => self::NOTIFICATIONS_STATUS_CANCELED,
+				'finished_at' => current_time( 'mysql', 1 ),
 			),
 			array( 'id' => $notification_id )
 		);
