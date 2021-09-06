@@ -112,16 +112,6 @@ class Perfecty_Push_Public {
 		);
 		register_rest_route(
 			'perfecty-push',
-			'/v1/push/users/(?P<user_id>[a-zA-Z0-9-]+)/preferences',
-			array(
-				'methods'             => array( 'POST' ),
-				'callback'            => array( $users, 'update_preferences' ),
-				'permission_callback' => '__return_true',
-				'args'                => array( 'user_id' => array() ),
-			)
-		);
-		register_rest_route(
-			'perfecty-push',
 			'/v1/push/users/(?P<user_id>[a-zA-Z0-9-]+)',
 			array(
 				'methods'             => array( 'GET' ),

@@ -32,7 +32,7 @@ class Perfecty_Push_Lib_Cron_Check {
 			// something is wrong: even though it was scheduled in the future,
 			// it is still scheduled but in the past and the difference is longer than
 			// MAX_DIFF seconds. This means the cron is not running properly in this cycle
-			Log::warning( 'Scheduled event was not executed, diff: ' . $diff . 's, failed attempt: ' . ( $failures_count + 1 ) );
+			Log::warning( 'Cron check missed, diff: ' . $diff . 's, failed attempt: ' . ( $failures_count + 1 ) );
 
 			// increment failures count and un-schedule the event so that it's checked again after some minutes
 			update_option( self::FAILURES_COUNT, $failures_count + 1 );

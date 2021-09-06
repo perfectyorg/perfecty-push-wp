@@ -133,6 +133,9 @@
 				<span><?php printf( esc_html__( 'Scheduled:', 'perfecty-push-notifications' ) ); ?> </span><span><?php echo esc_html( $jobs_stats['scheduled'] ); ?></span>
 			</div>
 			<div class="perfecty-push-stats-text">
+				<span><?php printf( esc_html__( 'Canceled:', 'perfecty-push-notifications' ) ); ?> </span><span><?php echo esc_html( $jobs_stats['canceled'] ); ?></span>
+			</div>
+			<div class="perfecty-push-stats-text">
 				<span><?php printf( esc_html__( 'Failed:', 'perfecty-push-notifications' ) ); ?> </span><span><?php echo esc_html( $jobs_stats['failed'] ); ?></span>
 			</div>
 		</div>

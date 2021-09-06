@@ -131,12 +131,6 @@ class Perfecty_Push_Lib_Push_Server {
 			return false;
 		} else {
 			// Fallback to wp-cron
-			$total_users     = Perfecty_Push_Lib_Db::get_total_users();
-			$notification_id = Perfecty_Push_Lib_Db::create_notification( $payload, Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_SCHEDULED, $total_users, $batch_size );
-			if ( ! $notification_id ) {
-				Log::error( 'Could not schedule the notification.' );
-				return false;
-			}
 			if ( is_null( $scheduled_time ) ) {
 				$scheduled_time = time();
 			}
@@ -144,9 +138,13 @@ class Perfecty_Push_Lib_Push_Server {
 				$date           = new DateTime( $scheduled_time );
 				$scheduled_time = $date->getTimestamp();
 			}
-			$result = wp_schedule_single_event( $scheduled_time, self::BROADCAST_HOOK, array( $notification_id ) );
-			Log::info( 'Scheduling job id=' . $notification_id . ', result: ' . $result );
-
+			$total_users     = Perfecty_Push_Lib_Db::get_total_users();
+			$notification_id = Perfecty_Push_Lib_Db::create_notification( $payload, Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_SCHEDULED, $total_users, $batch_size, $scheduled_time );
+			if ( ! $notification_id ) {
+				Log::error( 'Could not schedule the notification.' );
+				return false;
+			}
+			self::schedule_job( $notification_id, $scheduled_time );
 			do_action( 'perfecty_push_broadcast_scheduled', $payload );
 
 			return $notification_id;
@@ -154,11 +152,39 @@ class Perfecty_Push_Lib_Push_Server {
 	}
 
 	/**
+	 * Schedule a notification to be executed by the cron job
+	 *
+	 * @param $notification_id
+	 * @param $scheduled_time
+	 *
+	 * @since v1.4.1
+	 */
+	public static function schedule_job( $notification_id, $scheduled_time ) {
+		$result = wp_schedule_single_event( $scheduled_time, self::BROADCAST_HOOK, array( $notification_id ) );
+		Log::info( 'Scheduling job id=' . $notification_id . ', result: ' . $result );
+		return $result;
+	}
+
+	/**
+	 * Un-schedule a notification from the cron job
+	 *
+	 * @param $notification_id
+	 * @param $scheduled_time
+	 *
+	 * @since v1.4.1
+	 */
+	public static function unschedule_job( $notification_id, $scheduled_time ) {
+		$result = wp_unschedule_event( $scheduled_time, self::BROADCAST_HOOK, array( $notification_id ) );
+		Log::info( 'Un-scheduling job id=' . $notification_id . ', result: ' . $result );
+		return $result;
+	}
+
+	/**
 	 * Send the notification to a WordPress user
 	 *
 	 * @param $wp_user_id int WordPress User Id
 	 * @param $payload array|string Payload to be sent, json encoded or array
-	 * @return array Array with [total, succeeded]
+	 * @return array Array with [succeeded, failed]
 	 * @throws Exception
 	 */
 	public static function notify( $wp_user_id, $payload ) {
@@ -191,18 +217,6 @@ class Perfecty_Push_Lib_Push_Server {
 	}
 
 	/**
-	 * Get scheduled time
-	 *
-	 * @param $notification_id int Notification id
-	 * @return int|bool Scheduled Unix timestamp for the notification or false
-	 */
-	public static function get_notification_scheduled_time( $notification_id ) {
-		$args   = array( intval( $notification_id ) );
-		$result = wp_next_scheduled( self::BROADCAST_HOOK, $args );
-		return $result;
-	}
-
-	/**
 	 * Get the job notifications that are stalled and
 	 * schedule the execution automatically
 	 */
@@ -210,7 +224,7 @@ class Perfecty_Push_Lib_Push_Server {
 		$running = Perfecty_Push_Lib_Db::get_notifications_stalled();
 		foreach ( $running as $item ) {
 			if ( ! wp_next_scheduled( self::BROADCAST_HOOK, array( $item->id ) ) ) {
-				wp_schedule_single_event( time(), self::BROADCAST_HOOK, array( $item->id ) );
+				self::schedule_job( $item->id, time() );
 				Log::info( 'An stalled notification job was unleashed, id = ' . $item->id );
 			}
 		}
@@ -274,6 +288,7 @@ class Perfecty_Push_Lib_Push_Server {
 		// we get the next batch, starting from $last_cursor we take $batch_size elements
 		// we only fetch the active users (only_active)
 		$total_succeeded = 0;
+		$total_failed    = 0;
 		$cursor          = $notification->last_cursor;
 		$start_time      = microtime( true );
 		while ( true ) {
@@ -291,10 +306,13 @@ class Perfecty_Push_Lib_Push_Server {
 				break;
 			}
 
-			$succeeded = self::send_notification( $notification->payload, $users );
+			$result    = self::send_notification( $notification->payload, $users );
+			$succeeded = $result[0];
+			$failed    = $result[1];
 			if ( $succeeded !== 0 ) {
-				Log::info( "Completed batch, successful: $succeeded, cursor: $cursor" );
+				Log::info( "Completed batch, successful: $succeeded, failed: $failed, cursor: $cursor" );
 				$total_succeeded += $succeeded;
+				$total_failed    += $failed;
 			} else {
 				Log::error( 'Error executing one batch for id=' . $notification_id );
 				Perfecty_Push_Lib_Db::mark_notification_failed( $notification_id );
@@ -315,11 +333,12 @@ class Perfecty_Push_Lib_Push_Server {
 			$notification                    = Perfecty_Push_Lib_Db::get_notification( $notification_id );
 			$notification->last_cursor       = $cursor;
 			$notification->succeeded        += $total_succeeded;
+			$notification->failed           += $total_failed;
 			$notification->is_taken          = 0;
 			$notification->last_execution_at = current_time( 'mysql', 1 );
 			$result                          = Perfecty_Push_Lib_Db::update_notification( $notification );
 
-			Log::info( 'Notification cycle for id=' . $notification_id . ' sent. Cursor: ' . $notification->last_cursor . ', Succeeded: ' . $total_succeeded );
+			Log::info( 'Notification cycle for id=' . $notification_id . ' sent. Cursor: ' . $notification->last_cursor . ', Succeeded: ' . $total_succeeded . ', Failed: ' . $total_failed );
 			if ( ! $result ) {
 				Log::error( 'Could not update the notification after sending one batch' );
 				return false;
@@ -344,7 +363,7 @@ class Perfecty_Push_Lib_Push_Server {
 	 *
 	 * @param $payload array|string Payload to be sent, json encoded or array
 	 * @param $users array List of users
-	 * @return int Total succeeded notifications sent
+	 * @return array Total (succeeded, failed) notifications sent
 	 * @throws ErrorException
 	 */
 	public static function send_notification( $payload, $users ) {
@@ -367,12 +386,14 @@ class Perfecty_Push_Lib_Push_Server {
 		}
 
 		$succeeded = 0;
+		$failed    = 0;
 		foreach ( self::$webpush->flush() as $report ) {
 			if ( $report->isSuccess() ) {
 				Log::debug( 'Notification sent successfully' );
 				$succeeded++;
 			} else {
 				Log::error( 'Failed to send one notification, error: ' . $report->getReason() );
+				$failed++;
 
 				$endpoint = $report->getEndpoint();
 				if ( $report->isSubscriptionExpired() ) {
@@ -388,6 +409,6 @@ class Perfecty_Push_Lib_Push_Server {
 				}
 			}
 		}
-		return $succeeded;
+		return array( $succeeded, $failed );
 	}
 }

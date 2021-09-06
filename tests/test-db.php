@@ -395,22 +395,34 @@ class DbTest extends WP_UnitTestCase {
      * Test the notifications stats
      */
     public function test_get_notifications_stats() {
-        $id1       = Perfecty_Push_Lib_Db::create_notification( 'my_payload1', Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_SCHEDULED, 35, 20 );
-        $id2       = Perfecty_Push_Lib_Db::create_notification( 'my_payload2', Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_SCHEDULED, 45, 17 );
-        Perfecty_Push_Lib_Db::create_notification( 'my_payload2', Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_SCHEDULED, 10, 17 );
+        $id1       = Perfecty_Push_Lib_Db::create_notification( 'my_payload1', Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_COMPLETED, 10, 20 );
+	    $id2       = Perfecty_Push_Lib_Db::create_notification( 'my_payload2', Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_FAILED, 5, 20 );
+	    $id3       = Perfecty_Push_Lib_Db::create_notification( 'my_payload3', Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_CANCELED, 7, 17 );
+	    $id4       = Perfecty_Push_Lib_Db::create_notification( 'my_payload3', Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_RUNNING, 3, 17 );
+        // this one should not count in the stats
+        Perfecty_Push_Lib_Db::create_notification( 'my_payload4', Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_SCHEDULED, 10, 17 );
 
         $notification_1 = Perfecty_Push_Lib_Db::get_notification($id1);
-        $notification_1->succeeded = 70;
+        $notification_1->succeeded = 10;
         Perfecty_Push_Lib_Db::update_notification($notification_1);
         $notification_2 = Perfecty_Push_Lib_Db::get_notification($id2);
-        $notification_2->succeeded = 7;
+        $notification_2->succeeded = 2;
+        $notification_2->failed = 3;
         Perfecty_Push_Lib_Db::update_notification($notification_2);
+	    $notification_3 = Perfecty_Push_Lib_Db::get_notification($id3);
+	    $notification_3->succeeded = 3;
+	    $notification_3->failed = 2;
+	    Perfecty_Push_Lib_Db::update_notification($notification_3);
+	    $notification_4 = Perfecty_Push_Lib_Db::get_notification($id4);
+	    $notification_4->succeeded = 1;
+	    $notification_4->failed = 1;
+	    Perfecty_Push_Lib_Db::update_notification($notification_4);
 
-        $result = Perfecty_Push_Lib_Db::get_notifications_stats();
+	    $result = Perfecty_Push_Lib_Db::get_notifications_stats();
 
-        $this->assertSame(90, $result['total']);
-        $this->assertSame(77, $result['succeeded']);
-        $this->assertSame(13, $result['failed']);
+        $this->assertSame(25, $result['total']);
+        $this->assertSame(16, $result['succeeded']);
+        $this->assertSame(6, $result['failed']);
     }
 
     /**
@@ -420,17 +432,20 @@ class DbTest extends WP_UnitTestCase {
         $id1       = Perfecty_Push_Lib_Db::create_notification( 'my_payload1', Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_COMPLETED, 35, 20 );
         $id2       = Perfecty_Push_Lib_Db::create_notification( 'my_payload2', Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_COMPLETED, 45, 17 );
         $id3       = Perfecty_Push_Lib_Db::create_notification( 'my_payload3', Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_RUNNING, 10, 17 );
-        Perfecty_Push_Lib_Db::create_notification( 'my_payload4', Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_COMPLETED, 10, 17 );
-        Perfecty_Push_Lib_Db::create_notification( 'my_payload5', Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_COMPLETED, 10, 17 );
+        Perfecty_Push_Lib_Db::create_notification( 'my_payload4', Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_SCHEDULED, 10, 17 );
+        Perfecty_Push_Lib_Db::create_notification( 'my_payload5', Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_SCHEDULED, 10, 17 );
 
         $notification_1 = Perfecty_Push_Lib_Db::get_notification($id1);
-        $notification_1->succeeded = 70;
+        $notification_1->succeeded = 10;
+        $notification_1->failed = 25;
         Perfecty_Push_Lib_Db::update_notification($notification_1);
         $notification_2 = Perfecty_Push_Lib_Db::get_notification($id2);
-        $notification_2->succeeded = 7;
-        Perfecty_Push_Lib_Db::update_notification($notification_2);
+        $notification_2->succeeded = 44;
+	    $notification_2->failed = 1;
+	    Perfecty_Push_Lib_Db::update_notification($notification_2);
         $notification_3 = Perfecty_Push_Lib_Db::get_notification($id3);
-        $notification_3->succeeded = 10;
+        $notification_3->succeeded = 5;
+        $notification_3->failed = 3;
         Perfecty_Push_Lib_Db::update_notification($notification_3);
 
         $end_date = new DateTime();
@@ -440,10 +455,10 @@ class DbTest extends WP_UnitTestCase {
 
         $today = date('Y-m-d');
 
-        // we have discarded the with running status ($notification_3), so total = 77 instead of 87
+        // we have discarded the with running and scheduled status (notification 3, 4 and 5), so succeeded = 10+44, failed = 25+1
         $this->assertSame($today, $results[0]->date);
-        $this->assertSame(77, $results[0]->succeeded);
-        $this->assertSame(23, $results[0]->failed);
+        $this->assertSame(54, $results[0]->succeeded);
+        $this->assertSame(26, $results[0]->failed);
     }
 
     /**
@@ -455,13 +470,15 @@ class DbTest extends WP_UnitTestCase {
         $id3       = Perfecty_Push_Lib_Db::create_notification( 'my_payload3', Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_COMPLETED, 10, 11 );
         $id4       = Perfecty_Push_Lib_Db::create_notification( 'my_payload4', Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_FAILED, 7, 21 );
         $id5       = Perfecty_Push_Lib_Db::create_notification( 'my_payload5', Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_RUNNING, 27, 30 );
+	    $id6       = Perfecty_Push_Lib_Db::create_notification( 'my_payload5', Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_CANCELED, 17, 30 );
 
-        $result = Perfecty_Push_Lib_Db::get_jobs_stats();
+	    $result = Perfecty_Push_Lib_Db::get_jobs_stats();
 
         $this->assertSame(1, $result['scheduled']);
         $this->assertSame(2, $result['running']);
         $this->assertSame(1, $result['failed']);
         $this->assertSame(1, $result['completed']);
+	    $this->assertSame(1, $result['canceled']);
     }
 
 	/**

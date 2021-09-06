@@ -27,7 +27,7 @@ class Perfecty_Push_Integration {
 	 * @param string $title Title of the message (default: site name)
 	 * @param string $image_url Url of the image to show (default: none)
 	 * @param string $url_to_open Url to open (default: site url)
-	 * @return array Array with [total, succeeded]
+	 * @return array Array with [succeeded, failed]
 	 * @throws Exception
 	 * @since 1.2.0
 	 */

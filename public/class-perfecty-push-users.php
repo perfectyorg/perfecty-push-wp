@@ -17,7 +17,9 @@
  * @author     Rowinson Gallego <rwn.gallego@gmail.com>
  */
 
+use Minishlink\WebPush\Subscription;
 use Ramsey\Uuid\Uuid;
+use Perfecty_Push_Lib_Log as Log;
 
 class Perfecty_Push_Users {
 	/**
@@ -55,6 +57,14 @@ class Perfecty_Push_Users {
 			$user_id    = sanitize_text_field( $user_id );
 			$first_time = sanitize_text_field( $first_time );
 			$wp_user_id = is_user_logged_in() ? get_current_user_id() : null;
+
+			// check if this is a valid subscription
+			try {
+				new Subscription( $endpoint, $key_p256dh, $key_auth );
+			} catch ( Exception $e ) {
+				Log::error( 'Invalid subscription: ' . $e->getMessage() );
+				return new WP_Error( 'validation_error', __( 'Invalid subscription parameters', 'perfecty-push-notifications' ), array( 'status' => 400 ) );
+			}
 
 			$user = Perfecty_Push_Lib_Db::get_user_by( $user_id, $key_auth, $key_p256dh );
 			if ( $user ) {
@@ -158,43 +168,6 @@ class Perfecty_Push_Users {
 		}
 	}
 
-	/**
-	 * Change the user preferences
-	 *
-	 * @since 1.0.0
-	 */
-	public function update_preferences( $data ) {
-		$is_active = $data['is_active'] ?? null;
-		$user_id   = $data['user_id'] ?? null;
-
-		// Validate the nonce.
-		$nonce = isset( $_SERVER['HTTP_X_WP_NONCE'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_WP_NONCE'] ) ) : '';
-		if ( wp_verify_nonce( $nonce, 'wp_rest' ) === false ) {
-			$this->terminate();
-		}
-
-		$validation = $this->validate_set_user_active( $is_active, $user_id );
-		if ( $validation !== true ) {
-			return new WP_Error( 'bad_request', $validation, array( 'status' => 400 ) );
-		}
-
-		$user = Perfecty_Push_Lib_Db::get_user_by_uuid( $user_id );
-		if ( $user == null ) {
-			return new WP_Error( 'bad_request', __( 'user id not found', 'perfecty-push-notifications' ), array( 'status' => 404 ) );
-		}
-		// FIXME Temporary disabled functionality
-		$result = true;
-
-		if ( $result === false ) {
-			return new WP_Error( 'failed_update', __( 'Could not change the user', 'perfecty-push-notifications' ), array( 'status' => 500 ) );
-		} else {
-			$response = array(
-				'is_active' => $is_active,
-			);
-			return (object) $response;
-		}
-	}
-
 	private function get_remote_ip() {
 		$options              = get_option( 'perfecty_push', array() );
 		$segmentation_enabled = isset( $options['segmentation_enabled'] ) && $options['segmentation_enabled'] == 1;
@@ -245,20 +218,6 @@ class Perfecty_Push_Users {
 	 */
 	public function terminate() {
 		wp_die( -1, 403 );
-	}
-
-	private function validate_set_user_active( $is_active, $user_id ) {
-		if ( null === $is_active || null === $user_id ) {
-			return __( 'Missing parameters', 'perfecty-push-notifications' );
-		}
-		if ( false !== $is_active && true !== $is_active ) {
-			return __( 'is_active must be a boolean', 'perfecty-push-notifications' );
-		}
-		if ( ! Uuid::isValid( $user_id ) ) {
-			return __( 'Invalid user ID', 'perfecty-push-notifications' );
-		}
-
-		return true;
 	}
 
 	private function validate_delete( $user_id ) {

@@ -100,9 +100,10 @@ class PushServerTest extends WP_UnitTestCase {
 		$users = array(
 			Perfecty_Push_Lib_Db::get_user( $id ),
 		);
-		$result        = Perfecty_Push_Lib_Push_Server::send_notification( 'this_is_the_payload', $users );
+		[$succeeded, $failed]        = Perfecty_Push_Lib_Push_Server::send_notification( 'this_is_the_payload', $users );
 
-		$this->assertSame( 1, $result );
+		$this->assertSame( 1, $succeeded );
+		$this->assertSame( 0, $failed );
 	}
 
     /**
@@ -146,9 +147,10 @@ class PushServerTest extends WP_UnitTestCase {
         $users = array(
             Perfecty_Push_Lib_Db::get_user( $id ),
         );
-        $result        = Perfecty_Push_Lib_Push_Server::send_notification( 'this_is_the_payload', $users );
+        [$succeeded, $failed]        = Perfecty_Push_Lib_Push_Server::send_notification( 'this_is_the_payload', $users );
 
-        $this->assertSame( 0, $result );
+        $this->assertSame( 0, $succeeded );
+	    $this->assertSame( 1, $failed );
     }
 
 	/**
@@ -194,12 +196,13 @@ class PushServerTest extends WP_UnitTestCase {
 		$users = array(
 			Perfecty_Push_Lib_Db::get_user( $id ),
 		);
-		$result        = Perfecty_Push_Lib_Push_Server::send_notification( 'this_is_the_payload', $users );
+		[$succeeded, $failed]        = Perfecty_Push_Lib_Push_Server::send_notification( 'this_is_the_payload', $users );
 
         $user_after = Perfecty_Push_Lib_Db::get_user($id);
 
-        $this->assertSame( 0, $result );
-        $this->assertNotSame(null, $user_before);
+        $this->assertSame( 0, $succeeded );
+		$this->assertSame( 1, $failed );
+		$this->assertNotSame(null, $user_before);
         $this->assertSame(null, $user_after);
 	}
 
@@ -236,12 +239,13 @@ class PushServerTest extends WP_UnitTestCase {
         $users = array(
             Perfecty_Push_Lib_Db::get_user( $id ),
         );
-        $result        = Perfecty_Push_Lib_Push_Server::send_notification( 'this_is_the_payload', $users );
+        [$succeeded, $failed]        = Perfecty_Push_Lib_Push_Server::send_notification( 'this_is_the_payload', $users );
 
         $user_after = Perfecty_Push_Lib_Db::get_user($id);
 
-        $this->assertSame( 0, $result );
-        $this->assertNotSame(null, $user_before);
+        $this->assertSame( 0, $succeeded );
+	    $this->assertSame( 1, $failed );
+	    $this->assertNotSame(null, $user_before);
         $this->assertEquals(null, $user_after);
     }
 
