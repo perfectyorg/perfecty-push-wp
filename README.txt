@@ -4,7 +4,7 @@ Donate link: https://github.com/perfectyorg
 Tags: Push Notifications, Web Push Notifications, Notifications, User engagement
 Requires at least: 5.0
 Tested up to: 5.8
-Stable tag: 1.4.1
+Stable tag: 1.4.2
 Requires PHP: 7.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -94,6 +94,10 @@ You can create an issue in our Github repo:
 8. Settings
 
 == Changelog ==
+
+= 1.4.2 =
+* Set the default log level to ERROR. Related [#117](https://github.com/perfectyorg/perfecty-push-wp/issues/117)
+* Move the cron job check warning to the logger. Related [#110](https://github.com/perfectyorg/perfecty-push-wp/issues/110)
 
 = 1.4.1 =
 * Improvements to the job management section and the job stats. Related [#104](https://github.com/perfectyorg/perfecty-push-wp/issues/104), [#102](https://github.com/perfectyorg/perfecty-push-wp/issues/102)

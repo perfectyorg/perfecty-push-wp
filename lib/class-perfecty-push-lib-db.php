@@ -100,7 +100,7 @@ class Perfecty_Push_Lib_Db {
 					$wpdb->query( "ALTER TABLE $user_table DROP INDEX endpoint" );
 				}
 			}
-			if ( $db_version == 5) {
+			if ( $db_version == 5 ) {
 				// the counters have been adjusted, we migrate the old stats
 				$wpdb->query( "UPDATE $notifications_table SET failed = total - succeeded" );
 			}
