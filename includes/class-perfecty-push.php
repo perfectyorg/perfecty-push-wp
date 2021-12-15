@@ -240,7 +240,7 @@ class Perfecty_Push {
 			Perfecty_Push_Lib_Log::init( $logger, Perfecty_Push_Lib_Log::DEBUG );
 		} else {
 			$logger = new Perfecty_Push_Lib_Log_ErrorLog();
-			Perfecty_Push_Lib_Log::init( $logger, Perfecty_Push_Lib_Log::INFO );
+			Perfecty_Push_Lib_Log::init( $logger, Perfecty_Push_Lib_Log::ERROR );
 		}
 	}
 
