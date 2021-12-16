@@ -501,10 +501,12 @@ class Perfecty_Push_Admin {
 	 * Register the metaboxes
 	 */
 	public function register_metaboxes() {
-		$post_types = get_post_types( array(
-			'public'   => true,
-			'_builtin' => false
-		) );
+		$post_types   = get_post_types(
+			array(
+				'public'   => true,
+				'_builtin' => false,
+			)
+		);
 		$post_types[] = 'post';
 
 		add_meta_box( 'perfecty_push_post_metabox', 'Perfecty Push', array( $this, 'display_post_metabox' ), $post_types, 'side', 'high' );
