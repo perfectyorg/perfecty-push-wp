@@ -17,8 +17,7 @@
  * @author     Rowinson Gallego <rwn.gallego@gmail.com>
  */
 
-use Minishlink\WebPush\Subscription;
-use Ramsey\Uuid\Uuid;
+use Perfecty_Push_External_Uuid as Uuid;
 use Perfecty_Push_Lib_Log as Log;
 
 class Perfecty_Push_Users {
@@ -60,7 +59,7 @@ class Perfecty_Push_Users {
 
 			// check if this is a valid subscription
 			try {
-				new Subscription( $endpoint, $key_p256dh, $key_auth );
+				Perfecty_Push_External_Webpush::subscription( $endpoint, $key_p256dh, $key_auth );
 			} catch ( Exception $e ) {
 				Log::error( 'Invalid subscription: ' . $e->getMessage() );
 				return new WP_Error( 'validation_error', __( 'Invalid subscription parameters', 'perfecty-push-notifications' ), array( 'status' => 400 ) );

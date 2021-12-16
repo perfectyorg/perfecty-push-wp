@@ -1,8 +1,5 @@
 <?php
 
-use Minishlink\WebPush\WebPush;
-use Ramsey\Uuid\Uuid;
-
 /**
  * Class RestRegistrationTest
  *
@@ -88,8 +85,8 @@ class RestRegistrationTest extends WP_UnitTestCase {
 		$this->assertArraySubset( $expected, (array) $users[0] );
 
 		// clean up.
-		$webpush         = new WebPush();
-		$vapid_generator = array( 'Minishlink\WebPush\VAPID', 'createVapidKeys' );
+		$webpush         = Perfecty_Push_External_Webpush::get();
+		$vapid_generator = array( 'Perfecty_Push_External_Webpush', 'createVapidKeys' );
 		Perfecty_Push_Lib_Push_Server::bootstrap( array(), $vapid_generator, $webpush );
 
 	}

@@ -1,6 +1,6 @@
 <?php
 
-use Ramsey\Uuid\Uuid;
+use Perfecty_Push_External_Uuid as Uuid;
 
 /***
  * DB library

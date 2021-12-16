@@ -9,7 +9,7 @@
  * Test the Perfecty_Push_Lib_Db
  */
 
-use Ramsey\Uuid\Uuid;
+use Perfecty_Push_External_Uuid as Uuid;
 
 class DbTest extends WP_UnitTestCase {
 

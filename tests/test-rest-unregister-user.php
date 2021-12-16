@@ -5,6 +5,8 @@
  * @package Perfecty_Push
  */
 
+use Perfecty_Push_External_Uuid as Uuid;
+
 /**
  * Test the Perfecty_Push_Users class
  */
@@ -46,7 +48,7 @@ class RestUnregisterUserTest extends WP_UnitTestCase {
 	 * Test unregister user not found
 	 */
 	public function test_unregister_user_not_found() {
-	    $uuid = \Ramsey\Uuid\Uuid::uuid4();
+	    $uuid = Uuid::uuid4();
 		$data        = array(
 			'user_id'   => $uuid->toString(),
 		);
@@ -89,7 +91,7 @@ class RestUnregisterUserTest extends WP_UnitTestCase {
 	 * Test unregister user with invalid nonce
 	 */
 	public function test_unregister_user_invalid_nonce() {
-        $uuid = \Ramsey\Uuid\Uuid::uuid4();
+        $uuid = Uuid::uuid4();
         $data        = array(
             'user_id'   => $uuid->toString(),
         );

@@ -1,7 +1,5 @@
 <?php
 
-use Minishlink\WebPush\Subscription;
-use Minishlink\WebPush\WebPush;
 use Perfecty_Push_Lib_Log as Log;
 
 /***
@@ -67,12 +65,12 @@ class Perfecty_Push_Lib_Push_Server {
 			}
 		);
 		try {
-			$webpush = new WebPush( self::$auth, array( 'batchSize' => $parallel_flushing_size ) );
+			$webpush = Perfecty_Push_External_Webpush::get( self::$auth, array( 'batchSize' => $parallel_flushing_size ) );
 			$webpush->setReuseVAPIDHeaders( true );
 		} catch ( Throwable $ex ) {
 			Log::error( 'Could not start the Push Server: ' . $ex->getMessage() . ', ' . $ex->getTraceAsString() );
-			Class_Perfecty_Push_Lib_Utils::show_message( esc_html( 'Could not start the Push Server, check the PHP error logs for more information.', 'perfecty-push-notifications' ), 'warning' );
-			Class_Perfecty_Push_Lib_Utils::disable();
+			Perfecty_Push_Lib_Utils::show_message( esc_html( 'Could not start the Push Server, check the PHP error logs for more information.', 'perfecty-push-notifications' ), 'warning' );
+			Perfecty_Push_Lib_Utils::disable();
 			throw $ex;
 		}
 		restore_error_handler();
@@ -116,7 +114,7 @@ class Perfecty_Push_Lib_Push_Server {
 		$payload = apply_filters( 'perfecty_push_custom_payload', $payload );
 		$payload = json_encode( $payload );
 
-		if ( Class_Perfecty_Push_Lib_Utils::is_disabled() ) {
+		if ( Perfecty_Push_Lib_Utils::is_disabled() ) {
 			Log::error( 'Perfecty Push is disabled, fix the issues already reported.' );
 			return false;
 		}
@@ -376,7 +374,7 @@ class Perfecty_Push_Lib_Push_Server {
 
 		foreach ( $users as $item ) {
 			Log::debug( 'Enqueuing notification to user id=' . $item->id );
-			$push_user = new Subscription(
+			$push_user = Perfecty_Push_External_Webpush::subscription(
 				$item->endpoint,
 				$item->key_p256dh,
 				$item->key_auth
