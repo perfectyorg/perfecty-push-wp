@@ -1,7 +1,5 @@
 <?php
 
-use Minishlink\WebPush\WebPush;
-
 /**
  * Class LoggerTest
  *

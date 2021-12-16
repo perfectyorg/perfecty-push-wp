@@ -38,7 +38,7 @@ class Perfecty_Push_Global {
 		$plugin_activated = get_option( 'perfecty_push_activated', 0 );
 
 		if ( $plugin_activated == 1 ) {
-			Class_Perfecty_Push_Lib_Utils::check_database();
+			Perfecty_Push_Lib_Utils::check_database();
 		}
 
 		if ( get_option( 'perfecty_push_version' ) != PERFECTY_PUSH_VERSION ) {

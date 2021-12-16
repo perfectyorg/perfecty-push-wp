@@ -1,7 +1,5 @@
 <?php
 
-use Minishlink\WebPush\WebPush;
-
 /**
  * Class PushServerTest
  *
@@ -34,10 +32,10 @@ class PushServerTest extends WP_UnitTestCase {
                 return false; // we raise it to the next handler otherwise
             }
         );
-		$webpush         = new WebPush();
+		$webpush         = Perfecty_Push_External_Webpush::get();
         restore_error_handler();
 
-		$vapid_generator = array( 'Minishlink\WebPush\VAPID', 'createVapidKeys' );
+		$vapid_generator = array( 'Perfecty_Push_External_Webpush', 'createVapidKeys' );
 		Perfecty_Push_Lib_Push_Server::bootstrap( array(), $vapid_generator, $webpush );
 
 		\Mockery::close();

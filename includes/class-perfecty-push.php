@@ -78,7 +78,7 @@ class Perfecty_Push {
 		$this->load_dependencies();
 		$this->load_logger();
 		$this->set_locale();
-		if ( Class_Perfecty_Push_Lib_Utils::is_enabled() ) {
+		if ( Perfecty_Push_Lib_Utils::is_enabled() ) {
 			$this->load_push_server();
 		}
 		$this->define_global_hooks();
@@ -215,7 +215,7 @@ class Perfecty_Push {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-perfecty-push-admin-logs-table.php';
 
 		/**
-		 * Contains the lib/ definitions
+		 * Contains the lib/ and external/ definitions
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'lib/class-perfecty-push-lib-db.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'lib/class-perfecty-push-lib-push-server.php';
@@ -225,6 +225,8 @@ class Perfecty_Push {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'lib/log/class-perfecty-push-lib-log-db.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'lib/log/class-perfecty-push-lib-log-errorlog.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'lib/class-perfecty-push-lib-cron-check.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'external/class-perfecty-push-external-uuid.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'external/class-perfecty-push-external-webpush.php';
 		$this->loader = new Perfecty_Push_Loader();
 	}
 
@@ -280,11 +282,11 @@ class Perfecty_Push {
 			);
 		} elseif ( $plugin_activated == 1 ) {
 			error_log( 'VAPID Keys are missing' );
-			Class_Perfecty_Push_Lib_Utils::show_message( sprintf( esc_html( 'The VAPID keys are missing in Perfecty Push. Help: %1$s Generate the VAPID Keys. %2$s', 'perfecty-push-notifications' ), "<a href='https://docs.perfecty.org/wp/troubleshooting/#the-vapid-keys-are-missing-in-perfecty-push-generate-the-vapid-keys' target='_blank'>", '</a>' ), 'warning' );
-			Class_Perfecty_Push_Lib_Utils::disable();
+			Perfecty_Push_Lib_Utils::show_message( sprintf( esc_html( 'The VAPID keys are missing in Perfecty Push. Help: %1$s Generate the VAPID Keys. %2$s', 'perfecty-push-notifications' ), "<a href='https://docs.perfecty.org/wp/troubleshooting/#the-vapid-keys-are-missing-in-perfecty-push-generate-the-vapid-keys' target='_blank'>", '</a>' ), 'warning' );
+			Perfecty_Push_Lib_Utils::disable();
 			return false;
 		}
-		$vapid_generator = array( 'Minishlink\WebPush\VAPID', 'createVapidKeys' );
+		$vapid_generator = array( 'Perfecty_Push_External_Webpush', 'createVapidKeys' );
 
 		Perfecty_Push_Lib_Push_Server::bootstrap( $auth, $vapid_generator );
 		return true;

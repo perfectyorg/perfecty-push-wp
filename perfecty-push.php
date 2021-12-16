@@ -79,11 +79,11 @@ require plugin_dir_path( __FILE__ ) . 'includes/class-perfecty-push.php';
 require plugin_dir_path( __FILE__ ) . 'lib/class-perfecty-push-lib-utils.php';
 if ( version_compare( PHP_VERSION, '7.2.0', '>=' ) ) {
 	require __DIR__ . '/vendor/autoload.php';
-	Class_Perfecty_Push_Lib_Utils::check_gmp();
+	Perfecty_Push_Lib_Utils::check_gmp();
 } else {
 	error_log( sprintf( 'Wrong PHP version: %s', PHP_VERSION ) );
-	Class_Perfecty_Push_Lib_Utils::show_message( esc_html( 'Perfecty Push requires PHP >= 7.2.0', 'perfecty-push-notifications' ), 'error' );
-	Class_Perfecty_Push_Lib_Utils::disable();
+	Perfecty_Push_Lib_Utils::show_message( esc_html( 'Perfecty Push requires PHP >= 7.2.0', 'perfecty-push-notifications' ), 'error' );
+	Perfecty_Push_Lib_Utils::disable();
 }
 
 /**

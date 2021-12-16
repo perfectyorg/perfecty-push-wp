@@ -95,6 +95,9 @@ You can create an issue in our Github repo:
 
 == Changelog ==
 
+= 1.5.0 =
+* Use the external composer libraries only when necessary to avoid potential conflicts. Related [#111](https://github.com/perfectyorg/perfecty-push-wp/issues/111)
+
 = 1.4.2 =
 * Set the default log level to ERROR. Related [#117](https://github.com/perfectyorg/perfecty-push-wp/issues/117)
 * Move the cron job check warning to the logger. Related [#110](https://github.com/perfectyorg/perfecty-push-wp/issues/110)

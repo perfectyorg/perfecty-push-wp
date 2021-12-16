@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Class Class_Perfecty_Push_Lib_Utils
+ * Class Perfecty_Push_Lib_Utils
  *
  * Contains utilities for checking the Push Server and show messages
  */
-class Class_Perfecty_Push_Lib_Utils {
+class Perfecty_Push_Lib_Utils {
 
 
 	/**

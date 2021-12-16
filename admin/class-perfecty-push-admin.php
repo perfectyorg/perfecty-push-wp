@@ -605,7 +605,7 @@ class Perfecty_Push_Admin {
 
 			if ( $result === false ) {
 				error_log( esc_html__( 'Could not schedule the broadcast async, check the logs', 'perfecty-push-notifications' ) );
-				Class_Perfecty_Push_Lib_Utils::show_message( esc_html__( 'Could not send the notification', 'perfecty-push-notifications' ), 'error' );
+				Perfecty_Push_Lib_Utils::show_message( esc_html__( 'Could not send the notification', 'perfecty-push-notifications' ), 'error' );
 			} else {
 				if ( isset( $_POST['perfecty_push_post_metabox_nonce'] ) ) {
 					// once we sent the notification, we reset the checkbox when the
@@ -614,7 +614,7 @@ class Perfecty_Push_Admin {
 				}
 				update_post_meta( $post->ID, '_perfecty_push_send_on_publish', false );
 
-				Class_Perfecty_Push_Lib_Utils::show_message( '<strong>Perfecty Push</strong> ' . esc_html__( 'has sent a notification for the recently published post:', 'perfecty-push-notifications' ) . ' ' . $body );
+				Perfecty_Push_Lib_Utils::show_message( '<strong>Perfecty Push</strong> ' . esc_html__( 'has sent a notification for the recently published post:', 'perfecty-push-notifications' ) . ' ' . $body );
 			}
 		}
 	}
@@ -975,7 +975,7 @@ class Perfecty_Push_Admin {
 
 		if ( empty( $options['vapid_public_key'] ) && empty( $options['vapid_private_key'] ) &&
 			! empty( $new_input['vapid_public_key'] ) && ! empty( $new_input['vapid_private_key'] ) ) {
-			Class_Perfecty_Push_Lib_Utils::clean_messages();
+			Perfecty_Push_Lib_Utils::clean_messages();
 		}
 		return $new_input;
 	}

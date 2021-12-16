@@ -30,7 +30,7 @@ class Perfecty_Push_Deactivator {
 	 * @since    1.0.0
 	 */
 	public static function deactivate() {
-		Class_Perfecty_Push_Lib_Utils::clean_messages();
+		Perfecty_Push_Lib_Utils::clean_messages();
 		delete_option( 'perfecty_push_activated' );
 	}
 

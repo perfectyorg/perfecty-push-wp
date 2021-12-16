@@ -11,7 +11,7 @@ $perfecty_push_unregister_conflicts_expression = ! empty( $options['unregister_c
 $perfecty_push_prompt_icon_url                 = isset( $options['notifications_default_icon'] ) && ! empty( $options['notifications_default_icon'] ) ? wp_get_attachment_url( $options['notifications_default_icon'] ) : '';
 $perfecty_push_visits_to_display_prompt        = isset( $options['visits_to_display_prompt'] ) && $options['visits_to_display_prompt'] ? $options['visits_to_display_prompt'] : 0;
 
-if ( Class_Perfecty_Push_Lib_Utils::is_disabled() ||
+if ( Perfecty_Push_Lib_Utils::is_disabled() ||
 	( ! isset( $options['widget_enabled'] ) || $options['widget_enabled'] == 0 ) ) {
 	$perfecty_push_enabled = false;
 } else {
