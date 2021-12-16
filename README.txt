@@ -21,7 +21,7 @@ Features:
 - Self-hosted: total control of your information, and no need of third-party integrations.
 - Migrate users from other Push Notifications providers like OneSignal.
 - PWA Friendly (Tested with Super PWA) and AMP plugins (Transitional mode).
-- Send Push Notifications on posts publishing. You can use the feature image of the post or customize the title.
+- Send Push Notifications on posts publishing. Also supports custom posts. You can use the feature image of the post or customize the title.
 - Send custom Push Notifications: you can easily change the icon, the image or the URL to open.
 - See the stats in the Dashboard.
 - Customizable public widget.
@@ -96,6 +96,7 @@ You can create an issue in our Github repo:
 == Changelog ==
 
 = 1.5.0 =
+* Send automatic notifications for Custom Post Types (public). Related [#103](https://github.com/perfectyorg/perfecty-push-wp/issues/103)
 * Use the external composer libraries only when necessary to avoid potential conflicts. Related [#111](https://github.com/perfectyorg/perfecty-push-wp/issues/111)
 
 = 1.4.2 =
