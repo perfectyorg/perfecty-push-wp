@@ -98,6 +98,7 @@ You can create an issue in our Github repo:
 = 1.5.0 =
 * Send automatic notifications for Custom Post Types (public). Related [#103](https://github.com/perfectyorg/perfecty-push-wp/issues/103)
 * Use the external composer libraries only when necessary to avoid potential conflicts. Related [#111](https://github.com/perfectyorg/perfecty-push-wp/issues/111)
+* Fix compatibility issues with the Otter Blocks plugin. Related [#125](https://github.com/perfectyorg/perfecty-push-wp/issues/125)
 
 = 1.4.2 =
 * Set the default log level to ERROR. Related [#117](https://github.com/perfectyorg/perfecty-push-wp/issues/117)
