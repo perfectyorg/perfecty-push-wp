@@ -93,7 +93,7 @@ create_dist() {
   create_sdk_dist
   rm -rf $DIST_PATH
   mkdir -p $SVN_PATH $OUTPUT_PATH
-  cp -Rp admin includes languages lib public composer.json composer.lock index.php LICENSE.txt perfecty-push.php README.txt uninstall.php $OUTPUT_PATH
+  cp -Rp admin includes external languages lib public composer.json composer.lock index.php LICENSE.txt perfecty-push.php README.txt uninstall.php $OUTPUT_PATH
   (cd $OUTPUT_PATH && composer install --quiet --no-dev --optimize-autoloader)
   cp index.php $OUTPUT_PATH/vendor/
 }
