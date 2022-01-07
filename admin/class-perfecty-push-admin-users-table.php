@@ -28,6 +28,13 @@ class Perfecty_Push_Admin_Users_Table extends WP_List_Table {
 		}
 	}
 
+	function column_created_at( $item ) {
+		return sprintf(
+			'%s',
+			get_date_from_gmt( $item['created_at'] )
+		);
+	}
+
 	function column_uuid( $item ) {
 		$action_nonce = wp_create_nonce( 'bulk-' . $this->_args['plural'] );
 		$page         = esc_html( sanitize_key( $_REQUEST['page'] ) );
