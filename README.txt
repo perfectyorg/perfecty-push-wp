@@ -4,7 +4,7 @@ Donate link: https://github.com/perfectyorg
 Tags: Push Notifications, Web Push Notifications, Notifications, User engagement
 Requires at least: 5.0
 Tested up to: 5.8
-Stable tag: 1.5.0
+Stable tag: 1.5.1
 Requires PHP: 7.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -94,6 +94,9 @@ You can create an issue in our Github repo:
 8. Settings
 
 == Changelog ==
+
+= 1.5.1 =
+* Remove unnecessary autoload, related to [#111](https://github.com/perfectyorg/perfecty-push-wp/issues/111).
 
 = 1.5.0 =
 * Send automatic notifications for Custom Post Types (public). Related [#103](https://github.com/perfectyorg/perfecty-push-wp/issues/103)
