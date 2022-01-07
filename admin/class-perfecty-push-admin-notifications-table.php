@@ -41,7 +41,7 @@ class Perfecty_Push_Admin_Notifications_Table extends WP_List_Table {
 
 		return sprintf(
 			'%s %s',
-			$item['created_at'],
+			get_date_from_gmt( $item['created_at'] ),
 			$this->row_actions( $actions )
 		);
 	}

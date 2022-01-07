@@ -26,7 +26,7 @@
 				<p>
 					<label for="created_at"><?php printf( esc_html__( 'Registered at:', 'perfecty-push-notifications' ) ); ?> </label>
 					<br>
-				<div><?php echo esc_html( $item->created_at ); ?></div>
+				<div><?php echo get_date_from_gmt( esc_html( $item->created_at ) ); ?></div>
 				</p>
 				<p>
 					<label for="key_auth"><?php printf( esc_html__( 'Key auth:', 'perfecty-push-notifications' ) ); ?> </label>

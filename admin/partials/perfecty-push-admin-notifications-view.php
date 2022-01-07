@@ -43,7 +43,7 @@
 				<p>
 					<label for="created_at"><?php printf( esc_html__( 'Date:', 'perfecty-push-notifications' ) ); ?> </label>
 					<br>
-				<div><?php echo esc_html( $item->created_at ); ?></div>
+				<div><?php echo get_date_from_gmt( esc_html( $item->created_at ) ); ?></div>
 				</p>
 				<p>
 					<label for="status"><?php printf( esc_html__( 'Status:', 'perfecty-push-notifications' ) ); ?> </label>
