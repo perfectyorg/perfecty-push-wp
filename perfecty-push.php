@@ -15,7 +15,7 @@
  * Plugin Name:       Perfecty Push Notifications
  * Plugin URI:        https://wordpress.org/plugins/perfecty-push-notifications
  * Description:       Self-hosted, Open Source and powerful <strong>Web Push Notifications</strong> plugin to send push notifications <strong>from your own server for free!</strong>
- * Version:           1.5.0
+ * Version:           1.5.1
  * Author:            Perfecty
  * Author URI:        https://perfecty.org
  * License:           GPL-2.0+
@@ -34,7 +34,7 @@ if ( ! defined( 'WPINC' ) ) {
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'PERFECTY_PUSH_VERSION', '1.5.0' );
+define( 'PERFECTY_PUSH_VERSION', '1.5.1' );
 
 /**
  * DB Version of the plugin
@@ -78,7 +78,6 @@ require plugin_dir_path( __FILE__ ) . 'includes/class-perfecty-push.php';
  */
 require plugin_dir_path( __FILE__ ) . 'lib/class-perfecty-push-lib-utils.php';
 if ( version_compare( PHP_VERSION, '7.2.0', '>=' ) ) {
-	require __DIR__ . '/vendor/autoload.php';
 	Perfecty_Push_Lib_Utils::check_gmp();
 } else {
 	error_log( sprintf( 'Wrong PHP version: %s', PHP_VERSION ) );
