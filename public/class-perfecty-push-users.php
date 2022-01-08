@@ -27,6 +27,8 @@ class Perfecty_Push_Users {
 	 * @since 1.0.0
 	 */
 	public function register( $data ) {
+		$site_id    = $data['site_id'] ?? null;
+
 		// Request
 		$user       = $data['user'] ?? null;
 		$user_id    = $data['user_id'] ?? null;
@@ -46,7 +48,7 @@ class Perfecty_Push_Users {
 		$key_p256dh = $res[2];
 
 		// Process request
-		$validation = $this->validate( $endpoint, $key_auth, $key_p256dh, $remote_ip, $user_id, $first_time );
+		$validation = $this->validate( $site_id, $endpoint, $key_auth, $key_p256dh, $remote_ip, $user_id, $first_time );
 		if ( $validation === true ) {
 			// filter data
 			$endpoint   = esc_url( $endpoint );
@@ -112,6 +114,7 @@ class Perfecty_Push_Users {
 	 * @since 1.0.0
 	 */
 	public function get_user( $data ) {
+		$site_id = $data['site_id'] ?? null;
 		$user_id = $data['user_id'] ?? null;
 
 		// Validate the nonce.
@@ -120,7 +123,7 @@ class Perfecty_Push_Users {
 			$this->terminate();
 		}
 
-		$validation = $this->validate_get_user( $user_id );
+		$validation = $this->validate_get_user( $site_id, $user_id );
 		if ( $validation !== true ) {
 			return new WP_Error( 'bad_request', $validation, array( 'status' => 400 ) );
 		}
@@ -142,6 +145,7 @@ class Perfecty_Push_Users {
 	 */
 	public function unregister( $data ) {
 		$user_id = $data['user_id'] ?? null;
+		$site_id = $data['site_id'] ?? null;
 
 		// Validate the nonce.
 		$nonce = isset( $_SERVER['HTTP_X_WP_NONCE'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_WP_NONCE'] ) ) : '';
@@ -149,7 +153,7 @@ class Perfecty_Push_Users {
 			$this->terminate();
 		}
 
-		$validation = $this->validate_delete( $user_id );
+		$validation = $this->validate_delete( $site_id, $user_id );
 		if ( $validation !== true ) {
 			return new WP_Error( 'bad_request', $validation, array( 'status' => 400 ) );
 		}
@@ -188,7 +192,11 @@ class Perfecty_Push_Users {
 		return array( $endpoint, $key_auth, $key_p256dh );
 	}
 
-	private function validate( $endpoint, $key_auth, $key_p256dh, $remote_ip, $user_id, $first_time ) {
+	private function validate( $site_id, $endpoint, $key_auth, $key_p256dh, $remote_ip, $user_id, $first_time ) {
+		if ( ! Uuid::isValid( $site_id ) ) {
+			return __( 'Invalid site ID', 'perfecty-push-notifications' );
+		}
+
 		if ( ! $endpoint ) {
 			return __( 'No endpoint was provided in the request', 'perfecty-push-notifications' );
 		}
@@ -219,7 +227,11 @@ class Perfecty_Push_Users {
 		wp_die( -1, 403 );
 	}
 
-	private function validate_delete( $user_id ) {
+	private function validate_delete( $site_id, $user_id ) {
+		if ( ! Uuid::isValid( $site_id ) ) {
+			return __( 'Invalid site ID', 'perfecty-push-notifications' );
+		}
+
 		if ( ! Uuid::isValid( $user_id ) ) {
 			return __( 'Invalid user ID', 'perfecty-push-notifications' );
 		}
@@ -227,7 +239,11 @@ class Perfecty_Push_Users {
 		return true;
 	}
 
-	private function validate_get_user( $user_id ) {
+	private function validate_get_user( $site_id, $user_id ) {
+		if ( ! Uuid::isValid( $site_id ) ) {
+			return __( 'Invalid site ID', 'perfecty-push-notifications' );
+		}
+
 		if ( ! Uuid::isValid( $user_id ) ) {
 			return __( 'Invalid user ID', 'perfecty-push-notifications' );
 		}

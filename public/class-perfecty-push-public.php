@@ -93,31 +93,32 @@ class Perfecty_Push_Public {
 		// JS SDK friendly routes
 		register_rest_route(
 			'perfecty-push',
-			'/v1/push/users',
+			'/v1/webpush/(?P<site_id>[a-zA-Z0-9-]+)/subscribers',
 			array(
 				'methods'             => array( 'POST' ),
 				'callback'            => array( $users, 'register' ),
 				'permission_callback' => '__return_true',
+				'args'                => array( 'site_id' => array() ),
 			)
 		);
 		register_rest_route(
 			'perfecty-push',
-			'/v1/push/users/(?P<user_id>[a-zA-Z0-9-]+)/unregister',
+			'/v1/webpush/(?P<site_id>[a-zA-Z0-9-]+)/subscribers/(?P<subscriber_id>[a-zA-Z0-9-]+)/unregister',
 			array(
 				'methods'             => array( 'POST' ),
 				'callback'            => array( $users, 'unregister' ),
 				'permission_callback' => '__return_true',
-				'args'                => array( 'user_id' => array() ),
+				'args'                => array( 'site_id' => array(), 'subscriber_id' => array() ),
 			)
 		);
 		register_rest_route(
 			'perfecty-push',
-			'/v1/push/users/(?P<user_id>[a-zA-Z0-9-]+)',
+			'/v1/webpush/(?P<site_id>[a-zA-Z0-9-]+)/subscribers/(?P<subscriber_id>[a-zA-Z0-9-]+)',
 			array(
 				'methods'             => array( 'GET' ),
 				'callback'            => array( $users, 'get_user' ),
 				'permission_callback' => '__return_true',
-				'args'                => array( 'user_id' => array() ),
+				'args'                => array( 'site_id' => array(), 'subscriber_id' => array() ),
 			)
 		);
 	}

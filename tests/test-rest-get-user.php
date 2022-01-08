@@ -13,11 +13,13 @@ use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
  */
 class RestGetUserTest extends WP_UnitTestCase {
 	use ArraySubsetAsserts;
+	private $site_id;
 
 	public function set_up() {
 		parent::set_up();
 		activate_perfecty_push();
 		$_SERVER['HTTP_X_WP_NONCE'] = wp_create_nonce( 'wp_rest' );
+		$this->site_id = Uuid::uuid4();
 	}
 
 	public function tear_down() {
@@ -35,6 +37,7 @@ class RestGetUserTest extends WP_UnitTestCase {
 		$user = Perfecty_Push_Lib_Db::get_user( $id );
 
 		$data        = array(
+			'site_id'   => $this->site_id,
 			'user_id'   => $user->uuid,
 		);
 		$users = new Perfecty_Push_Users();
@@ -54,6 +57,7 @@ class RestGetUserTest extends WP_UnitTestCase {
 	public function test_get_user_not_found() {
 	    $uuid = Uuid::uuid4();
 		$data        = array(
+			'site_id'   => $this->site_id,
 			'user_id'   => $uuid->toString(),
 		);
 		$users = new Perfecty_Push_Users();
@@ -67,6 +71,7 @@ class RestGetUserTest extends WP_UnitTestCase {
 	 */
 	public function test_get_user_invalid() {
 		$data        = array(
+			'site_id'   => $this->site_id,
 			'user_id'   => '7777777-wrong-uuid',
 		);
 		$users = new Perfecty_Push_Users();
@@ -89,6 +94,7 @@ class RestGetUserTest extends WP_UnitTestCase {
 	public function test_get_user_invalid_nonce() {
         $uuid = Uuid::uuid4();
         $data        = array(
+	        'site_id'   => $this->site_id,
             'user_id'   => $uuid->toString(),
         );
 		unset( $_SERVER['HTTP_X_WP_NONCE'] );

@@ -11,9 +11,12 @@
  */
 
 use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
+use Perfecty_Push_External_Uuid as Uuid;
 
 class RestRegistrationTest extends WP_UnitTestCase {
 	use ArraySubsetAsserts;
+
+	private $site_id;
 
 	public function set_up() {
 		parent::set_up();
@@ -24,6 +27,7 @@ class RestRegistrationTest extends WP_UnitTestCase {
 			define( 'PERFECTY_PUSH_VAPID_PRIVATE_KEY', 'test_private_key' );
 			define( 'PERFECTY_PUSH_VAPID_PUBLIC_KEY', 'test_public_key' );
 		}
+		$this->site_id = Uuid::uuid4();
 	}
 
 	public function tear_down() {
@@ -39,6 +43,7 @@ class RestRegistrationTest extends WP_UnitTestCase {
 	public function test_registration_new() {
 		$registration         = new Perfecty_Push_Users();
 		$data                 = array(
+			'site_id'   => $this->site_id,
 			'user'       => array(
 				'endpoint' => 'http://my_endpoint',
 				'keys'     => array(
@@ -104,6 +109,7 @@ class RestRegistrationTest extends WP_UnitTestCase {
 
 		$registration = new Perfecty_Push_Users();
 		$data         = array(
+			'site_id'   => $this->site_id,
 			'user' => array(
 				'endpoint' => 'http://my_endpoint',
 				'keys'     => array(
@@ -142,6 +148,7 @@ class RestRegistrationTest extends WP_UnitTestCase {
 	public function test_registration_new_logged_in_wp_user() {
 		$registration = new Perfecty_Push_Users();
 		$data         = array(
+			'site_id'   => $this->site_id,
 			'user' => array(
 				'endpoint' => 'http://my_endpoint',
 				'keys'     => array(
@@ -188,6 +195,7 @@ class RestRegistrationTest extends WP_UnitTestCase {
 
 		$registration = new Perfecty_Push_Users();
 		$data         = array(
+			'site_id'   => $this->site_id,
 			'user'    => array(
 				'endpoint' => 'http://my_endpoint2',
 				'keys'     => array(
@@ -231,6 +239,7 @@ class RestRegistrationTest extends WP_UnitTestCase {
 
 		$registration = new Perfecty_Push_Users();
 		$data         = array(
+			'site_id'   => $this->site_id,
 			'user'    => array(
 				'endpoint' => 'http://my_endpoint',
 				'keys'     => array(
@@ -270,6 +279,7 @@ class RestRegistrationTest extends WP_UnitTestCase {
 	public function test_registration_invalid() {
 		$users = new Perfecty_Push_Users();
 		$data  = array(
+			'site_id'   => $this->site_id,
 			'user' => array(
 				'endpoint' => 'http://my_endpoint',
 				'keys'     => array(
@@ -304,6 +314,7 @@ class RestRegistrationTest extends WP_UnitTestCase {
 
 		$registration = new Perfecty_Push_Users();
 		$data         = array(
+			'site_id'   => $this->site_id,
 			'user' => array(
 				'endpoint' => 'http://my_endpoint',
 				'keys'     => array(
@@ -332,6 +343,7 @@ class RestRegistrationTest extends WP_UnitTestCase {
 	public function test_registration_missing_data() {
 		$users = new Perfecty_Push_Users();
 		$data  = array(
+			'site_id'   => $this->site_id,
 			'user' => array(
 				'keys' => array(
 					'p256dh' => 'my_p256dh_key',
@@ -358,6 +370,7 @@ class RestRegistrationTest extends WP_UnitTestCase {
 	public function test_registration_db_error() {
 		$users = new Perfecty_Push_Users();
 		$data  = array(
+			'site_id'   => $this->site_id,
 			'user' => array(
 				'endpoint' => 'http://my_endpoint',
 				'keys'     => array(
@@ -388,6 +401,7 @@ class RestRegistrationTest extends WP_UnitTestCase {
 		$user          = Perfecty_Push_Lib_Db::get_user( $id );
 		$registrations = new Perfecty_Push_Users();
 		$data          = array(
+			'site_id'   => $this->site_id,
 			'user'    => array(
 				'endpoint' => 'http://my_endpoint',
 				'keys'     => array(
