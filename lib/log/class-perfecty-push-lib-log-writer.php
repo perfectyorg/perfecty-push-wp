@@ -1,5 +1,7 @@
 <?php
 
+defined( 'WPINC' ) || exit;
+
 /***
  * Writer interface
  */

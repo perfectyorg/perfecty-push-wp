@@ -1,5 +1,7 @@
 <?php
 
+defined( 'WPINC' ) || exit;
+
 /***
  * Log writter that uses error_log()
  */

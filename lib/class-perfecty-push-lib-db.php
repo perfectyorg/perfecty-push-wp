@@ -1,5 +1,7 @@
 <?php
 
+defined( 'WPINC' ) || exit;
+
 use Perfecty_Push_External_Uuid as Uuid;
 
 /***

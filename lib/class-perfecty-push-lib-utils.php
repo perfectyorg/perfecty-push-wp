@@ -1,5 +1,7 @@
 <?php
 
+defined( 'WPINC' ) || exit;
+
 /**
  * Class Perfecty_Push_Lib_Utils
  *

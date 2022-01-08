@@ -1,4 +1,7 @@
 <?php
+
+defined( 'WPINC' ) || exit;
+
 /**
  * Prints the about page
  *

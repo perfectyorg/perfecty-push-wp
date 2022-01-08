@@ -1,4 +1,7 @@
 <?php
+
+defined( 'WPINC' ) || exit;
+
 /**
  * The integration interface between Perfecty Push and external WordPress plugins.
  *

@@ -1,5 +1,7 @@
 <?php
 
+defined( 'WPINC' ) || exit;
+
 use Perfecty_Push_Lib_Log as Log;
 
 /***

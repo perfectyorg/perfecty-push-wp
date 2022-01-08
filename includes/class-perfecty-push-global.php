@@ -1,5 +1,7 @@
 <?php
 
+defined( 'WPINC' ) || exit;
+
 /**
  * The file that defines the global hooks and actions
  *
