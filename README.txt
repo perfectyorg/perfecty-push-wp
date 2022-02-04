@@ -1,6 +1,6 @@
-=== Perfecty Push Notifications ===
+=== Perfecty Push Notifications - Self-hosted ===
 Contributors: rwngallego, mociofiletto
-Donate link: https://github.com/perfectyorg
+Donate link: https://paypal.me/rwngallego
 Tags: Push Notifications, Web Push Notifications, Notifications, User engagement
 Requires at least: 5.0
 Tested up to: 5.8
@@ -94,6 +94,10 @@ You can create an issue in our Github repo:
 8. Settings
 
 == Changelog ==
+
+= 1.5.2 =
+* Added support for WP 5.9 and beta support to PHP 8. Fixes [#136](https://github.com/perfectyorg/perfecty-push-wp/issues/136)
+* Upgraded the `web-push` lib to `6.0.7`
 
 = 1.5.1 =
 * Remove unnecessary autoload, related to [#111](https://github.com/perfectyorg/perfecty-push-wp/issues/111).

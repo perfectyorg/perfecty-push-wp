@@ -68,7 +68,7 @@ sdk() {
 }
 
 test() {
-  CMD=$(plugin_cmd 'phpunit --debug')
+  CMD=$(plugin_cmd 'vendor/bin/phpunit --debug')
   compose_exec "$CMD"
 }
 

@@ -9,19 +9,22 @@
 /**
  * Test the Perfecty_Push_Lib_Logger class
  */
+use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
+
 class LoggerTest extends WP_UnitTestCase
 {
+	use ArraySubsetAsserts;
 
-    public function setUp()
+    public function set_up()
     {
-        parent::setUp();
+        parent::set_up();
         activate_perfecty_push();
     }
 
-    public function tearDown()
+    public function tear_down()
     {
         deactivate_perfecty_push();
-        parent::tearDown();
+        parent::tear_down();
     }
 
     /**

@@ -10,17 +10,20 @@
  */
 
 use Perfecty_Push_External_Uuid as Uuid;
+use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
 
 class DbTest extends WP_UnitTestCase {
 
-	public function setUp() {
-		parent::setUp();
+	use ArraySubsetAsserts;
+
+	public function set_up() {
+		parent::set_up();
 		activate_perfecty_push();
 	}
 
-	public function tearDown() {
+	public function tear_down() {
 		deactivate_perfecty_push();
-		parent::tearDown();
+		parent::tear_down();
 	}
 
 	/**
