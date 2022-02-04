@@ -9,12 +9,15 @@
 /**
  * Test the Perfecty_Push_Lib_Push_Server class
  */
+use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
+
 class PushServerTest extends WP_UnitTestCase {
+	use ArraySubsetAsserts;
 
 	private $mocked_vapid_callback = "md5";
 
-	public function setUp() {
-		parent::setUp();
+	public function set_up() {
+		parent::set_up();
 		activate_perfecty_push();
 
 		if ( ! defined( 'PERFECTY_PUSH_VAPID_PRIVATE_KEY' ) && ! defined( 'PERFECTY_PUSH_VAPID_PUBLIC_KEY' ) ) {
@@ -23,7 +26,7 @@ class PushServerTest extends WP_UnitTestCase {
 		}
 	}
 
-	public function tearDown() {
+	public function tear_down() {
         set_error_handler(
             function ( $errno, $errstr, $errfile, $errline ) {
                 if ( strpos( $errstr, 'gmp extension is not loaded' ) !== false ) {
@@ -40,7 +43,7 @@ class PushServerTest extends WP_UnitTestCase {
 
 		\Mockery::close();
 		deactivate_perfecty_push();
-		parent::tearDown();
+		parent::tear_down();
 	}
 
 	/**

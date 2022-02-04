@@ -10,10 +10,13 @@
  * Test the Perfecty_Push_Users class
  */
 
-class RestRegistrationTest extends WP_UnitTestCase {
+use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
 
-	public function setUp() {
-		parent::setUp();
+class RestRegistrationTest extends WP_UnitTestCase {
+	use ArraySubsetAsserts;
+
+	public function set_up() {
+		parent::set_up();
 		activate_perfecty_push();
 
 		$_SERVER['HTTP_X_WP_NONCE'] = wp_create_nonce( 'wp_rest' );
@@ -23,11 +26,11 @@ class RestRegistrationTest extends WP_UnitTestCase {
 		}
 	}
 
-	public function tearDown() {
+	public function tear_down() {
 		\Mockery::close();
 		deactivate_perfecty_push();
 		unset( $_SERVER['HTTP_X_WP_NONCE'] );
-		parent::tearDown();
+		parent::tear_down();
 	}
 
 	/**

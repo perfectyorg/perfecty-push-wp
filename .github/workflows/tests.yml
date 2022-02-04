@@ -10,9 +10,20 @@ jobs:
   test:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
-        wordpress-version: ['5.0', '5.1', '5.2', '5.3', '5.4', '5.5', '5.6', '5.7', 'latest']
-        php-versions: ['7.2', '7.3', '7.4', '8.0', '8.1']
+        # See: https://make.wordpress.org/core/handbook/references/php-compatibility-and-wordpress-versions/
+        wordpress-version: ['5.2', '5.3', '5.4', '5.5', '5.6', '5.7', '5.8', '5.9']
+        php-versions: ['7.2', '7.3', '7.4', '8.0']
+        exclude:
+          - php-versions: '8.0'
+            wordpress-version: '5.2'
+          - php-versions: '8.0'
+            wordpress-version: '5.3'
+          - php-versions: '8.0'
+            wordpress-version: '5.4'
+          - php-versions: '8.0'
+            wordpress-version: '5.5'
 
     name: PHP:${{ matrix.php-versions }} / WP:${{ matrix.wordpress-version }}
     services:
@@ -56,7 +67,19 @@ jobs:
         key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
         restore-keys: ${{ runner.os }}-composer-
 
+    - name: Only for WP 5.9 and PHP 8
+      # See: https://make.wordpress.org/core/2021/09/27/changes-to-the-wordpress-core-php-test-suite/
+      if: ${{ matrix.php-versions == '8.0' && matrix.wordpress-version == '5.9' }}
+      run: (composer remove --dev phpunit/phpunit || true ) && composer update --dev yoast/phpunit-polyfills --with-dependencies && composer install --no-progress --prefer-dist --optimize-autoloader
+
+    - name: When using PHP 8 and WP <= 5.8
+      # See: https://core.trac.wordpress.org/ticket/50902
+      if: ${{ matrix.php-versions == '8.0' && (matrix.wordpress-version == '5.6' || matrix.wordpress-version == '5.7' || matrix.wordpress-version == '5.8' )}}
+      run: composer install --no-progress --prefer-dist --optimize-autoloader --ignore-platform-reqs
+
     - name: Install Composer dependencies
+      # Rest of the versions
+      if: ${{ matrix.php-versions != '8.0' }}
       run: composer install --no-progress --prefer-dist --optimize-autoloader
 
     - name: Run the tests

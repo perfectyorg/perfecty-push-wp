@@ -561,10 +561,10 @@ class Perfecty_Push_Admin {
 		$send_notification = ! empty( $_POST['perfecty_push_send_on_publish'] );
 		update_post_meta( $post_id, '_perfecty_push_send_on_publish', $send_notification );
 
-		$notification_title = $_POST['perfecty_push_notification_custom_title'];
+		$notification_title = $_POST['perfecty_push_notification_custom_title'] ?? '';
 		update_post_meta( $post_id, '_perfecty_push_notification_custom_title', esc_html( $notification_title ) );
 
-		$notification_body = $_POST['perfecty_push_notification_custom_body'];
+		$notification_body = $_POST['perfecty_push_notification_custom_body'] ?? '';
 		update_post_meta( $post_id, '_perfecty_push_notification_custom_body', esc_html( $notification_body ) );
 	}
 
@@ -587,8 +587,8 @@ class Perfecty_Push_Admin {
 			wp_verify_nonce( $_POST['perfecty_push_post_metabox_nonce'], 'perfecty_push_post_metabox' ) ) {
 			// we do this because on_transition_post_status is triggered before on_save_post by WordPress
 			$send_notification  = ! empty( $_POST['perfecty_push_send_on_publish'] );
-			$notification_title = $_POST['perfecty_push_notification_custom_title'];
-			$notification_body  = $_POST['perfecty_push_notification_custom_body'];
+			$notification_title = $_POST['perfecty_push_notification_custom_title'] ?? '';
+			$notification_body  = $_POST['perfecty_push_notification_custom_body'] ?? '';
 		} else {
 			$send_notification  = ! empty( get_post_meta( $post->ID, '_perfecty_push_send_on_publish', true ) );
 			$notification_title = get_post_meta( $post->ID, '_perfecty_push_notification_custom_title', true );
@@ -598,7 +598,7 @@ class Perfecty_Push_Admin {
 		if ( 'publish' == $new_status && $send_notification ) {
 			$body               = trim( $notification_body ) ? $notification_body : html_entity_decode( get_the_title( $post ) );
 			$url_to_open        = get_the_permalink( $post );
-			$notification_title = trim( $notification_title ) ? $notification_title : false;
+			$notification_title = trim( $notification_title ) ? $notification_title : '';
 
 			// we use this to check if the post has a thumbnail because has_post_thumbnail could return true even if no post thumbnail is set.
 			$featured_image_url = wp_get_attachment_url( get_post_thumbnail_id( $post->ID ) );
