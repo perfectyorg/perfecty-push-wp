@@ -6,3 +6,4 @@ out/
 dist/
 public/js/perfecty-push-sdk/
 /.phpunit.result.cache
+composer.lock

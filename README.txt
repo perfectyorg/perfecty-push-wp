@@ -28,7 +28,7 @@ Features:
 - The user authorization tokens stay in your server when they subscribe to receive your Push Notifications.
 - Easily comply with GDPR: all the Push Notifications information is processed and stored in your server.
 - Open Source: no hidden fees, and open transparency.
-- Offline browser Push Notifications through [Push API](https://developer.mozilla.org/en-US/docs/Web/API/Push_API).
+- Offline browser Push Notifications through [Push API](https://developer.mozilla.org/en-US/docs/Web/API/Push_API). iOS/Safari are not supported yet.
 
 Requirements:
 - `gmp` extension for message encryption (optional)
@@ -98,6 +98,7 @@ You can create an issue in our Github repo:
 = 1.5.2 =
 * Added support for WP 5.9 and beta support to PHP 8. Fixes [#136](https://github.com/perfectyorg/perfecty-push-wp/issues/136)
 * Upgraded the `web-push` lib to `6.0.7`
+* Improve multilingual support, use default values as placeholders in the Widget texts. Fixes [143](https://github.com/perfectyorg/perfecty-push-wp/issues/143)
 
 = 1.5.1 =
 * Remove unnecessary autoload, related to [#111](https://github.com/perfectyorg/perfecty-push-wp/issues/111).
