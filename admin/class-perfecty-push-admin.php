@@ -1369,12 +1369,13 @@ class Perfecty_Push_Admin {
 	 */
 	public function print_dialog_title() {
 		$options = get_option( 'perfecty_push' );
-		$value   = isset( $options['dialog_title'] ) && ! empty( $options['dialog_title'] ) ? esc_attr( $options['dialog_title'] ) : PERFECTY_PUSH_OPTIONS_DIALOG_TITLE;
+		$value   = isset( $options['dialog_title'] ) && ! empty( $options['dialog_title'] ) ? esc_attr( $options['dialog_title'] ) : "";
 
 		printf(
 			'<input type="text" id="perfecty_push[dialog_title]"' .
-			'name="perfecty_push[dialog_title]" value="%s" class="perfecty-push-options-dialog-group"/>',
-			esc_html( $value )
+			'name="perfecty_push[dialog_title]" value="%s" placeholder="%s" class="perfecty-push-options-dialog-group"/>',
+			esc_html( $value ),
+			PERFECTY_PUSH_OPTIONS_DIALOG_TITLE
 		);
 	}
 
@@ -1385,12 +1386,13 @@ class Perfecty_Push_Admin {
 	 */
 	public function print_dialog_submit() {
 		$options = get_option( 'perfecty_push' );
-		$value   = isset( $options['dialog_submit'] ) && ! empty( $options['dialog_submit'] ) ? esc_attr( $options['dialog_submit'] ) : PERFECTY_PUSH_OPTIONS_DIALOG_CONTINUE;
+		$value   = isset( $options['dialog_submit'] ) && ! empty( $options['dialog_submit'] ) ? esc_attr( $options['dialog_submit'] ) : "";
 
 		printf(
 			'<input type="text" id="perfecty_push[dialog_submit]"' .
-			'name="perfecty_push[dialog_submit]" value="%s" class="perfecty-push-options-dialog-group"/>',
-			esc_html( $value )
+			'name="perfecty_push[dialog_submit]" value="%s" placeholder="%s" class="perfecty-push-options-dialog-group"/>',
+			esc_html( $value ),
+			PERFECTY_PUSH_OPTIONS_DIALOG_CONTINUE
 		);
 	}
 
@@ -1401,12 +1403,13 @@ class Perfecty_Push_Admin {
 	 */
 	public function print_dialog_cancel() {
 		$options = get_option( 'perfecty_push' );
-		$value   = isset( $options['dialog_cancel'] ) && ! empty( $options['dialog_cancel'] ) ? esc_attr( $options['dialog_cancel'] ) : PERFECTY_PUSH_OPTIONS_DIALOG_CANCEL;
+		$value   = isset( $options['dialog_cancel'] ) && ! empty( $options['dialog_cancel'] ) ? esc_attr( $options['dialog_cancel'] ) : "";
 
 		printf(
 			'<input type="text" id="perfecty_push[dialog_cancel]"' .
-			'name="perfecty_push[dialog_cancel]" value="%s" class="perfecty-push-options-dialog-group"/>',
-			esc_html( $value )
+			'name="perfecty_push[dialog_cancel]" value="%s" placeholder="%s" class="perfecty-push-options-dialog-group"/>',
+			esc_html( $value ),
+			PERFECTY_PUSH_OPTIONS_DIALOG_CANCEL
 		);
 	}
 
@@ -1417,12 +1420,13 @@ class Perfecty_Push_Admin {
 	 */
 	public function print_settings_title() {
 		$options = get_option( 'perfecty_push' );
-		$value   = isset( $options['settings_title'] ) && ! empty( $options['settings_title'] ) ? esc_attr( $options['settings_title'] ) : PERFECTY_PUSH_OPTIONS_SETTINGS_TITLE;
+		$value   = isset( $options['settings_title'] ) && ! empty( $options['settings_title'] ) ? esc_attr( $options['settings_title'] ) : "";
 
 		printf(
 			'<input type="text" id="perfecty_push[settings_title]"' .
-			'name="perfecty_push[settings_title]" value="%s" class="perfecty-push-options-dialog-group"/>',
-			esc_html( $value )
+			'name="perfecty_push[settings_title]" value="%s" placeholder="%s" class="perfecty-push-options-dialog-group"/>',
+			esc_html( $value ),
+			PERFECTY_PUSH_OPTIONS_SETTINGS_TITLE
 		);
 	}
 
@@ -1433,12 +1437,30 @@ class Perfecty_Push_Admin {
 	 */
 	public function print_settings_opt_in() {
 		$options = get_option( 'perfecty_push' );
-		$value   = isset( $options['settings_opt_in'] ) && ! empty( $options['settings_opt_in'] ) ? esc_attr( $options['settings_opt_in'] ) : PERFECTY_PUSH_OPTIONS_SETTINGS_OPT_IN;
+		$value   = isset( $options['settings_opt_in'] ) && ! empty( $options['settings_opt_in'] ) ? esc_attr( $options['settings_opt_in'] ) : "";
 
 		printf(
 			'<input type="text" id="perfecty_push[settings_opt_in]"' .
-			'name="perfecty_push[settings_opt_in]" value="%s" class="perfecty-push-options-dialog-group"/>',
-			esc_html( $value )
+			'name="perfecty_push[settings_opt_in]" value="%s" placeholder="%s" class="perfecty-push-options-dialog-group"/>',
+			esc_html( $value ),
+			PERFECTY_PUSH_OPTIONS_SETTINGS_OPT_IN
+		);
+	}
+
+	/**
+	 * Print the settings_update_error option
+	 *
+	 * @since 1.0.0
+	 */
+	public function print_settings_update_error() {
+		$options = get_option( 'perfecty_push' );
+		$value   = isset( $options['settings_update_error'] ) && ! empty( $options['settings_update_error'] ) ? esc_attr( $options['settings_update_error'] ) : "";
+
+		printf(
+			'<input type="text" id="perfecty_push[settings_update_error]"' .
+			'name="perfecty_push[settings_update_error]" value="%s" placeholder="%s" class="perfecty-push-options-dialog-group"/>',
+			esc_html( $value ),
+			PERFECTY_PUSH_OPTIONS_SETTINGS_UPDATE_ERROR
 		);
 	}
 
@@ -1537,22 +1559,6 @@ class Perfecty_Push_Admin {
 			}
 		}
 		return $attachment_id;
-	}
-
-	/**
-	 * Print the settings_update_error option
-	 *
-	 * @since 1.0.0
-	 */
-	public function print_settings_update_error() {
-		$options = get_option( 'perfecty_push' );
-		$value   = isset( $options['settings_update_error'] ) && ! empty( $options['settings_update_error'] ) ? esc_attr( $options['settings_update_error'] ) : PERFECTY_PUSH_OPTIONS_SETTINGS_UPDATE_ERROR;
-
-		printf(
-			'<input type="text" id="perfecty_push[settings_update_error]"' .
-			'name="perfecty_push[settings_update_error]" value="%s" class="perfecty-push-options-dialog-group"/>',
-			esc_html( $value )
-		);
 	}
 
 	/**
