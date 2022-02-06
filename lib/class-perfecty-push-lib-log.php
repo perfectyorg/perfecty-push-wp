@@ -47,7 +47,7 @@ class Perfecty_Push_Lib_Log {
 		if ( ! self::$enabled || self::$level > self::DEBUG ) {
 			return;
 		}
-		self::$writer->write( self::level_string( self::DEBUG ), $message );
+		self::$writer->write( self::level_to_string( self::DEBUG ), $message );
 	}
 
 	/**
@@ -59,7 +59,7 @@ class Perfecty_Push_Lib_Log {
 		if ( ! self::$enabled || self::$level > self::INFO ) {
 			return;
 		}
-		self::$writer->write( self::level_string( self::INFO ), $message );
+		self::$writer->write( self::level_to_string( self::INFO ), $message );
 	}
 
 	/**
@@ -71,7 +71,7 @@ class Perfecty_Push_Lib_Log {
 		if ( ! self::$enabled || self::$level > self::WARNING ) {
 			return;
 		}
-		self::$writer->write( self::level_string( self::WARNING ), $message );
+		self::$writer->write( self::level_to_string( self::WARNING ), $message );
 	}
 
 	/**
@@ -83,18 +83,18 @@ class Perfecty_Push_Lib_Log {
 		if ( ! self::$enabled || self::$level > self::ERROR ) {
 			return;
 		}
-		self::$writer->write( self::level_string( self::ERROR ), $message );
+		self::$writer->write( self::level_to_string( self::ERROR ), $message );
 	}
 
 	/**
-	 * Get the level string
+	 * Get the string from the level code
 	 *
 	 * @param $level int Level code.
 	 *
 	 * @return string
 	 * @since 1.3.3
 	 */
-	private static function level_string( $level ) {
+	private static function level_to_string( $level ) {
 		$string = '';
 		switch ( $level ) {
 			case self::DEBUG:
@@ -110,8 +110,34 @@ class Perfecty_Push_Lib_Log {
 				$string = 'error';
 				break;
 			default:
-				'';
+				break;
 		}
 		return $string;
+	}
+
+	/**
+	 * Get the level code from the string
+	 *
+	 * @param $level_string string Level string.
+	 *
+	 * @return int
+	 * @since 1.6.0
+	 */
+	public static function string_to_level( $level_string ) {
+		$level = self::ERROR;
+		switch ( $level_string ) {
+			case 'debug':
+				$level = self::DEBUG;
+				break;
+			case 'info':
+				$level = self::INFO;
+				break;
+			case 'warning':
+				$level = self::WARNING;
+				break;
+			default:
+				break;
+		}
+		return $level;
 	}
 }
