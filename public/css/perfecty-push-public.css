@@ -41,12 +41,39 @@
   width: 100px;
 }
 
-.perfecty-push-dialog-container button{
-  margin: 5px 10px;
+.perfecty-push-dialog-container .perfecty-push-dialog-form .perfecty-push-dialog-title {
+  margin: 20px 0px;
 }
 
-.perfecty-push-dialog-container .perfecty-push-dialog-title {
-  margin: 20px 0px;
+.perfecty-push-dialog-container .perfecty-push-dialog-form button{
+  margin: 5px 10px;
+  font-size: 1em;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  border: none;
+  border-radius: 0;
+  color: #fff;
+  cursor: pointer;
+  display: inline-block;
+  font-weight: 600;
+  letter-spacing: 0.0222em;
+  line-height: 1.25;
+  opacity: 1;
+  padding: 1em 1.2em;
+  text-align: center;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: opacity 0.15s linear;
+}
+
+.perfecty-push-dialog-container .perfecty-push-dialog-form #perfecty-push-dialog-cancel {
+  background-color: #ffffff;
+  color: #f77924;
+}
+
+.perfecty-push-dialog-container .perfecty-push-dialog-form #perfecty-push-dialog-subscribe {
+  background-color: #f77924;
+  color: #ffffff;
 }
 
 /* Settings control */
