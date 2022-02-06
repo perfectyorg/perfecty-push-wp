@@ -38,8 +38,8 @@ class Perfecty_Push_Lib_Payload {
 		}
 
 		return array(
-			'title'               => stripslashes( $title ),
-			'body'                => stripslashes( $body ),
+			'title'               => substr( stripslashes( $title ), 0, 250 ),
+			'body'                => substr( stripslashes( $body ), 0, 1750 ),
 			'icon'                => $icon_url,
 			'image'               => $image,
 			'require_interaction' => $require_interaction,
