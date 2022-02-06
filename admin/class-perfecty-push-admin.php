@@ -469,17 +469,17 @@ class Perfecty_Push_Admin {
 		);
 
 		add_settings_field(
-			'log_level',
-			esc_html__( 'Log level', 'perfecty-push-notifications' ),
-			array( $this, 'print_log_level' ),
+			'log_driver',
+			esc_html__( 'Log driver', 'perfecty-push-notifications' ),
+			array( $this, 'print_log_driver' ),
 			'perfecty-push-options',
 			'perfecty_push_self_hosted_settings'
 		);
 
 		add_settings_field(
-			'log_driver',
-			esc_html__( 'Log driver', 'perfecty-push-notifications' ),
-			array( $this, 'print_log_driver' ),
+			'log_level',
+			esc_html__( 'Log level', 'perfecty-push-notifications' ),
+			array( $this, 'print_log_level' ),
 			'perfecty-push-options',
 			'perfecty_push_self_hosted_settings'
 		);
@@ -982,11 +982,11 @@ class Perfecty_Push_Admin {
 		if ( isset( $input['visits_to_display_prompt'] ) ) {
 			$new_input['visits_to_display_prompt'] = intval( sanitize_text_field( $input['visits_to_display_prompt'] ) );
 		}
-		if ( isset( $input['log_level'] ) ) {
-			$new_input['log_level'] = sanitize_text_field( $input['log_level'] );
-		}
 		if ( isset( $input['log_driver'] ) ) {
 			$new_input['log_driver'] = sanitize_text_field( $input['log_driver'] );
+		}
+		if ( isset( $input['log_level'] ) ) {
+			$new_input['log_level'] = sanitize_text_field( $input['log_level'] );
 		}
 
 		if ( empty( $options['vapid_public_key'] ) && empty( $options['vapid_private_key'] ) &&
@@ -1240,6 +1240,26 @@ class Perfecty_Push_Admin {
 	}
 
 	/**
+	 * Print the logs driver setting
+	 *
+	 * @since 1.6.0
+	 */
+	public function print_log_driver() {
+		$options = get_option( 'perfecty_push' );
+		$value   = isset( $options['log_driver'] ) ? esc_attr( $options['log_driver'] ) : 'errorlog';
+
+		$print_selected = function( $val ) use ( $value ) {
+			return $val == $value ? 'selected' : '';
+		};
+		printf(
+			'<select name="perfecty_push[log_driver]" id="perfecty_push[log_driver]">' .
+			'<option value="errorlog" ' . $print_selected( 'errorlog' ) . '>PHP - error_log()</option>' .
+			'<option value="db"' . $print_selected( 'db' ) . '>Database</option>' .
+			'</select>'
+		);
+	}
+
+	/**
 	 * Print the logs level setting
 	 *
 	 * @since 1.6.0
@@ -1257,26 +1277,6 @@ class Perfecty_Push_Admin {
 			'<option value="warning"' . $print_selected( 'warning' ) . '>Warning</option>' .
 			'<option value="info"' . $print_selected( 'info' ) . '>Info</option>' .
 			'<option value="debug"' . $print_selected( 'debug' ) . '>Debug</option>' .
-			'</select>'
-		);
-	}
-
-	/**
-	 * Print the logs driver setting
-	 *
-	 * @since 1.6.0
-	 */
-	public function print_log_driver() {
-		$options = get_option( 'perfecty_push' );
-		$value   = isset( $options['log_driver'] ) ? esc_attr( $options['log_driver'] ) : 'errorlog';
-
-		$print_selected = function( $val ) use ( $value ) {
-			return $val == $value ? 'selected' : '';
-		};
-		printf(
-			'<select name="perfecty_push[log_driver]" id="perfecty_push[log_driver]">' .
-			'<option value="errorlog" ' . $print_selected( 'errorlog' ) . '>PHP - error_log()</option>' .
-			'<option value="db"' . $print_selected( 'db' ) . '>Database</option>' .
 			'</select>'
 		);
 	}
