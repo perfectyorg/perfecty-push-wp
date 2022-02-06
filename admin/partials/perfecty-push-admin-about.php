@@ -29,7 +29,7 @@
 		// translators: %1$s is the opening a tag
 		// translators: %2$s is the closing a tag
 			esc_html__( 'If you want to support the development of the project, you can %1$sdonate here%2$s.', 'perfecty-push-notifications' ),
-			'<a href="https://paypal.com/paypalme/rwngallego" target="_blank">',
+			'<a href="https://paypal.me/tatalata777" target="_blank">',
 			'</a>'
 		);
 		?>

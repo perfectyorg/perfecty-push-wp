@@ -59,7 +59,7 @@ class Perfecty_Push_Lib_Utils {
 	/**
 	 * Check the gmp extension
 	 *
-	 * If not no gmp, PHP=7.2 and missing VAPID keys, it will disable the Push Server
+	 * If no gmp, PHP=7.2 and missing VAPID keys, it will disable the Push Server
 	 */
 	public static function check_gmp() {
 		$gmp_loaded     = extension_loaded( 'gmp' );

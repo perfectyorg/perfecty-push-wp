@@ -173,8 +173,6 @@ class Perfecty_Push_Lib_Db {
 	/**
 	 * Get the users stats. $result contains:
 	 * - total
-	 * - active
-	 * - inactive
 	 *
 	 * @return array Result
 	 */
@@ -821,5 +819,20 @@ class Perfecty_Push_Lib_Db {
 		);
 		$results = $wpdb->get_results( $sql, $mode );
 		return $results;
+	}
+
+	/**
+	 * Delete the entries older than the given number of days.
+	 * It has a LIMIT of 1000 to avoid impacting the DB
+	 *
+	 * @param $days int Number of days
+	 *
+	 * @return int|bool Number of rows updated or false
+	 */
+	public static function delete_old_logs( $days ) {
+		global $wpdb;
+
+		$sql = $wpdb->prepare( 'DELETE FROM ' . self::logs_table() . ' WHERE created_at < (NOW() - INTERVAL %d DAY) LIMIT 1000', $days );
+		return $wpdb->query( $sql );
 	}
 }

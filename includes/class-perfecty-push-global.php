@@ -82,6 +82,17 @@ class Perfecty_Push_Global {
 					$options['batch_size'] = Perfecty_Push_Lib_Push_Server::DEFAULT_BATCH_SIZE;
 					update_option( 'perfecty_push', $options );
 				}
+				if ( version_compare( get_option( 'perfecty_push_version' ), '1.6.0', '<' ) ) {
+					// this is before 1.6.0
+					// we use the existing preferences
+					if ( isset( $options['logs_enabled'] ) && $options['logs_enabled'] == 1 ) {
+						$options['log_driver'] = 'db';
+						$options['log_level']  = 'debug';
+					} else {
+						$options['log_driver'] = 'errorlog';
+						$options['log_level']  = 'error';
+					}
+				}
 			}
 			update_option( 'perfecty_push_version', PERFECTY_PUSH_VERSION );
 		}

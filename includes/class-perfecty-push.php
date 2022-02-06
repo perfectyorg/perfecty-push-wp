@@ -234,16 +234,17 @@ class Perfecty_Push {
 	 * Loads the logger library
 	 */
 	public function load_logger() {
-		$options      = get_option( 'perfecty_push', array() );
-		$enabled_logs = isset( $options['logs_enabled'] ) && $options['logs_enabled'] == 1;
+		$options = get_option( 'perfecty_push', array() );
+		$driver  = $options['log_driver'] ?? 'errorlog';
+		$level   = $options['log_level'] ?? 'error';
 
-		if ( $enabled_logs ) {
+		if ( $driver === 'db' ) {
 			$logger = new Perfecty_Push_Lib_Log_Db();
-			Perfecty_Push_Lib_Log::init( $logger, Perfecty_Push_Lib_Log::DEBUG );
+			$logger->delete_old_logs( 10 );
 		} else {
 			$logger = new Perfecty_Push_Lib_Log_ErrorLog();
-			Perfecty_Push_Lib_Log::init( $logger, Perfecty_Push_Lib_Log::ERROR );
 		}
+		Perfecty_Push_Lib_Log::init( $logger, Perfecty_Push_Lib_Log::string_to_level( $level ) );
 	}
 
 	/**

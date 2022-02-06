@@ -316,7 +316,7 @@ class Perfecty_Push_Admin {
 
 		add_settings_field(
 			'settings_welcome_message',
-			esc_html__( 'Confirmation notification text', 'perfecty-push-notifications' ),
+			esc_html__( 'Welcome notification text', 'perfecty-push-notifications' ),
 			array( $this, 'print_settings_welcome_message' ),
 			'perfecty-push-options',
 			'perfecty_push_widget_settings'
@@ -355,7 +355,7 @@ class Perfecty_Push_Admin {
 
 		add_settings_field(
 			'widget_debugging_enabled',
-			esc_html__( 'Enable Client Logs', 'perfecty-push-notifications' ),
+			esc_html__( 'Enable client logs', 'perfecty-push-notifications' ),
 			array( $this, 'print_widget_debugging_enabled' ),
 			'perfecty-push-options',
 			'perfecty_push_javascript_sdk_settings'
@@ -431,14 +431,14 @@ class Perfecty_Push_Admin {
 
 		add_settings_field(
 			'vapid_private_key',
-			esc_html__( 'Vapid Private Key', 'perfecty-push-notifications' ),
+			esc_html__( 'Vapid private key', 'perfecty-push-notifications' ),
 			array( $this, 'print_vapid_private_key' ),
 			'perfecty-push-options',
 			'perfecty_push_self_hosted_settings'
 		);
 		add_settings_field(
 			'vapid_public_key',
-			esc_html__( 'Vapid Public Key', 'perfecty-push-notifications' ),
+			esc_html__( 'Vapid public key', 'perfecty-push-notifications' ),
 			array( $this, 'print_vapid_public_key' ),
 			'perfecty-push-options',
 			'perfecty_push_self_hosted_settings'
@@ -454,7 +454,7 @@ class Perfecty_Push_Admin {
 
 		add_settings_field(
 			'batch_size',
-			esc_html__( 'Batch Size', 'perfecty-push-notifications' ),
+			esc_html__( 'Batch size', 'perfecty-push-notifications' ),
 			array( $this, 'print_batch_size' ),
 			'perfecty-push-options',
 			'perfecty_push_self_hosted_settings'
@@ -469,9 +469,17 @@ class Perfecty_Push_Admin {
 		);
 
 		add_settings_field(
-			'logs_enabled',
-			esc_html__( 'Enable Server Logs', 'perfecty-push-notifications' ),
-			array( $this, 'print_logs_enabled' ),
+			'log_driver',
+			esc_html__( 'Log driver', 'perfecty-push-notifications' ),
+			array( $this, 'print_log_driver' ),
+			'perfecty-push-options',
+			'perfecty_push_self_hosted_settings'
+		);
+
+		add_settings_field(
+			'log_level',
+			esc_html__( 'Log level', 'perfecty-push-notifications' ),
+			array( $this, 'print_log_level' ),
 			'perfecty-push-options',
 			'perfecty_push_self_hosted_settings'
 		);
@@ -849,10 +857,9 @@ class Perfecty_Push_Admin {
 		$table        = new Perfecty_Push_Admin_Logs_Table();
 		$affected     = $table->prepare_items();
 		$options      = get_option( 'perfecty_push', array() );
-		$enabled_logs = isset( $options['logs_enabled'] ) && $options['logs_enabled'] == 1;
+		$enabled_logs = isset( $options['log_driver'] ) && $options['log_driver'] == 'db';
 		if ( ! $enabled_logs ) {
-			$message = esc_html__( 'Logs are disabled. You need to enable them in Settings.', 'perfecty-push-notifications' );
-		} else {
+			$message = esc_html__( 'You are using a logger that does not support the Log viewer (supported: Database)', 'perfecty-push-notifications' );
 		}
 		require_once plugin_dir_path( __FILE__ ) . 'partials/perfecty-push-admin-logs.php';
 	}
@@ -906,11 +913,6 @@ class Perfecty_Push_Admin {
 			$new_input['segmentation_enabled'] = 1;
 		} else {
 			$new_input['segmentation_enabled'] = 0;
-		}
-		if ( isset( $input['logs_enabled'] ) ) {
-			$new_input['logs_enabled'] = 1;
-		} else {
-			$new_input['logs_enabled'] = 0;
 		}
 		if ( isset( $input['notifications_interaction_required'] ) ) {
 			$new_input['notifications_interaction_required'] = 1;
@@ -979,6 +981,12 @@ class Perfecty_Push_Admin {
 		}
 		if ( isset( $input['visits_to_display_prompt'] ) ) {
 			$new_input['visits_to_display_prompt'] = intval( sanitize_text_field( $input['visits_to_display_prompt'] ) );
+		}
+		if ( isset( $input['log_driver'] ) ) {
+			$new_input['log_driver'] = sanitize_text_field( $input['log_driver'] );
+		}
+		if ( isset( $input['log_level'] ) ) {
+			$new_input['log_level'] = sanitize_text_field( $input['log_level'] );
 		}
 
 		if ( empty( $options['vapid_public_key'] ) && empty( $options['vapid_private_key'] ) &&
@@ -1232,20 +1240,44 @@ class Perfecty_Push_Admin {
 	}
 
 	/**
-	 * Print the enable logs setting
+	 * Print the logs driver setting
 	 *
-	 * @since 1.2.0
+	 * @since 1.6.0
 	 */
-	public function print_logs_enabled() {
+	public function print_log_driver() {
 		$options = get_option( 'perfecty_push' );
-		$value   = isset( $options['logs_enabled'] ) ? esc_attr( $options['logs_enabled'] ) : 0;
+		$value   = isset( $options['log_driver'] ) ? esc_attr( $options['log_driver'] ) : 'errorlog';
 
-		$enabled = $value ? 'checked="checked"' : '';
-
+		$print_selected = function( $val ) use ( $value ) {
+			return $val == $value ? 'selected' : '';
+		};
 		printf(
-			'<input type="checkbox" id="perfecty_push[logs_enabled]"' .
-			'name="perfecty_push[logs_enabled]" %s />',
-			esc_html( $enabled )
+			'<select name="perfecty_push[log_driver]" id="perfecty_push[log_driver]">' .
+			'<option value="errorlog" ' . $print_selected( 'errorlog' ) . '>PHP - error_log()</option>' .
+			'<option value="db"' . $print_selected( 'db' ) . '>Database</option>' .
+			'</select>'
+		);
+	}
+
+	/**
+	 * Print the logs level setting
+	 *
+	 * @since 1.6.0
+	 */
+	public function print_log_level() {
+		$options = get_option( 'perfecty_push' );
+		$value   = isset( $options['log_level'] ) ? esc_attr( $options['log_level'] ) : 'error';
+
+		$print_selected = function( $val ) use ( $value ) {
+			return $val == $value ? 'selected' : '';
+		};
+		printf(
+			'<select name="perfecty_push[log_level]" id="perfecty_push[log_level]">' .
+			'<option value="error" ' . $print_selected( 'error' ) . '>Error</option>' .
+			'<option value="warning"' . $print_selected( 'warning' ) . '>Warning</option>' .
+			'<option value="info"' . $print_selected( 'info' ) . '>Info</option>' .
+			'<option value="debug"' . $print_selected( 'debug' ) . '>Debug</option>' .
+			'</select>'
 		);
 	}
 
@@ -1369,7 +1401,7 @@ class Perfecty_Push_Admin {
 	 */
 	public function print_dialog_title() {
 		$options = get_option( 'perfecty_push' );
-		$value   = isset( $options['dialog_title'] ) && ! empty( $options['dialog_title'] ) ? esc_attr( $options['dialog_title'] ) : "";
+		$value   = isset( $options['dialog_title'] ) && ! empty( $options['dialog_title'] ) ? esc_attr( $options['dialog_title'] ) : '';
 
 		printf(
 			'<input type="text" id="perfecty_push[dialog_title]"' .
@@ -1386,7 +1418,7 @@ class Perfecty_Push_Admin {
 	 */
 	public function print_dialog_submit() {
 		$options = get_option( 'perfecty_push' );
-		$value   = isset( $options['dialog_submit'] ) && ! empty( $options['dialog_submit'] ) ? esc_attr( $options['dialog_submit'] ) : "";
+		$value   = isset( $options['dialog_submit'] ) && ! empty( $options['dialog_submit'] ) ? esc_attr( $options['dialog_submit'] ) : '';
 
 		printf(
 			'<input type="text" id="perfecty_push[dialog_submit]"' .
@@ -1403,7 +1435,7 @@ class Perfecty_Push_Admin {
 	 */
 	public function print_dialog_cancel() {
 		$options = get_option( 'perfecty_push' );
-		$value   = isset( $options['dialog_cancel'] ) && ! empty( $options['dialog_cancel'] ) ? esc_attr( $options['dialog_cancel'] ) : "";
+		$value   = isset( $options['dialog_cancel'] ) && ! empty( $options['dialog_cancel'] ) ? esc_attr( $options['dialog_cancel'] ) : '';
 
 		printf(
 			'<input type="text" id="perfecty_push[dialog_cancel]"' .
@@ -1420,7 +1452,7 @@ class Perfecty_Push_Admin {
 	 */
 	public function print_settings_title() {
 		$options = get_option( 'perfecty_push' );
-		$value   = isset( $options['settings_title'] ) && ! empty( $options['settings_title'] ) ? esc_attr( $options['settings_title'] ) : "";
+		$value   = isset( $options['settings_title'] ) && ! empty( $options['settings_title'] ) ? esc_attr( $options['settings_title'] ) : '';
 
 		printf(
 			'<input type="text" id="perfecty_push[settings_title]"' .
@@ -1437,7 +1469,7 @@ class Perfecty_Push_Admin {
 	 */
 	public function print_settings_opt_in() {
 		$options = get_option( 'perfecty_push' );
-		$value   = isset( $options['settings_opt_in'] ) && ! empty( $options['settings_opt_in'] ) ? esc_attr( $options['settings_opt_in'] ) : "";
+		$value   = isset( $options['settings_opt_in'] ) && ! empty( $options['settings_opt_in'] ) ? esc_attr( $options['settings_opt_in'] ) : '';
 
 		printf(
 			'<input type="text" id="perfecty_push[settings_opt_in]"' .
@@ -1454,7 +1486,7 @@ class Perfecty_Push_Admin {
 	 */
 	public function print_settings_update_error() {
 		$options = get_option( 'perfecty_push' );
-		$value   = isset( $options['settings_update_error'] ) && ! empty( $options['settings_update_error'] ) ? esc_attr( $options['settings_update_error'] ) : "";
+		$value   = isset( $options['settings_update_error'] ) && ! empty( $options['settings_update_error'] ) ? esc_attr( $options['settings_update_error'] ) : '';
 
 		printf(
 			'<input type="text" id="perfecty_push[settings_update_error]"' .
