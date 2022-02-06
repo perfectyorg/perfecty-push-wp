@@ -95,14 +95,14 @@ class Perfecty_Push {
 		$options              = get_option( 'perfecty_push', array() );
 		$vapid_public_key     = isset( $options['vapid_public_key'] ) ? $options['vapid_public_key'] : '';
 		$vapid_private_key    = isset( $options['vapid_private_key'] ) ? $options['vapid_private_key'] : '';
-		$service_worker_scope = isset( $options['service_worker_scope'] ) && ! empty( $options['service_worker_scope'] ) ? $options['service_worker_scope'] : '/perfecty/push';
+		$is_cloud             = isset( $options['service_worker_scope'] ) && ! empty( $options['service_worker_scope'] ) ? $options['service_worker_scope'] : '/perfecty/push';
 
 		if ( ! defined( 'PERFECTY_PUSH_JS_DIR' ) ) {
 			$path = plugin_dir_url( __DIR__ ) . 'public/js';
 			define( 'PERFECTY_PUSH_JS_DIR', $path );
 		}
-		if ( ! defined( 'PERFECTY_PUSH_SERVICE_WORKER_SCOPE' ) ) {
-			define( 'PERFECTY_PUSH_SERVICE_WORKER_SCOPE', $service_worker_scope );
+		if ( ! defined( 'PERFECTY_PUSH_IS_CLOUD' ) ) {
+			define( 'PERFECTY_PUSH_IS_CLOUD', $is_cloud );
 		}
 		if ( ! defined( 'PERFECTY_PUSH_VAPID_PUBLIC_KEY' ) && $vapid_public_key ) {
 			define( 'PERFECTY_PUSH_VAPID_PUBLIC_KEY', $vapid_public_key );

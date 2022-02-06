@@ -1,5 +1,7 @@
 <?php
 
+defined( 'WPINC' ) || exit;
+
 /**
  * The public-facing functionality of the plugin.
  *
@@ -108,7 +110,10 @@ class Perfecty_Push_Public {
 				'methods'             => array( 'POST' ),
 				'callback'            => array( $users, 'unregister' ),
 				'permission_callback' => '__return_true',
-				'args'                => array( 'site_id' => array(), 'subscriber_id' => array() ),
+				'args'                => array(
+					'site_id'       => array(),
+					'subscriber_id' => array(),
+				),
 			)
 		);
 		register_rest_route(
@@ -118,7 +123,10 @@ class Perfecty_Push_Public {
 				'methods'             => array( 'GET' ),
 				'callback'            => array( $users, 'get_user' ),
 				'permission_callback' => '__return_true',
-				'args'                => array( 'site_id' => array(), 'subscriber_id' => array() ),
+				'args'                => array(
+					'site_id'       => array(),
+					'subscriber_id' => array(),
+				),
 			)
 		);
 	}

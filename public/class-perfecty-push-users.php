@@ -1,4 +1,7 @@
 <?php
+
+defined( 'WPINC' ) || exit;
+
 /**
  * The public-facing functionality of the plugin.
  *
@@ -27,11 +30,11 @@ class Perfecty_Push_Users {
 	 * @since 1.0.0
 	 */
 	public function register( $data ) {
-		$site_id    = $data['site_id'] ?? null;
+		$site_id = $data['site_id'] ?? null;
 
 		// Request
 		$user       = $data['user'] ?? null;
-		$user_id    = $data['user_id'] ?? null;
+		$user_id    = $data['subscriber_id'] ?? null;
 		$first_time = $data['first_time'] ?? null;
 		$remote_ip  = $this->get_remote_ip();
 
@@ -115,7 +118,7 @@ class Perfecty_Push_Users {
 	 */
 	public function get_user( $data ) {
 		$site_id = $data['site_id'] ?? null;
-		$user_id = $data['user_id'] ?? null;
+		$user_id = $data['subscriber_id'] ?? null;
 
 		// Validate the nonce.
 		$nonce = isset( $_SERVER['HTTP_X_WP_NONCE'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_WP_NONCE'] ) ) : '';
@@ -144,7 +147,7 @@ class Perfecty_Push_Users {
 	 * @since 1.2.0
 	 */
 	public function unregister( $data ) {
-		$user_id = $data['user_id'] ?? null;
+		$user_id = $data['subscriber_id'] ?? null;
 		$site_id = $data['site_id'] ?? null;
 
 		// Validate the nonce.
@@ -193,7 +196,7 @@ class Perfecty_Push_Users {
 	}
 
 	private function validate( $site_id, $endpoint, $key_auth, $key_p256dh, $remote_ip, $user_id, $first_time ) {
-		if ( ! Uuid::isValid( $site_id ) ) {
+		if ( ! $site_id || ! Uuid::isValid( $site_id ) ) {
 			return __( 'Invalid site ID', 'perfecty-push-notifications' );
 		}
 
@@ -228,11 +231,11 @@ class Perfecty_Push_Users {
 	}
 
 	private function validate_delete( $site_id, $user_id ) {
-		if ( ! Uuid::isValid( $site_id ) ) {
+		if ( ! $site_id || ! Uuid::isValid( $site_id ) ) {
 			return __( 'Invalid site ID', 'perfecty-push-notifications' );
 		}
 
-		if ( ! Uuid::isValid( $user_id ) ) {
+		if ( ! $user_id || ! Uuid::isValid( $user_id ) ) {
 			return __( 'Invalid user ID', 'perfecty-push-notifications' );
 		}
 
@@ -240,11 +243,11 @@ class Perfecty_Push_Users {
 	}
 
 	private function validate_get_user( $site_id, $user_id ) {
-		if ( ! Uuid::isValid( $site_id ) ) {
+		if ( ! $site_id || ! Uuid::isValid( $site_id ) ) {
 			return __( 'Invalid site ID', 'perfecty-push-notifications' );
 		}
 
-		if ( ! Uuid::isValid( $user_id ) ) {
+		if ( ! $user_id || ! Uuid::isValid( $user_id ) ) {
 			return __( 'Invalid user ID', 'perfecty-push-notifications' );
 		}
 

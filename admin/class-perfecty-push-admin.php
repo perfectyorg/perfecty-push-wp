@@ -1,5 +1,7 @@
 <?php
 
+defined( 'WPINC' ) || exit;
+
 /**
  * The admin-specific functionality of the plugin.
  *
@@ -134,77 +136,91 @@ class Perfecty_Push_Admin {
 	  * @since 1.0.0
 	  */
 	public function register_admin_menu() {
-		add_menu_page(
-			'Perfecty Push',
-			'Perfecty Push',
-			'manage_options',
-			'perfecty-push',
-			array( $this, 'print_dashboard_page' ),
-			'dashicons-smiley'
-		);
+		$options = get_option('perfecty_push');
+		$is_self_hosted = isset( $options['push_server_type'] ) && $options['push_server_type'] == 'cloud';
+		if ($is_self_hosted) {
+			add_menu_page(
+				'Perfecty Push',
+				'Perfecty Push',
+				'manage_options',
+				'perfecty-push-options',
+				array( $this, 'print_options_page' ),
+				'dashicons-smiley'
+			);
+		} else {
+			add_menu_page(
+				'Perfecty Push',
+				'Perfecty Push',
+				'manage_options',
+				'perfecty-push',
+				array( $this, 'print_dashboard_page' ),
+				'dashicons-smiley'
+			);
 
-		add_submenu_page(
-			'perfecty-push',
-			esc_html__( 'Dashboard', 'perfecty-push-notifications' ),
-			esc_html__( 'Dashboard', 'perfecty-push-notifications' ),
-			'manage_options',
-			'perfecty-push',
-			array( $this, 'print_dashboard_page' )
-		);
+			add_submenu_page(
+				'perfecty-push',
+				esc_html__( 'Dashboard', 'perfecty-push-notifications' ),
+				esc_html__( 'Dashboard', 'perfecty-push-notifications' ),
+				'manage_options',
+				'perfecty-push',
+				array( $this, 'print_dashboard_page' )
+			);
 
-		add_submenu_page(
-			'perfecty-push',
-			esc_html__( 'Send notification', 'perfecty-push-notifications' ),
-			esc_html__( 'Send notification', 'perfecty-push-notifications' ),
-			'manage_options',
-			'perfecty-push-send-notification',
-			array( $this, 'print_send_notification_page' )
-		);
+			add_submenu_page(
+				'perfecty-push',
+				esc_html__( 'Send notification', 'perfecty-push-notifications' ),
+				esc_html__( 'Send notification', 'perfecty-push-notifications' ),
+				'manage_options',
+				'perfecty-push-send-notification',
+				array( $this, 'print_send_notification_page' )
+			);
 
-		add_submenu_page(
-			'perfecty-push',
-			esc_html__( 'Notification jobs', 'perfecty-push-notifications' ),
-			esc_html__( 'Notification jobs', 'perfecty-push-notifications' ),
-			'manage_options',
-			'perfecty-push-notifications',
-			array( $this, 'print_notifications_page' )
-		);
+			add_submenu_page(
+				'perfecty-push',
+				esc_html__( 'Notification jobs', 'perfecty-push-notifications' ),
+				esc_html__( 'Notification jobs', 'perfecty-push-notifications' ),
+				'manage_options',
+				'perfecty-push-notifications',
+				array( $this, 'print_notifications_page' )
+			);
 
-		add_submenu_page(
-			'perfecty-push',
-			esc_html__( 'Users', 'perfecty-push-notifications' ),
-			esc_html__( 'Users', 'perfecty-push-notifications' ),
-			'manage_options',
-			'perfecty-push-users',
-			array( $this, 'print_users_page' )
-		);
+			add_submenu_page(
+				'perfecty-push',
+				esc_html__( 'Users', 'perfecty-push-notifications' ),
+				esc_html__( 'Users', 'perfecty-push-notifications' ),
+				'manage_options',
+				'perfecty-push-users',
+				array( $this, 'print_users_page' )
+			);
 
-		add_submenu_page(
-			'perfecty-push',
-			esc_html__( 'Settings', 'perfecty-push-notifications' ),
-			esc_html__( 'Settings', 'perfecty-push-notifications' ),
-			'manage_options',
-			'perfecty-push-options',
-			array( $this, 'print_options_page' )
-		);
+			add_submenu_page(
+				'perfecty-push',
+				esc_html__( 'Settings', 'perfecty-push-notifications' ),
+				esc_html__( 'Settings', 'perfecty-push-notifications' ),
+				'manage_options',
+				'perfecty-push-options',
+				array( $this, 'print_options_page' )
+			);
 
-		add_submenu_page(
-			'perfecty-push',
-			esc_html__( 'Logs', 'perfecty-push-notifications' ),
-			esc_html__( 'Logs', 'perfecty-push-notifications' ),
-			'manage_options',
-			'perfecty-push-logs',
-			array( $this, 'print_logs_page' )
-		);
+			add_submenu_page(
+				'perfecty-push',
+				esc_html__( 'Logs', 'perfecty-push-notifications' ),
+				esc_html__( 'Logs', 'perfecty-push-notifications' ),
+				'manage_options',
+				'perfecty-push-logs',
+				array( $this, 'print_logs_page' )
+			);
 
-		add_submenu_page(
-			'perfecty-push',
-			esc_html__( 'About', 'perfecty-push-notifications' ),
-			esc_html__( 'About', 'perfecty-push-notifications' ),
-			'manage_options',
-			'perfecty-push-about',
-			array( $this, 'print_about_page' )
-		);
+			add_submenu_page(
+				'perfecty-push',
+				esc_html__( 'About', 'perfecty-push-notifications' ),
+				esc_html__( 'About', 'perfecty-push-notifications' ),
+				'manage_options',
+				'perfecty-push-about',
+				array( $this, 'print_about_page' )
+			);
+
+		}
 	}
 
 	/**
@@ -217,6 +233,92 @@ class Perfecty_Push_Admin {
 			'perfecty_group',
 			'perfecty_push',
 			array( $this, 'sanitize' )
+		);
+
+		add_settings_section(
+			'perfecty_push_server',
+			esc_html__( 'Push Server', 'perfecty-push-notifications' ),
+			array( $this, 'print_perfecty_push_server_section' ),
+			'perfecty-push-options'
+		);
+
+		add_settings_field(
+			'push_server_type',
+			esc_html__( 'Type', 'perfecty-push-notifications' ),
+			array( $this, 'print_push_server_type' ),
+			'perfecty-push-options',
+			'perfecty_push_server'
+		);
+
+		add_settings_field(
+			'site_id',
+			esc_html__( 'Site ID', 'perfecty-push-notifications' ),
+			array( $this, 'print_site_id' ),
+			'perfecty-push-options',
+			'perfecty_push_server'
+		);
+
+		add_settings_field(
+			'api_key',
+			esc_html__( 'API Key', 'perfecty-push-notifications' ),
+			array( $this, 'print_api_key' ),
+			'perfecty-push-options',
+			'perfecty_push_server'
+		);
+
+		add_settings_field(
+			'vapid_private_key',
+			esc_html__( 'Vapid Private Key', 'perfecty-push-notifications' ),
+			array( $this, 'print_vapid_private_key' ),
+			'perfecty-push-options',
+			'perfecty_push_server'
+		);
+		add_settings_field(
+			'vapid_public_key',
+			esc_html__( 'Vapid Public Key', 'perfecty-push-notifications' ),
+			array( $this, 'print_vapid_public_key' ),
+			'perfecty-push-options',
+			'perfecty_push_server'
+		);
+
+		add_settings_field(
+			'server_url',
+			esc_html__( 'Custom REST Url', 'perfecty-push-notifications' ),
+			array( $this, 'print_server_url' ),
+			'perfecty-push-options',
+			'perfecty_push_server'
+		);
+
+		add_settings_field(
+			'batch_size',
+			esc_html__( 'Batch Size', 'perfecty-push-notifications' ),
+			array( $this, 'print_batch_size' ),
+			'perfecty-push-options',
+			'perfecty_push_server'
+		);
+
+		add_settings_field(
+			'parallel_flushing_size',
+			esc_html__( 'Parallel flushing size', 'perfecty-push-notifications' ),
+			array( $this, 'print_parallel_flushing_size' ),
+			'perfecty-push-options',
+			'perfecty_push_server'
+		);
+
+		add_settings_field(
+			'log_driver',
+			esc_html__( 'Log driver', 'perfecty-push-notifications' ),
+			array( $this, 'print_log_driver' ),
+			'perfecty-push-options',
+			'perfecty_push_self_hosted_settings'
+		);
+
+		add_settings_field(
+			'log_level',
+			esc_html__( 'Log level', 'perfecty-push-notifications' ),
+			array( $this, 'print_log_level' ),
+			'perfecty-push-options',
+			'perfecty_push_self_hosted_settings'
 		);
 
 		add_settings_section(
@@ -464,22 +566,6 @@ class Perfecty_Push_Admin {
 			'parallel_flushing_size',
 			esc_html__( 'Parallel flushing size', 'perfecty-push-notifications' ),
 			array( $this, 'print_parallel_flushing_size' ),
-			'perfecty-push-options',
-			'perfecty_push_self_hosted_settings'
-		);
-
-		add_settings_field(
-			'log_driver',
-			esc_html__( 'Log driver', 'perfecty-push-notifications' ),
-			array( $this, 'print_log_driver' ),
-			'perfecty-push-options',
-			'perfecty_push_self_hosted_settings'
-		);
-
-		add_settings_field(
-			'log_level',
-			esc_html__( 'Log level', 'perfecty-push-notifications' ),
-			array( $this, 'print_log_level' ),
 			'perfecty-push-options',
 			'perfecty_push_self_hosted_settings'
 		);
@@ -988,6 +1074,15 @@ class Perfecty_Push_Admin {
 		if ( isset( $input['log_level'] ) ) {
 			$new_input['log_level'] = sanitize_text_field( $input['log_level'] );
 		}
+		if ( isset( $input['site_id'] ) ) {
+			$new_input['site_id'] = sanitize_text_field( $input['site_id'] );
+		}
+		if ( isset( $input['api_key'] ) ) {
+			$new_input['api_key'] = sanitize_text_field( $input['api_key'] );
+		}
+		if ( isset( $input['push_server_type'] ) ) {
+			$new_input['push_server_type'] = sanitize_text_field( $input['push_server_type'] );
+		}
 
 		if ( empty( $options['vapid_public_key'] ) && empty( $options['vapid_private_key'] ) &&
 			! empty( $new_input['vapid_public_key'] ) && ! empty( $new_input['vapid_private_key'] ) ) {
@@ -1024,6 +1119,15 @@ class Perfecty_Push_Admin {
 	}
 
 	/**
+	 * Print the push server section info
+	 *
+	 * @since 1.5.0
+	 */
+	public function print_perfecty_push_server_section() {
+		print esc_html__( 'Configure your Push Server (self-hosted or Cloud)', 'perfecty-push-notifications' );
+	}
+
+	/**
 	 * Print the notifications section info
 	 *
 	 * @since 1.3.0
@@ -1051,7 +1155,7 @@ class Perfecty_Push_Admin {
 		$value   = isset( $options['segmentation_tracking_utm'] ) ? esc_attr( $options['segmentation_tracking_utm'] ) : '';
 
 		printf(
-			'Example: <div class="perfecty-push-options-unregister-conflicts-regex">%s</div>' .
+			'Example: <div class="perfecty-push-options-additional-info">%s</div>' .
 			'<input type="text" id="perfecty_push[segmentation_tracking_utm]"' .
 			'name="perfecty_push[segmentation_tracking_utm]" value="%s"/>',
 			esc_html( 'utm_source=perfecty-push&utm_medium=web-push&utm_campaign=my-campaign-name' ),
@@ -1059,6 +1163,60 @@ class Perfecty_Push_Admin {
 		);
 	}
 
+	/**
+	 * Print the push_server_type option
+	 *
+	 * @since 1.7.0
+	 */
+	public function print_push_server_type() {
+		$options = get_option( 'perfecty_push' );
+		$value   = isset( $options['push_server_type'] ) ? esc_attr( $options['push_server_type'] ) : 'self_hosted_php';
+
+		$print_selected = function( $val ) use ( $value ) {
+			return $val == $value ? 'selected' : '';
+		};
+		printf(
+			'<select name="perfecty_push[push_server_type]" id="perfecty_push[push_server_type]">' .
+			'<option value="self_hosted_php" ' . $print_selected( 'self_hosted_php' ) . '>PHP</option>' .
+			'<option value="cloud"' . $print_selected( 'cloud' ) . '>Cloud - perfecty.org</option>' .
+			'</select>'
+		);
+	}
+
+	/**
+	 * Print the site ID
+	 *
+	 * @since 1.7.0
+	 */
+	public function print_site_id() {
+		$options = get_option( 'perfecty_push' );
+		$value   = isset( $options['site_id'] ) ? esc_attr( $options['site_id'] ) : '';
+
+		printf(
+			'<input type="text" id="perfecty_push[site_id]"' .
+			'name="perfecty_push[site_id]" value="%s" class="perfecty-push-options-cloud-group"/>',
+			esc_html( $value )
+		);
+	}
+
+	/**
+	 * Print the API Key
+	 *
+	 * @since 1.7.0
+	 */
+	public function print_api_key() {
+		$options = get_option( 'perfecty_push' );
+		$value   = isset( $options['api_key'] ) ? esc_attr( $options['api_key'] ) : '';
+
+		printf(
+			'<input type="password" id="perfecty_push[api_key]"' .
+			'name="perfecty_push[api_key]" value="%s" class="perfecty-push-options-cloud-group"/><div>' .
+			'<br /><a href="%s" target="_blank">%s</a> </div>',
+			esc_html( $value ),
+			'https://console.perfecty.org/',
+			esc_html('Go to the console', 'perfecty-push-notifications')
+		);
+	}
 
 	/**
 	 * Print the Vapid public key
@@ -1071,7 +1229,7 @@ class Perfecty_Push_Admin {
 
 		printf(
 			'<input type="text" id="perfecty_push[vapid_public_key]"' .
-			'name="perfecty_push[vapid_public_key]" value="%s"/>',
+			'name="perfecty_push[vapid_public_key]" value="%s" class="perfecty-push-options-self-hosted-group"/>',
 			esc_html( $value )
 		);
 	}
@@ -1086,8 +1244,8 @@ class Perfecty_Push_Admin {
 		$value   = isset( $options['vapid_private_key'] ) ? esc_attr( $options['vapid_private_key'] ) : '';
 
 		printf(
-			'<input type="text" id="perfecty_push[vapid_private_key]"' .
-			'name="perfecty_push[vapid_private_key]" value="%s"/>',
+			'<input type="password" id="perfecty_push[vapid_private_key]"' .
+			'name="perfecty_push[vapid_private_key]" value="%s" class="perfecty-push-options-self-hosted-group"/>',
 			esc_html( $value )
 		);
 	}
@@ -1103,7 +1261,7 @@ class Perfecty_Push_Admin {
 
 		printf(
 			'<input type="text" id="perfecty_push[server_url]"' .
-			'name="perfecty_push[server_url]" value="%s" placeholder="%s"/>',
+			'name="perfecty_push[server_url]" value="%s" placeholder="%s" class="perfecty-push-options-self-hosted-group"/>',
 			esc_html( $value ),
 			get_rest_url( null, 'perfecty-push' )
 		);
@@ -1119,9 +1277,9 @@ class Perfecty_Push_Admin {
 		$value   = isset( $options['batch_size'] ) ? esc_attr( $options['batch_size'] ) : '';
 
 		printf(
-			'<input type="text" id="perfecty_push[batch_size]"' .
+			'<div class="perfecty-push-options-self-hosted-group"><input type="text" id="perfecty_push[batch_size]"' .
 			'name="perfecty_push[batch_size]" value="%s"/>' .
-			'<div>%s <a href="%s" target="_blank">%s</div>',
+			'<div>%s <a href="%s" target="_blank">%s</div></div>',
 			esc_html( $value ),
 			esc_html( 'High values require a longer script execution time. See: ' ),
 			'https://docs.perfecty.org/wp/performance-improvements/#adjusting-the-batch_size-parameter',
@@ -1139,9 +1297,9 @@ class Perfecty_Push_Admin {
 		$value   = isset( $options['parallel_flushing_size'] ) ? esc_attr( $options['parallel_flushing_size'] ) : '';
 
 		printf(
-			'<input type="text" id="perfecty_push[parallel_flushing_size]"' .
+			'<div class="perfecty-push-options-self-hosted-group"><input type="text" id="perfecty_push[parallel_flushing_size]"' .
 			'name="perfecty_push[parallel_flushing_size]" value="%s"/>' .
-			'<div>%s <a href="%s" target="_blank">%s</div>',
+			'<div>%s <a href="%s" target="_blank">%s</div></div>',
 			esc_html( $value ),
 			esc_html( 'Notifications to send in parallel. Please read: ' ),
 			'https://docs.perfecty.org/wp/performance-improvements/#adjusting-the-parallel_flushing_size-parameter',
@@ -1347,7 +1505,7 @@ class Perfecty_Push_Admin {
 		$value   = isset( $options['unregister_conflicts_expression'] ) ? esc_attr( $options['unregister_conflicts_expression'] ) : '';
 
 		printf(
-			'<div>Default expression:</div><div class="perfecty-push-options-unregister-conflicts-regex">%s</div>' .
+			'<div>Default expression:</div><div class="perfecty-push-options-additional-info">%s</div>' .
 			'<textarea id="perfecty_push[unregister_conflicts_expression]"' .
 			'name="perfecty_push[unregister_conflicts_expression]" class="perfecty-push-options-unregister-conflicts-group" ' .
 			'placeholder="%s">%s</textarea>' .

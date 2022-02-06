@@ -1,4 +1,7 @@
 <?php
+
+defined( 'WPINC' ) || exit;
+
 $perfecty_push_dialog_title                    = ! empty( $options['dialog_title'] ) ? $options['dialog_title'] : PERFECTY_PUSH_OPTIONS_DIALOG_TITLE;
 $perfecty_push_dialog_submit                   = ! empty( $options['dialog_submit'] ) ? $options['dialog_submit'] : PERFECTY_PUSH_OPTIONS_DIALOG_CONTINUE;
 $perfecty_push_dialog_cancel                   = ! empty( $options['dialog_cancel'] ) ? $options['dialog_cancel'] : PERFECTY_PUSH_OPTIONS_DIALOG_CANCEL;
@@ -7,6 +10,8 @@ $perfecty_push_settings_opt_in                 = ! empty( $options['settings_opt
 $perfecty_push_settings_update_error           = ! empty( $options['settings_update_error'] ) ? $options['settings_update_error'] : PERFECTY_PUSH_OPTIONS_SETTINGS_UPDATE_ERROR;
 $perfecty_push_nonce                           = wp_create_nonce( 'wp_rest' );
 $perfecty_push_server_url                      = ! empty( $options['server_url'] ) ? $options['server_url'] : get_rest_url( null, 'perfecty-push' );
+$perfecty_push_site_id                         = ! empty( $options['site_id'] ) ? $options['site_id'] : '';
+$perfecty_push_api_key                         = ! empty( $options['api_key'] ) ? $options['api_key'] : '';
 $perfecty_push_unregister_conflicts_expression = ! empty( $options['unregister_conflicts_expression'] ) ? $options['unregister_conflicts_expression'] : PERFECTY_PUSH_UNREGISTER_CONFLICTS_EXPRESSION;
 $perfecty_push_prompt_icon_url                 = isset( $options['notifications_default_icon'] ) && ! empty( $options['notifications_default_icon'] ) ? wp_get_attachment_url( $options['notifications_default_icon'] ) : '';
 $perfecty_push_visits_to_display_prompt        = isset( $options['visits_to_display_prompt'] ) && $options['visits_to_display_prompt'] ? $options['visits_to_display_prompt'] : 0;
@@ -49,6 +54,8 @@ if ( isset( $options['widget_ask_permissions_directly'] ) && $options['widget_as
 		settingsOptIn: "<?php echo $perfecty_push_settings_opt_in; ?>",
 		settingsUpdateError: "<?php echo $perfecty_push_settings_update_error; ?>",
 		serverUrl: "<?php echo $perfecty_push_server_url; ?>",
+		siteId: "<?php echo $perfecty_push_site_id; ?>",
+		apiKey: "<?php echo $perfecty_push_api_key; ?>",
 		vapidPublicKey: "<?php echo PERFECTY_PUSH_VAPID_PUBLIC_KEY; ?>",
 		token: "<?php echo $perfecty_push_nonce; ?>",
 		tokenHeader: "X-WP-Nonce",

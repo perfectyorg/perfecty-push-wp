@@ -111,6 +111,7 @@
 				}
 			);
 
+			// widget_ask_permissions_directly
 			$( "#perfecty_push\\[widget_ask_permissions_directly\\]" ).change(
 				function(e){
 					if (this.checked) {
@@ -124,6 +125,7 @@
 				$( ".perfecty-push-options-dialog-group" ).closest( 'tr' ).hide();
 			}
 
+			// unregister_conflicts
 			$( "#perfecty_push\\[unregister_conflicts\\]" ).change(
 				function(e){
 					if (this.checked) {
@@ -136,10 +138,24 @@
 			if ( ! $( "#perfecty_push\\[unregister_conflicts\\]" ).is( ':checked' )) {
 				$( ".perfecty-push-options-unregister-conflicts-group" ).closest( 'tr' ).hide();
 			}
+			// push_server_type option
+			const toggleServerTypeOptions = function(value) {
+				if (value == "self_hosted_php") {
+					$( ".perfecty-push-options-self-hosted-group" ).closest( 'tr' ).show();
+					$( ".perfecty-push-options-cloud-group" ).closest( 'tr' ).hide();
+				} else if (value == "cloud") {
+					$( ".perfecty-push-options-self-hosted-group" ).closest( 'tr' ).hide();
+					$( ".perfecty-push-options-cloud-group" ).closest( 'tr' ).show();
+				}
+			}
+			$( "#perfecty_push\\[push_server_type\\]" ).change(function(e){
+				toggleServerTypeOptions(this.value);
+			});
+			toggleServerTypeOptions($( "#perfecty_push\\[push_server_type\\] option:selected" ).val())
 
 			// Settings > Select default icon
-			var perfecty_icon_choose;
-			$( '#perfecty-push-default-icon-select' ).on(
+			let perfecty_icon_choose;
+			$( '#perfecty_push_default_icon_select' ).on(
 				'click',
 				function(event) {
 					event.preventDefault();
@@ -169,7 +185,7 @@
 			}
 			
 			// Send on publish metabox
-			var hide_custom_fields = function() {
+			let hide_custom_fields = function() {
 				$("#perfecty_push_notification_custom_title").prop("disabled",true);
 				$("#perfecty_push_notification_custom_title").hide();
 				$("#perfecty_push_notification_custom_title_label").hide();
@@ -178,7 +194,7 @@
 				$("#perfecty_push_notification_custom_body_label").hide();
 			}
 			
-			var show_custom_fields = function() {
+			let show_custom_fields = function() {
 				$("#perfecty_push_notification_custom_title").show();
 				$("#perfecty_push_notification_custom_title_label").show();
 				$("#perfecty_push_notification_custom_title").prop("disabled",false);
