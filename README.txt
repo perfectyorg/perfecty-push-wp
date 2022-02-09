@@ -3,8 +3,8 @@ Contributors: rwngallego, mociofiletto
 Donate link: https://paypal.me/tatalata777
 Tags: Push Notifications, Web Push Notifications, Notifications, User engagement
 Requires at least: 5.0
-Tested up to: 5.8
-Stable tag: 1.5.1
+Tested up to: 5.9
+Stable tag: 1.6.0
 Requires PHP: 7.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -97,9 +97,9 @@ You can create an issue in our Github repo:
 
 = 1.6.0 =
 * Important: Default styles for the prompt are provided. If necessary, please override the corresponding CSS classes in your theme. Fixes [#135](https://github.com/perfectyorg/perfecty-push-wp/issues/135)
+* Added support for WP 5.9 and beta support to PHP 8. Fixes [#136](https://github.com/perfectyorg/perfecty-push-wp/issues/136)
 * Two new Settings added: Log level and Log driver. Fixes [#137](https://github.com/perfectyorg/perfecty-push-wp/issues/137)
 * Logs auto-cleanup for the Database driver. Deletes the entries older than 10 days in chunks of 1000 rows. Fixes [#94](https://github.com/perfectyorg/perfecty-push-wp/issues/94)
-* Added support for WP 5.9 and beta support to PHP 8. Fixes [#136](https://github.com/perfectyorg/perfecty-push-wp/issues/136)
 * Improve multilingual support, use default values as placeholders in the Widget texts. Fixes [143](https://github.com/perfectyorg/perfecty-push-wp/issues/143)
 * Upgraded the `web-push` lib to `6.0.7`
 
