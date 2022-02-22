@@ -17,15 +17,52 @@
 				}
 			);
 
+			// Send Notification > Select image
 			$( "#perfecty-push-send-notification-image-custom" ).change(
 				function(e){
 					if (this.checked) {
 						$( "#perfecty-push-send-notification-image" ).removeAttr( "disabled" );
+						$( "#perfecty-push-send-notification-image-select" ).removeAttr( "disabled" );
 					} else {
 						$( "#perfecty-push-send-notification-image" ).attr( "disabled", "disabled" );
+						$( "#perfecty-push-send-notification-image" ).val( "" );
+						$( "#perfecty-push-send-notification-image-select" ).attr( "disabled", "disabled" );
+						$( '.perfecty-push-send-notification-image-preview' ).attr( 'src', '' );
+						$( '.perfecty-push-send-notification-image-preview-container' ).hide();
 					}
 				}
 			);
+
+			// Send Notification > Select image > Choose
+			var perfecty_send_notification_choose;
+			$( '#perfecty-push-send-notification-image-select' ).on(
+				'click',
+				function(event) {
+					event.preventDefault();
+					perfecty_send_notification_choose = wp.media(
+						{
+							title: 'Select image to upload',
+							button: {
+								text: 'Use this image',
+							},
+							multiple: false
+						}
+					);
+					perfecty_send_notification_choose.on(
+						'select',
+						function() {
+							let attachment = perfecty_send_notification_choose.state().get( 'selection' ).first().toJSON();
+							$( '.perfecty-push-send-notification-image-preview-container' ).show();
+							$( '.perfecty-push-send-notification-image-preview' ).attr( 'src', attachment.url );
+							$( "#perfecty-push-send-notification-image" ).val( attachment.url );
+						}
+					);
+					perfecty_send_notification_choose.open();
+				}
+			);
+			if ($( '.perfecty-push-send-notification-image-preview' ).attr( 'src' ) !== "") {
+				$( '.perfecty-push-send-notification-image-preview-container' ).show();
+			}
 
 			$( "#perfecty-push-send-notification-url-to-open-custom" ).change(
 				function(e){
@@ -100,8 +137,9 @@
 				$( ".perfecty-push-options-unregister-conflicts-group" ).closest( 'tr' ).hide();
 			}
 
+			// Settings > Select default icon
 			var perfecty_icon_choose;
-			$( '#perfecty_push_default_icon_select' ).on(
+			$( '#perfecty-push-default-icon-select' ).on(
 				'click',
 				function(event) {
 					event.preventDefault();

@@ -36,6 +36,17 @@
   display: none;
 }
 
+/* Send Notification */
+
+.perfecty-push-send-notification-image-preview {
+  width: 100px;
+  height: 100px;
+}
+
+.perfecty-push-send-notification-image-preview-container {
+  display: none;
+}
+
 .perfecty-push-stats > div {
   float: left;
   margin: 20px;

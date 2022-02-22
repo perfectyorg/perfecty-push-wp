@@ -95,6 +95,9 @@ You can create an issue in our Github repo:
 
 == Changelog ==
 
+= 1.6.1 =
+* Send Notification: Select image from gallery. Related [#150](https://github.com/perfectyorg/perfecty-push-wp/issues/150)
+
 = 1.6.0 =
 * Important: Default styles for the prompt are provided. If necessary, please override the corresponding CSS classes in your theme. Fixes [#135](https://github.com/perfectyorg/perfecty-push-wp/issues/135)
 * Added support for WP 5.9 and beta support to PHP 8. Fixes [#136](https://github.com/perfectyorg/perfecty-push-wp/issues/136)
