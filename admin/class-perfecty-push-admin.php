@@ -1292,7 +1292,7 @@ class Perfecty_Push_Admin {
 
 		printf(
 			'<div class="perfecty-push-default-icon-preview-container"><img src="%s" class="perfecty-push-default-icon-preview"/></div>' .
-			'<input type="button" id="perfecty_push_default_icon_select" class="button" value="%s"/>' .
+			'<input type="button" id="perfecty-push-default-icon-select" class="button" value="%s"/>' .
 			'<input type="hidden" id="perfecty_push[notifications_default_icon]"' .
 			'name="perfecty_push[notifications_default_icon]" value="%s"/>',
 			wp_get_attachment_url( $value ),

@@ -20,6 +20,9 @@
 			<br />
 			<input id="perfecty-push-send-notification-image-custom" name="perfecty-push-send-notification-image-custom" type="checkbox"/>
 			<input id="perfecty-push-send-notification-image" name="perfecty-push-send-notification-image" type="text" value="<?php echo esc_attr( $item['perfecty-push-send-notification-image'] ); ?>" disabled="disabled">
+			<span> <?php printf( esc_html__( 'or', 'perfecty-push-notifications' ) ); ?> </span>
+			<input type="button" id="perfecty-push-send-notification-image-select" class="button" value="<?php printf( esc_html__( 'Select image', 'perfecty-push-notifications' ) ); ?>" disabled="disabled"/>
+			<div class="perfecty-push-send-notification-image-preview-container"><img src="" class="perfecty-push-send-notification-image-preview"/></div>
 		</p>
 	</div>
 	<div>
