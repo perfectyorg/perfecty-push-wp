@@ -105,7 +105,7 @@ class Perfecty_Push_Public {
 		);
 		register_rest_route(
 			'perfecty-push',
-			'/v1/webpush/(?P<site_id>[a-zA-Z0-9-]+)/subscribers/(?P<subscriber_id>[a-zA-Z0-9-]+)/unregister',
+			'/v1/webpush/(?P<site_id>[a-zA-Z0-9-]+)/subscribers/(?P<id>[a-zA-Z0-9-]+)/unregister',
 			array(
 				'methods'             => array( 'POST' ),
 				'callback'            => array( $users, 'unregister' ),
@@ -118,7 +118,7 @@ class Perfecty_Push_Public {
 		);
 		register_rest_route(
 			'perfecty-push',
-			'/v1/webpush/(?P<site_id>[a-zA-Z0-9-]+)/subscribers/(?P<subscriber_id>[a-zA-Z0-9-]+)',
+			'/v1/webpush/(?P<site_id>[a-zA-Z0-9-]+)/subscribers/(?P<id>[a-zA-Z0-9-]+)',
 			array(
 				'methods'             => array( 'GET' ),
 				'callback'            => array( $users, 'get_user' ),

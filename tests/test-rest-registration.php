@@ -44,7 +44,7 @@ class RestRegistrationTest extends WP_UnitTestCase {
 		$registration         = new Perfecty_Push_Users();
 		$data                 = array(
 			'site_id'   => $this->site_id,
-			'user'       => array(
+			'push_subscription'       => array(
 				'endpoint' => 'http://my_endpoint',
 				'keys'     => array(
 					'auth'   => 'my_auth_key',
@@ -87,7 +87,7 @@ class RestRegistrationTest extends WP_UnitTestCase {
 		$this->assertSame(
 			(array) $res,
 			array(
-				'uuid' => $users[0]->uuid,
+				'id' => $users[0]->uuid,
 			)
 		);
 		$this->assertArraySubset( $expected, (array) $users[0] );
@@ -110,7 +110,7 @@ class RestRegistrationTest extends WP_UnitTestCase {
 		$registration = new Perfecty_Push_Users();
 		$data         = array(
 			'site_id'   => $this->site_id,
-			'user' => array(
+			'push_subscription' => array(
 				'endpoint' => 'http://my_endpoint',
 				'keys'     => array(
 					'auth'   => 'my_auth_key',
@@ -136,7 +136,7 @@ class RestRegistrationTest extends WP_UnitTestCase {
 		$this->assertSame(
 			(array) $res,
 			array(
-				'uuid' => $users[0]->uuid,
+				'id' => $users[0]->uuid,
 			)
 		);
 		$this->assertArraySubset( $expected, (array) $users[0] );
@@ -149,7 +149,7 @@ class RestRegistrationTest extends WP_UnitTestCase {
 		$registration = new Perfecty_Push_Users();
 		$data         = array(
 			'site_id'   => $this->site_id,
-			'user' => array(
+			'push_subscription' => array(
 				'endpoint' => 'http://my_endpoint',
 				'keys'     => array(
 					'auth'   => 'my_auth_key',
@@ -181,7 +181,7 @@ class RestRegistrationTest extends WP_UnitTestCase {
 		$this->assertSame(
 			(array) $res,
 			array(
-				'uuid' => $users[0]->uuid,
+				'id' => $users[0]->uuid,
 			)
 		);
 		$this->assertArraySubset( $expected, (array) $users[0] );
@@ -196,7 +196,7 @@ class RestRegistrationTest extends WP_UnitTestCase {
 		$registration = new Perfecty_Push_Users();
 		$data         = array(
 			'site_id'   => $this->site_id,
-			'user'    => array(
+			'push_subscription'    => array(
 				'endpoint' => 'http://my_endpoint2',
 				'keys'     => array(
 					'auth'   => 'my_key_auth',
@@ -224,7 +224,7 @@ class RestRegistrationTest extends WP_UnitTestCase {
 		$this->assertSame(
 			(array) $res,
 			array(
-				'uuid' => $user->uuid,
+				'id' => $user->uuid,
 			)
 		);
 		$this->assertArraySubset( $expected, (array) $users[0] );
@@ -240,14 +240,14 @@ class RestRegistrationTest extends WP_UnitTestCase {
 		$registration = new Perfecty_Push_Users();
 		$data         = array(
 			'site_id'   => $this->site_id,
-			'user'    => array(
+			'push_subscription'    => array(
 				'endpoint' => 'http://my_endpoint',
 				'keys'     => array(
 					'auth'   => 'updated_my_auth_key',
 					'p256dh' => 'updated_my_p256dh_key',
 				),
 			),
-			'user_id' => $user->uuid,
+			'id' => $user->uuid,
 		);
 
 		$previous_users = Perfecty_Push_Lib_Db::get_users( 0, 5 );
@@ -267,7 +267,7 @@ class RestRegistrationTest extends WP_UnitTestCase {
 		$this->assertSame(
 			(array) $res,
 			array(
-				'uuid' => $users[0]->uuid,
+				'id' => $users[0]->uuid,
 			)
 		);
 		$this->assertArraySubset( $expected, (array) $users[0] );
@@ -280,7 +280,7 @@ class RestRegistrationTest extends WP_UnitTestCase {
 		$users = new Perfecty_Push_Users();
 		$data  = array(
 			'site_id'   => $this->site_id,
-			'user' => array(
+			'push_subscription' => array(
 				'endpoint' => 'http://my_endpoint',
 				'keys'     => array(
 					'auth'   => '',
@@ -315,7 +315,7 @@ class RestRegistrationTest extends WP_UnitTestCase {
 		$registration = new Perfecty_Push_Users();
 		$data         = array(
 			'site_id'   => $this->site_id,
-			'user' => array(
+			'push_subscription' => array(
 				'endpoint' => 'http://my_endpoint',
 				'keys'     => array(
 					'auth'   => 'my_auth_key',
@@ -344,7 +344,7 @@ class RestRegistrationTest extends WP_UnitTestCase {
 		$users = new Perfecty_Push_Users();
 		$data  = array(
 			'site_id'   => $this->site_id,
-			'user' => array(
+			'push_subscription' => array(
 				'keys' => array(
 					'p256dh' => 'my_p256dh_key',
 				),
@@ -371,7 +371,7 @@ class RestRegistrationTest extends WP_UnitTestCase {
 		$users = new Perfecty_Push_Users();
 		$data  = array(
 			'site_id'   => $this->site_id,
-			'user' => array(
+			'push_subscription' => array(
 				'endpoint' => 'http://my_endpoint',
 				'keys'     => array(
 					'auth'   => 'my_very_long_auth_key123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890',
@@ -402,14 +402,14 @@ class RestRegistrationTest extends WP_UnitTestCase {
 		$registrations = new Perfecty_Push_Users();
 		$data          = array(
 			'site_id'   => $this->site_id,
-			'user'    => array(
+			'push_subscription'    => array(
 				'endpoint' => 'http://my_endpoint',
 				'keys'     => array(
 					'auth'   => 'my_very_long_auth_key123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890',
 					'p256dh' => 'my_p256dh_key',
 				),
 			),
-			'user_id' => $user->uuid,
+			'id' => $user->uuid,
 		);
 
 		$res = $registrations->register( $data );

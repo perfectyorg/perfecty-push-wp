@@ -136,9 +136,7 @@ class Perfecty_Push_Admin {
 	  * @since 1.0.0
 	  */
 	public function register_admin_menu() {
-		$options = get_option('perfecty_push');
-		$is_self_hosted = isset( $options['push_server_type'] ) && $options['push_server_type'] == 'cloud';
-		if ($is_self_hosted) {
+		if ( PERFECTY_PUSH_IS_CLOUD ) {
 			add_menu_page(
 				'Perfecty Push',
 				'Perfecty Push',
@@ -219,7 +217,6 @@ class Perfecty_Push_Admin {
 				'perfecty-push-about',
 				array( $this, 'print_about_page' )
 			);
-
 		}
 	}
 
@@ -310,7 +307,7 @@ class Perfecty_Push_Admin {
 			esc_html__( 'Log driver', 'perfecty-push-notifications' ),
 			array( $this, 'print_log_driver' ),
 			'perfecty-push-options',
-			'perfecty_push_self_hosted_settings'
+			'perfecty_push_server'
 		);
 
 		add_settings_field(
@@ -318,7 +315,7 @@ class Perfecty_Push_Admin {
 			esc_html__( 'Log level', 'perfecty-push-notifications' ),
 			array( $this, 'print_log_level' ),
 			'perfecty-push-options',
-			'perfecty_push_self_hosted_settings'
+			'perfecty_push_server'
 		);
 
 		add_settings_section(
@@ -522,52 +519,6 @@ class Perfecty_Push_Admin {
 			array( $this, 'print_default_send_on_publish' ),
 			'perfecty-push-options',
 			'perfecty_push_metabox_settings'
-		);
-
-		add_settings_section(
-			'perfecty_push_self_hosted_settings',
-			esc_html__( 'Self-hosted server', 'perfecty-push-notifications' ),
-			array( $this, 'print_self_hosted_section' ),
-			'perfecty-push-options'
-		);
-
-		add_settings_field(
-			'vapid_private_key',
-			esc_html__( 'Vapid private key', 'perfecty-push-notifications' ),
-			array( $this, 'print_vapid_private_key' ),
-			'perfecty-push-options',
-			'perfecty_push_self_hosted_settings'
-		);
-		add_settings_field(
-			'vapid_public_key',
-			esc_html__( 'Vapid public key', 'perfecty-push-notifications' ),
-			array( $this, 'print_vapid_public_key' ),
-			'perfecty-push-options',
-			'perfecty_push_self_hosted_settings'
-		);
-
-		add_settings_field(
-			'server_url',
-			esc_html__( 'Custom REST Url', 'perfecty-push-notifications' ),
-			array( $this, 'print_server_url' ),
-			'perfecty-push-options',
-			'perfecty_push_self_hosted_settings'
-		);
-
-		add_settings_field(
-			'batch_size',
-			esc_html__( 'Batch size', 'perfecty-push-notifications' ),
-			array( $this, 'print_batch_size' ),
-			'perfecty-push-options',
-			'perfecty_push_self_hosted_settings'
-		);
-
-		add_settings_field(
-			'parallel_flushing_size',
-			esc_html__( 'Parallel flushing size', 'perfecty-push-notifications' ),
-			array( $this, 'print_parallel_flushing_size' ),
-			'perfecty-push-options',
-			'perfecty_push_self_hosted_settings'
 		);
 	}
 
@@ -1214,7 +1165,7 @@ class Perfecty_Push_Admin {
 			'<br /><a href="%s" target="_blank">%s</a> </div>',
 			esc_html( $value ),
 			'https://console.perfecty.org/',
-			esc_html('Go to the console', 'perfecty-push-notifications')
+			esc_html( 'Go to the console', 'perfecty-push-notifications' )
 		);
 	}
 
@@ -1308,6 +1259,48 @@ class Perfecty_Push_Admin {
 	}
 
 	/**
+	 * Print the logs driver setting
+	 *
+	 * @since 1.6.0
+	 */
+	public function print_log_driver() {
+		$options = get_option( 'perfecty_push' );
+		$value   = isset( $options['log_driver'] ) ? esc_attr( $options['log_driver'] ) : 'errorlog';
+
+		$print_selected = function( $val ) use ( $value ) {
+			return $val == $value ? 'selected' : '';
+		};
+		printf(
+			'<div class="perfecty-push-options-self-hosted-group"><select name="perfecty_push[log_driver]" id="perfecty_push[log_driver]">' .
+			'<option value="errorlog" ' . $print_selected( 'errorlog' ) . '>PHP - error_log()</option>' .
+			'<option value="db"' . $print_selected( 'db' ) . '>Database</option>' .
+			'</select></div>'
+		);
+	}
+
+	/**
+	 * Print the logs level setting
+	 *
+	 * @since 1.6.0
+	 */
+	public function print_log_level() {
+		$options = get_option( 'perfecty_push' );
+		$value   = isset( $options['log_level'] ) ? esc_attr( $options['log_level'] ) : 'error';
+
+		$print_selected = function( $val ) use ( $value ) {
+			return $val == $value ? 'selected' : '';
+		};
+		printf(
+			'<div class="perfecty-push-options-self-hosted-group"><select name="perfecty_push[log_level]" id="perfecty_push[log_level]">' .
+			'<option value="error" ' . $print_selected( 'error' ) . '>Error</option>' .
+			'<option value="warning"' . $print_selected( 'warning' ) . '>Warning</option>' .
+			'<option value="info"' . $print_selected( 'info' ) . '>Info</option>' .
+			'<option value="debug"' . $print_selected( 'debug' ) . '>Debug</option>' .
+			'</select></div>'
+		);
+	}
+
+	/**
 	 * Print the widget_enabled option
 	 *
 	 * @since 1.0.0
@@ -1394,48 +1387,6 @@ class Perfecty_Push_Admin {
 			'<input type="checkbox" id="perfecty_push[widget_ask_permissions_directly]"' .
 			'name="perfecty_push[widget_ask_permissions_directly]" %s />',
 			esc_html( $enabled )
-		);
-	}
-
-	/**
-	 * Print the logs driver setting
-	 *
-	 * @since 1.6.0
-	 */
-	public function print_log_driver() {
-		$options = get_option( 'perfecty_push' );
-		$value   = isset( $options['log_driver'] ) ? esc_attr( $options['log_driver'] ) : 'errorlog';
-
-		$print_selected = function( $val ) use ( $value ) {
-			return $val == $value ? 'selected' : '';
-		};
-		printf(
-			'<select name="perfecty_push[log_driver]" id="perfecty_push[log_driver]">' .
-			'<option value="errorlog" ' . $print_selected( 'errorlog' ) . '>PHP - error_log()</option>' .
-			'<option value="db"' . $print_selected( 'db' ) . '>Database</option>' .
-			'</select>'
-		);
-	}
-
-	/**
-	 * Print the logs level setting
-	 *
-	 * @since 1.6.0
-	 */
-	public function print_log_level() {
-		$options = get_option( 'perfecty_push' );
-		$value   = isset( $options['log_level'] ) ? esc_attr( $options['log_level'] ) : 'error';
-
-		$print_selected = function( $val ) use ( $value ) {
-			return $val == $value ? 'selected' : '';
-		};
-		printf(
-			'<select name="perfecty_push[log_level]" id="perfecty_push[log_level]">' .
-			'<option value="error" ' . $print_selected( 'error' ) . '>Error</option>' .
-			'<option value="warning"' . $print_selected( 'warning' ) . '>Warning</option>' .
-			'<option value="info"' . $print_selected( 'info' ) . '>Info</option>' .
-			'<option value="debug"' . $print_selected( 'debug' ) . '>Debug</option>' .
-			'</select>'
 		);
 	}
 

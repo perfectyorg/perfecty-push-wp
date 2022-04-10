@@ -33,10 +33,10 @@ class Perfecty_Push_Users {
 		$site_id = $data['site_id'] ?? null;
 
 		// Request
-		$user       = $data['user'] ?? null;
-		$user_id    = $data['subscriber_id'] ?? null;
-		$first_time = $data['first_time'] ?? null;
-		$remote_ip  = $this->get_remote_ip();
+		$push_subscription = $data['push_subscription'] ?? null;
+		$user_uuid         = $data['id'] ?? null;
+		$first_time        = $data['first_time'] ?? null;
+		$remote_ip         = $this->get_remote_ip();
 
 		// Validate the nonce
 		$nonce = isset( $_SERVER['HTTP_X_WP_NONCE'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_WP_NONCE'] ) ) : '';
@@ -45,20 +45,20 @@ class Perfecty_Push_Users {
 		}
 
 		// Extract the data
-		$res        = $this->extract_data( $user );
+		$res        = $this->extract_data( $push_subscription );
 		$endpoint   = $res[0];
 		$key_auth   = $res[1];
 		$key_p256dh = $res[2];
 
 		// Process request
-		$validation = $this->validate( $site_id, $endpoint, $key_auth, $key_p256dh, $remote_ip, $user_id, $first_time );
+		$validation = $this->validate( $site_id, $endpoint, $key_auth, $key_p256dh, $remote_ip, $user_uuid, $first_time );
 		if ( $validation === true ) {
 			// filter data
 			$endpoint   = esc_url( $endpoint );
 			$key_auth   = sanitize_text_field( $key_auth );
 			$key_p256dh = sanitize_text_field( $key_p256dh );
 			$remote_ip  = sanitize_text_field( $remote_ip );
-			$user_id    = sanitize_text_field( $user_id );
+			$user_uuid  = sanitize_text_field( $user_uuid );
 			$first_time = sanitize_text_field( $first_time );
 			$wp_user_id = is_user_logged_in() ? get_current_user_id() : null;
 
@@ -70,7 +70,7 @@ class Perfecty_Push_Users {
 				return new WP_Error( 'validation_error', __( 'Invalid subscription parameters', 'perfecty-push-notifications' ), array( 'status' => 400 ) );
 			}
 
-			$user = Perfecty_Push_Lib_Db::get_user_by( $user_id, $key_auth, $key_p256dh );
+			$user = Perfecty_Push_Lib_Db::get_user_by( $user_uuid, $key_auth, $key_p256dh );
 			if ( $user ) {
 				$user->endpoint   = $endpoint;
 				$user->key_auth   = $key_auth;
@@ -102,7 +102,7 @@ class Perfecty_Push_Users {
 
 			// The user was registered
 			$response = array(
-				'uuid' => $user->uuid,
+				'id' => $user->uuid,
 			);
 			return (object) $response;
 		} else {
@@ -117,8 +117,8 @@ class Perfecty_Push_Users {
 	 * @since 1.0.0
 	 */
 	public function get_user( $data ) {
-		$site_id = $data['site_id'] ?? null;
-		$user_id = $data['subscriber_id'] ?? null;
+		$site_id   = $data['site_id'] ?? null;
+		$user_uuid = $data['id'] ?? null;
 
 		// Validate the nonce.
 		$nonce = isset( $_SERVER['HTTP_X_WP_NONCE'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_WP_NONCE'] ) ) : '';
@@ -126,16 +126,16 @@ class Perfecty_Push_Users {
 			$this->terminate();
 		}
 
-		$validation = $this->validate_get_user( $site_id, $user_id );
+		$validation = $this->validate_get_user( $site_id, $user_uuid );
 		if ( $validation !== true ) {
 			return new WP_Error( 'bad_request', $validation, array( 'status' => 400 ) );
 		}
 
-		$user   = Perfecty_Push_Lib_Db::get_user_by_uuid( $user_id );
+		$user   = Perfecty_Push_Lib_Db::get_user_by_uuid( $user_uuid );
 		$result = array();
 		if ( $user !== null ) {
 			$result = array(
-				'uuid' => $user->uuid,
+				'id' => $user->uuid,
 			);
 		}
 		return (object) $result;
@@ -147,8 +147,8 @@ class Perfecty_Push_Users {
 	 * @since 1.2.0
 	 */
 	public function unregister( $data ) {
-		$user_id = $data['subscriber_id'] ?? null;
-		$site_id = $data['site_id'] ?? null;
+		$user_uuid = $data['id'] ?? null;
+		$site_id   = $data['site_id'] ?? null;
 
 		// Validate the nonce.
 		$nonce = isset( $_SERVER['HTTP_X_WP_NONCE'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_WP_NONCE'] ) ) : '';
@@ -156,12 +156,12 @@ class Perfecty_Push_Users {
 			$this->terminate();
 		}
 
-		$validation = $this->validate_delete( $site_id, $user_id );
+		$validation = $this->validate_delete( $site_id, $user_uuid );
 		if ( $validation !== true ) {
 			return new WP_Error( 'bad_request', $validation, array( 'status' => 400 ) );
 		}
 
-		$user = Perfecty_Push_Lib_Db::get_user_by_uuid( $user_id );
+		$user = Perfecty_Push_Lib_Db::get_user_by_uuid( $user_uuid );
 		if ( $user == null ) {
 			return new WP_Error( 'bad_request', __( 'User id not found', 'perfecty-push-notifications' ), array( 'status' => 404 ) );
 		}
@@ -195,7 +195,7 @@ class Perfecty_Push_Users {
 		return array( $endpoint, $key_auth, $key_p256dh );
 	}
 
-	private function validate( $site_id, $endpoint, $key_auth, $key_p256dh, $remote_ip, $user_id, $first_time ) {
+	private function validate( $site_id, $endpoint, $key_auth, $key_p256dh, $remote_ip, $user_uuid, $first_time ) {
 		if ( ! $site_id || ! Uuid::isValid( $site_id ) ) {
 			return __( 'Invalid site ID', 'perfecty-push-notifications' );
 		}
@@ -212,7 +212,7 @@ class Perfecty_Push_Users {
 		if ( $remote_ip && ! filter_var( $remote_ip, FILTER_VALIDATE_IP ) ) {
 			return __( 'Unknown Ip address', 'perfecty-push-notifications' );
 		}
-		if ( $user_id && ! Uuid::isValid( $user_id ) ) {
+		if ( $user_uuid && ! Uuid::isValid( $user_uuid ) ) {
 			return __( 'The user id is not a valid uuid', 'perfecty-push-notifications' );
 		}
 		if ( $first_time !== null && ! is_bool( $first_time ) ) {
@@ -230,24 +230,24 @@ class Perfecty_Push_Users {
 		wp_die( -1, 403 );
 	}
 
-	private function validate_delete( $site_id, $user_id ) {
+	private function validate_delete( $site_id, $user_uuid ) {
 		if ( ! $site_id || ! Uuid::isValid( $site_id ) ) {
 			return __( 'Invalid site ID', 'perfecty-push-notifications' );
 		}
 
-		if ( ! $user_id || ! Uuid::isValid( $user_id ) ) {
+		if ( ! $user_uuid || ! Uuid::isValid( $user_uuid ) ) {
 			return __( 'Invalid user ID', 'perfecty-push-notifications' );
 		}
 
 		return true;
 	}
 
-	private function validate_get_user( $site_id, $user_id ) {
+	private function validate_get_user( $site_id, $user_uuid ) {
 		if ( ! $site_id || ! Uuid::isValid( $site_id ) ) {
 			return __( 'Invalid site ID', 'perfecty-push-notifications' );
 		}
 
-		if ( ! $user_id || ! Uuid::isValid( $user_id ) ) {
+		if ( ! $user_uuid || ! Uuid::isValid( $user_uuid ) ) {
 			return __( 'Invalid user ID', 'perfecty-push-notifications' );
 		}
 

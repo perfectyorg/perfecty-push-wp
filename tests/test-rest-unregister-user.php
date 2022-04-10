@@ -39,7 +39,7 @@ class RestUnregisterUserTest extends WP_UnitTestCase {
 
 		$data        = array(
 			'site_id'   => $this->site_id,
-			'user_id'   => $user->uuid,
+			'id'   => $user->uuid,
 		);
 		$users = new Perfecty_Push_Users();
 		$res         = $users->unregister( $data );
@@ -57,7 +57,7 @@ class RestUnregisterUserTest extends WP_UnitTestCase {
 	    $uuid = Uuid::uuid4();
 		$data        = array(
 			'site_id'   => $this->site_id,
-			'user_id'   => $uuid->toString(),
+			'id'   => $uuid->toString(),
 		);
 		$users = new Perfecty_Push_Users();
 		$res         = $users->unregister( $data );
@@ -79,7 +79,7 @@ class RestUnregisterUserTest extends WP_UnitTestCase {
 	public function test_unregister_user_invalid() {
 		$data        = array(
 			'site_id'   => $this->site_id,
-			'user_id'   => '7777777-wrong-uuid',
+			'id'   => '7777777-wrong-uuid',
 		);
 		$users = new Perfecty_Push_Users();
 		$res         = $users->unregister( $data );
@@ -102,7 +102,7 @@ class RestUnregisterUserTest extends WP_UnitTestCase {
         $uuid = Uuid::uuid4();
         $data        = array(
 	        'site_id'   => $this->site_id,
-            'user_id'   => $uuid->toString(),
+            'id'   => $uuid->toString(),
         );
 		unset( $_SERVER['HTTP_X_WP_NONCE'] );
 		$mock = Mockery::mock( Perfecty_Push_Users::class )->makePartial();

@@ -42,6 +42,11 @@ define( 'PERFECTY_PUSH_VERSION', '1.6.1' );
 define( 'PERFECTY_PUSH_DB_VERSION', 6 );
 
 /**
+ * DB Version of the plugin
+ */
+define( 'PERFECTY_PUSH_CLOUD_URL', 'http://localhost:8080' );
+
+/**
  * The basename of the plugin
  */
 define( 'PERFECTY_PUSH_BASENAME', plugin_basename( __FILE__ ) );
