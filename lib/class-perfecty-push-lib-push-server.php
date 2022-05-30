@@ -336,6 +336,20 @@ class Perfecty_Push_Lib_Push_Server {
 			$notification->last_execution_at = current_time( 'mysql', 1 );
 			$result                          = Perfecty_Push_Lib_Db::update_notification( $notification );
 
+			//Creates a notification for the next day if recurring is checked
+			//if($notification->recurring){
+			if(1===1){
+				$date           = new DateTime( $notification->scheduled_at );
+				$scheduled_time = $date->add(new DateInterval('P1D'));
+
+				$total_users     = Perfecty_Push_Lib_Db::get_total_users();
+				$notification_id = Perfecty_Push_Lib_Db::create_notification( $notification->payload, Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_SCHEDULED, $total_users, $notification->batch_size, $scheduled_time );
+
+				self::schedule_job( $notification_id, $scheduled_time );
+				do_action( 'perfecty_push_broadcast_scheduled', $payload );
+			}
+
+			
 			Log::info( 'Notification cycle for id=' . $notification_id . ' sent. Cursor: ' . $notification->last_cursor . ', Succeeded: ' . $total_succeeded . ', Failed: ' . $total_failed );
 			if ( ! $result ) {
 				Log::error( 'Could not update the notification after sending one batch' );
