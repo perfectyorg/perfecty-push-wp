@@ -8,7 +8,7 @@ use Perfecty_Push_External_Uuid as Uuid;
 class Perfecty_Push_Lib_Db {
 
 	private static $allowed_users_fields         = 'id,uuid,wp_user_id,endpoint,key_auth,key_p256dh,remote_ip,created_at';
-	private static $allowed_notifications_fields = 'id,payload,total,succeeded,failed,last_cursor,batch_size,status,is_taken,created_at,finished_at,last_execution_at,scheduled_at';
+	private static $allowed_notifications_fields = 'id,payload,total,succeeded,failed,last_cursor,batch_size,status,is_taken,created_at,finished_at,last_execution_at,scheduled_at,recurring';
 	private static $allowed_logs_fields          = 'level,message,created_at';
 
 	public const NOTIFICATIONS_STATUS_SCHEDULED = 'scheduled';
@@ -366,7 +366,7 @@ class Perfecty_Push_Lib_Db {
 	 *
 	 * @return $inserted_id or false if error
 	 */
-	public static function create_notification( $payload, $status = self::NOTIFICATIONS_STATUS_SCHEDULED, $total = 0, $batch_size = Perfecty_Push_Lib_Push_Server::DEFAULT_BATCH_SIZE, $scheduled_at = null ) {
+	public static function create_notification( $payload, $status = self::NOTIFICATIONS_STATUS_SCHEDULED, $total = 0, $batch_size = Perfecty_Push_Lib_Push_Server::DEFAULT_BATCH_SIZE, $scheduled_at = null, $recurring = null ) {
 		global $wpdb;
 
 		$scheduled_at = $scheduled_at == null ? null : date( 'Y-m-d H:i:s', $scheduled_at );
@@ -378,6 +378,7 @@ class Perfecty_Push_Lib_Db {
 				'total'        => $total,
 				'batch_size'   => $batch_size,
 				'scheduled_at' => $scheduled_at,
+				'recurring'    => $recurring,
 			)
 		);
 
