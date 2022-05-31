@@ -340,7 +340,8 @@ class Perfecty_Push_Lib_Push_Server {
 			//if($notification->recurring){
 			if(1===1){
 				$date           = new DateTime( $notification->scheduled_at );
-				$scheduled_time = $date->add(new DateInterval('P1D'));
+				$datePlusDay 	= $date->add(new DateInterval('P1D'));
+				$scheduled_time = $datePlusDay->getTimeStamp();
 
 				$total_users     = Perfecty_Push_Lib_Db::get_total_users();
 				$notification_id = Perfecty_Push_Lib_Db::create_notification( $notification->payload, Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_SCHEDULED, $total_users, $notification->batch_size, $scheduled_time );
