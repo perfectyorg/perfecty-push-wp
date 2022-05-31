@@ -346,7 +346,7 @@ class Perfecty_Push_Lib_Push_Server {
 				$notification_id = Perfecty_Push_Lib_Db::create_notification( $notification->payload, Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_SCHEDULED, $total_users, $notification->batch_size, $scheduled_time, $notification->recurring );
 
 				self::schedule_job( $notification_id, $scheduled_time );
-				do_action( 'perfecty_push_broadcast_scheduled', $payload );
+				do_action( 'perfecty_push_broadcast_scheduled', $notification->payload );
 			}
 
 			
