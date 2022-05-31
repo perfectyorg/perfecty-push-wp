@@ -105,6 +105,11 @@ class Perfecty_Push_Lib_Db {
 				// the counters have been adjusted, we migrate the old stats
 				$wpdb->query( "UPDATE $notifications_table SET failed = total - succeeded" );
 			}
+			if ( $db_version == 7 ) {
+				if ( $wpdb->get_var( "SHOW INDEX FROM $notifications_table WHERE Key_name='recurring'" ) === null ) {
+					$wpdb->query( "ALTER TABLE $notifications_table ADD recurring boolean DEFAULT 0 NOT NULL" );
+				}
+			}
 
 			update_option( 'perfecty_push_db_version', PERFECTY_PUSH_DB_VERSION );
 		}
