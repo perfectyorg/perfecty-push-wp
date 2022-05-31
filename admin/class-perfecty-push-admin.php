@@ -763,13 +763,15 @@ class Perfecty_Push_Admin {
 				$item['perfecty-push-send-notification-url-to-open'] = sanitize_text_field( $item['perfecty-push-send-notification-url-to-open'] );
 				$item['perfecty-push-send-notification-image']       = sanitize_text_field( $item['perfecty-push-send-notification-image'] );
 				$item['perfecty-push-send-notification-timeoffset']  = sanitize_text_field( $item['perfecty-push-send-notification-timeoffset'] );
-				$item['perfecty-push-send-notification-recurring']	 = sanitize_key( $item['perfecty-push-send-notification-recurring'] );
+				$item['perfecty-push-send-notification-recurring']   = sanitize_key( $item['perfecty-push-send-notification-recurring'] );
 
 				$payload        = Perfecty_Push_Lib_Payload::build( $item['perfecty-push-send-notification-message'], $item['perfecty-push-send-notification-title'], $item['perfecty-push-send-notification-image'], $item['perfecty-push-send-notification-url-to-open'] );
 				$timeoffset     = intval( $item['perfecty-push-send-notification-timeoffset'] );
 				$scheduled_time = self::calculate_scheduled_time_from_offset( $timeoffset );
 				if(!empty($item['perfecty-push-send-notification-recurring'])){
 					$recurring = $item['perfecty-push-send-notification-recurring'] === 'yes' ? 1 : 0;
+				}else{
+					$recurring = 0;
 				}
 
 				// send notification
