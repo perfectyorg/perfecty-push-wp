@@ -52,42 +52,43 @@ class Perfecty_Push_Lib_Db {
 
 		// We execute the queries per table
 		$sql = "CREATE TABLE $user_table (
-          id int(11) NOT NULL AUTO_INCREMENT,
-          wp_user_id int(11) NULL,
-          uuid char(36) NOT NULL,
-          remote_ip varchar(46) DEFAULT '',
-          endpoint varchar(500) NOT NULL,
-          key_auth varchar(100) NOT NULL UNIQUE,
-          key_p256dh varchar(100) NOT NULL UNIQUE,
-          created_at datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
-          PRIMARY KEY  (id),
-          UNIQUE KEY users_uuid_uk (uuid)
-        ) $charset;";
+		  id int(11) NOT NULL AUTO_INCREMENT,
+		  wp_user_id int(11) NULL,
+		  uuid char(36) NOT NULL,
+		  remote_ip varchar(46) DEFAULT '',
+		  endpoint varchar(500) NOT NULL,
+		  key_auth varchar(100) NOT NULL UNIQUE,
+		  key_p256dh varchar(100) NOT NULL UNIQUE,
+		  created_at datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
+		  PRIMARY KEY  (id),
+		  UNIQUE KEY users_uuid_uk (uuid)
+		) $charset;";
 		dbDelta( $sql );
 
 		$sql = "CREATE TABLE $notifications_table (
-          id int(11) NOT NULL AUTO_INCREMENT,
-          payload varchar(2000) NOT NULL,
-          total int(11) DEFAULT 0 NOT NULL,
-          succeeded int(11) DEFAULT 0 NOT NULL,
-          failed int(11) DEFAULT 0 NOT NULL,
-          last_cursor int(11) DEFAULT 0 NOT NULL,
-          batch_size int(11) DEFAULT 0 NOT NULL,
-          status varchar(15) DEFAULT 'scheduled' NOT NULL,
-          is_taken tinyint(1) DEFAULT 0 NOT NULL,
-          created_at datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
-          last_execution_at datetime NULL,
-          scheduled_at datetime NULL,
-          finished_at datetime NULL,
-          PRIMARY KEY  (id)
-        ) $charset;";
+		  id int(11) NOT NULL AUTO_INCREMENT,
+		  payload varchar(2000) NOT NULL,
+		  total int(11) DEFAULT 0 NOT NULL,
+		  succeeded int(11) DEFAULT 0 NOT NULL,
+		  failed int(11) DEFAULT 0 NOT NULL,
+		  last_cursor int(11) DEFAULT 0 NOT NULL,
+		  batch_size int(11) DEFAULT 0 NOT NULL,
+		  status varchar(15) DEFAULT 'scheduled' NOT NULL,
+		  is_taken tinyint(1) DEFAULT 0 NOT NULL,
+		  created_at datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
+		  last_execution_at datetime NULL,
+		  scheduled_at datetime NULL,
+		  finished_at datetime NULL,
+  		  recurring boolean DEFAULT 0 NOT NULL,
+		  PRIMARY KEY  (id)
+		) $charset;";
 		dbDelta( $sql );
 
 		$sql = "CREATE TABLE $logs_table (
-          level varchar(10) DEFAULT 'debug',
-          message varchar(2000) NOT NULL,
-          created_at datetime DEFAULT CURRENT_TIMESTAMP NOT NULL
-        ) $charset;";
+		  level varchar(10) DEFAULT 'debug',
+		  message varchar(2000) NOT NULL,
+		  created_at datetime DEFAULT CURRENT_TIMESTAMP NOT NULL
+		) $charset;";
 		dbDelta( $sql );
 
 		if ( $db_version != PERFECTY_PUSH_DB_VERSION ) {
