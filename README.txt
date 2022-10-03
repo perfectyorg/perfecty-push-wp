@@ -3,8 +3,8 @@ Contributors: rwngallego, mociofiletto
 Donate link: https://paypal.me/tatalata777
 Tags: Push Notifications, Web Push Notifications, Notifications, User engagement
 Requires at least: 5.0
-Tested up to: 5.9
-Stable tag: 1.6.1
+Tested up to: 6.0
+Stable tag: 1.6.2
 Requires PHP: 7.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -94,6 +94,9 @@ You can create an issue in our Github repo:
 8. Settings
 
 == Changelog ==
+
+= 1.6.2 =
+* Tested up to WordPress 6.0
 
 = 1.6.1 =
 * Send Notification: Select image from gallery. Related [#150](https://github.com/perfectyorg/perfecty-push-wp/issues/150)
