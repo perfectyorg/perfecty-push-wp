@@ -17,7 +17,7 @@ PLUGIN_PATH="/var/www/html/wp-content/plugins/perfecty-push-wp"
 compose_exec() {
   declare command=$1
 
-  docker-compose exec -T wordpress /bin/bash -l -c "$command"
+  docker compose exec -T wordpress /bin/bash -l -c "$command"
 }
 
 plugin_cmd() {
@@ -34,15 +34,15 @@ setup() {
 }
 
 up() {
-  docker-compose up -d
+  docker compose up -d
 }
 
 down() {
-  docker-compose down
+  docker compose down
 }
 
 console() {
-  docker-compose exec wordpress /bin/bash
+  docker compose exec wordpress /bin/bash
 }
 
 wordpress() {
