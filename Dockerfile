@@ -1,4 +1,4 @@
-FROM wordpress:6.7-php8.1-apache
+FROM wordpress:5.9-php7.3-apache
 
 RUN apt-get update
 RUN apt-get install -y vim subversion mariadb-client wget
