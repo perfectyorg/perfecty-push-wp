@@ -12,8 +12,27 @@ jobs:
     strategy:
       matrix:
         # See: https://make.wordpress.org/core/handbook/references/php-compatibility-and-wordpress-versions/
-        wordpress-version: ['6.0', '6.1', '6.2', '6.3', '6.4', '6.5', '6.6', '6.7']
-        php-versions: ['7.3', '7.4', '8.0', '8.1', '8.2', '8.3', '8.4']
+        wordpress-version: ['6.1', '6.2', '6.3', '6.4', '6.5', '6.6', '6.7']
+        php-versions: ['7.3', '7.4', '8.0', '8.1', '8.2']
+        include:
+          # WordPress 6.0:
+          - wordpress-version: '6.0'
+            php-versions: '7.3'
+          - wordpress-version: '6.0'
+            php-versions: '7.4'
+          - wordpress-version: '6.0'
+            php-versions: '8.0'
+          - wordpress-version: '6.0'
+            php-versions: '8.1'
+          # php 8.3:
+          - php-versions: '8.3'
+            wordpress-version: '6.7'
+          - php-versions: '8.3'
+            wordpress-version: '6.6'
+          - php-versions: '8.3'
+            wordpress-version: '6.5'
+          - php-versions: '8.3'
+            wordpress-version: '6.4'
 
     name: PHP:${{ matrix.php-versions }} / WP:${{ matrix.wordpress-version }}
     services:
