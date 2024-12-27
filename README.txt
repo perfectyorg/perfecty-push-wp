@@ -1,9 +1,9 @@
 === Perfecty Push Notifications ===
 Contributors: rwngallego, mociofiletto
-Donate link: https://paypal.me/tatalata777
+Donate link: https://paypal.me/RowinsonG
 Tags: Push Notifications, Web Push Notifications, Notifications, User engagement
 Requires at least: 5.0
-Tested up to: 6.0
+Tested up to: 6.7
 Stable tag: 1.6.2
 Requires PHP: 7.2
 License: GPLv2 or later
