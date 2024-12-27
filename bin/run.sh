@@ -34,11 +34,12 @@ setup() {
 }
 
 up() {
-  docker compose up -d
+  docker compose up --build -d
 }
 
 down() {
   docker compose down
+  rm -rf ./data
 }
 
 console() {
