@@ -26,15 +26,14 @@ jobs:
 
     name: PHP:${{ matrix.php-versions }} / WP:${{ matrix.wordpress-version }}
     services:
-      mysql:
-        image: mysql:5.7
+      mariadb:
+        image: mariadb:10.11
         env:
-          MYSQL_ALLOW_EMPTY_PASSWORD: false
-          MYSQL_ROOT_PASSWORD: password
-          MYSQL_DATABASE: wordpress
+          MARIADB_ROOT_PASSWORD: password
+          MARIADB_DATABASE: wordpress
         ports:
           - 3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+        options: --health-cmd="mariadb-admin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
     - name: Checkout
@@ -50,7 +49,7 @@ jobs:
         fail-fast: true
 
     - name: Setup Wordpress over phpunit
-      run: bash bin/install-wp-tests.sh wordpress root password 127.0.0.1:${{ job.services.mysql.ports[3306] }} ${{ matrix.wordpress-version }} true
+      run: bash bin/install-wp-tests.sh wordpress root password 127.0.0.1:${{ job.services.mariadb.ports[3306] }} ${{ matrix.wordpress-version }} true
 
     - name: Get composer cache directory
       id: composer-cache

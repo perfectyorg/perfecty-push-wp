@@ -1,9 +1,9 @@
-version: '3.1'
-
 services:
 
   wordpress:
-    image: custom-wordpress:5.6-php7.2-apache
+    build:
+      context: .
+      dockerfile: ./Dockerfile
     platform: linux/amd64
     restart: always
     ports:
@@ -21,7 +21,7 @@ services:
       WORDPRESS_DEBUG: 1
 
   db:
-    image: mysql:5.7
+    image: mariadb:10.11
     platform: linux/amd64
     volumes:
       - ./data:/var/lib/mysql
@@ -31,10 +31,10 @@ services:
       - perfecty-net
     restart: always
     environment:
-      MYSQL_DATABASE: exampledb
-      MYSQL_USER: exampleuser
-      MYSQL_PASSWORD: examplepass
-      MYSQL_RANDOM_ROOT_PASSWORD: '1'
+      MARIADB_DATABASE: exampledb
+      MARIADB_USER: exampleuser
+      MARIADB_PASSWORD: examplepass
+      MARIADB_RANDOM_ROOT_PASSWORD: '1'
 
 networks:
   perfecty-net:
