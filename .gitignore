@@ -1,5 +1,4 @@
 /vendor/
-/data
 .idea
 .gradle
 out/

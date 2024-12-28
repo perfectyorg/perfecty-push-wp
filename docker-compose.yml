@@ -3,9 +3,10 @@ services:
   wordpress:
     build:
       context: .
-      dockerfile: ./Dockerfile
     platform: linux/amd64
     restart: always
+    depends_on:
+      - db
     ports:
       - 80:80
       - 443:443
@@ -23,8 +24,6 @@ services:
   db:
     image: mariadb:10.11
     platform: linux/amd64
-    volumes:
-      - ./data:/var/lib/mysql
     ports:
       - 3306:3306
     networks:

@@ -69,7 +69,7 @@ You can use the `Perfecty_Push_Integration` class to send Push Notifications fro
 
 ## Local development 👨🏻‍💻
 
-To see it in action in your local development environment you can run the setup the following commands:
+To see it in action in your local development environment you can run the following commands:
 
 ```
 make up
