@@ -12,29 +12,38 @@ jobs:
     strategy:
       matrix:
         # See: https://make.wordpress.org/core/handbook/references/php-compatibility-and-wordpress-versions/
-        wordpress-version: ['5.2', '5.3', '5.4', '5.5', '5.6', '5.7', '5.8', '5.9']
-        php-versions: ['7.2', '7.3', '7.4', '8.0']
-        exclude:
-          - php-versions: '8.0'
-            wordpress-version: '5.2'
-          - php-versions: '8.0'
-            wordpress-version: '5.3'
-          - php-versions: '8.0'
-            wordpress-version: '5.4'
-          - php-versions: '8.0'
-            wordpress-version: '5.5'
+        wordpress-version: ['6.1', '6.2', '6.3', '6.4', '6.5', '6.6', '6.7']
+        php-versions: ['7.3', '7.4', '8.0', '8.1', '8.2']
+        include:
+          # WordPress 6.0:
+          - wordpress-version: '6.0'
+            php-versions: '7.3'
+          - wordpress-version: '6.0'
+            php-versions: '7.4'
+          - wordpress-version: '6.0'
+            php-versions: '8.0'
+          - wordpress-version: '6.0'
+            php-versions: '8.1'
+          # php 8.3:
+          - php-versions: '8.3'
+            wordpress-version: '6.7'
+          - php-versions: '8.3'
+            wordpress-version: '6.6'
+          - php-versions: '8.3'
+            wordpress-version: '6.5'
+          - php-versions: '8.3'
+            wordpress-version: '6.4'
 
     name: PHP:${{ matrix.php-versions }} / WP:${{ matrix.wordpress-version }}
     services:
-      mysql:
-        image: mysql:5.7
+      mariadb:
+        image: mariadb:10.11
         env:
-          MYSQL_ALLOW_EMPTY_PASSWORD: false
-          MYSQL_ROOT_PASSWORD: password
-          MYSQL_DATABASE: wordpress
+          MARIADB_ROOT_PASSWORD: password
+          MARIADB_DATABASE: wordpress
         ports:
           - 3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+        options: --health-cmd="mariadb-admin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
     - name: Checkout
@@ -50,35 +59,23 @@ jobs:
         fail-fast: true
 
     - name: Setup Wordpress over phpunit
-      run: bash bin/install-wp-tests.sh wordpress root password 127.0.0.1:${{ job.services.mysql.ports[3306] }} ${{ matrix.wordpress-version }} true
+      run: bash bin/install-wp-tests.sh wordpress root password 127.0.0.1:${{ job.services.mariadb.ports[3306] }} ${{ matrix.wordpress-version }} true
 
     - name: Get composer cache directory
       id: composer-cache
-      run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+      run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
     - name: Setup problem matchers for PHPUnit
       run: echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
 
     - name: Cache composer dependencies
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: ${{ steps.composer-cache.outputs.dir }}
         key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
         restore-keys: ${{ runner.os }}-composer-
 
-    - name: Only for WP 5.9 and PHP 8
-      # See: https://make.wordpress.org/core/2021/09/27/changes-to-the-wordpress-core-php-test-suite/
-      if: ${{ matrix.php-versions == '8.0' && matrix.wordpress-version == '5.9' }}
-      run: (composer remove --dev phpunit/phpunit || true ) && composer update --dev yoast/phpunit-polyfills --with-dependencies && composer install --no-progress --prefer-dist --optimize-autoloader
-
-    - name: When using PHP 8 and WP <= 5.8
-      # See: https://core.trac.wordpress.org/ticket/50902
-      if: ${{ matrix.php-versions == '8.0' && (matrix.wordpress-version == '5.6' || matrix.wordpress-version == '5.7' || matrix.wordpress-version == '5.8' )}}
-      run: composer install --no-progress --prefer-dist --optimize-autoloader --ignore-platform-reqs
-
     - name: Install Composer dependencies
-      # Rest of the versions
-      if: ${{ matrix.php-versions != '8.0' }}
       run: composer install --no-progress --prefer-dist --optimize-autoloader
 
     - name: Run the tests
@@ -97,7 +94,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 7.2
+          php-version: 7.3
           tools: composer
         env:
           fail-fast: true

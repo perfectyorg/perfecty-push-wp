@@ -69,14 +69,7 @@ You can use the `Perfecty_Push_Integration` class to send Push Notifications fro
 
 ## Local development 👨🏻‍💻
 
-To see it in action in your local development environment, you need a set of
-services which Wordpress relies on. You start off by creating the docker image:
-
-```
-docker build -t custom-wordpress:5.6-php7.2-apache .
-```
-
-Then start all the services and run the setup:
+To see it in action in your local development environment you can run the following commands:
 
 ```
 make up
