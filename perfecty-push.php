@@ -95,7 +95,12 @@ if ( version_compare( PHP_VERSION, '7.2.0', '>=' ) ) {
  * @since    1.0.0
  */
 function run_perfecty_push() {
-	$plugin = new Perfecty_Push();
-	$plugin->run();
+	add_action(
+		'init',
+		function () {
+			$plugin = new Perfecty_Push();
+			$plugin->run();
+		}
+	);
 }
 run_perfecty_push();
