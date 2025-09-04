@@ -46,12 +46,14 @@
 	</div>
 	<div>
 		<p>
-		<label for="perfecty-push-send-notification-schedule-notification"><?php printf( esc_html__( 'Schedule notification', 'perfecty-push-notifications' ) ); ?> <i><?php printf( esc_html__( '(default: now)', 'perfecty-push-notifications' ) ); ?></i></label>
-		<br />
-		<input id="perfecty-push-send-notification-schedule-notification" name="perfecty-push-send-notification-schedule-notification" type="checkbox"/>
-		<input id="perfecty-push-send-notification-scheduled-date" name="perfecty-push-send-notification-scheduled-date" type="date" class="perfecty-push-notification-date" value="" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" placeholder="2021-05-26" disabled="disabled"/>
-		<input id="perfecty-push-send-notification-scheduled-time" name="perfecty-push-send-notification-scheduled-time" type="time" class="perfecty-push-notification-time" value="" pattern="[0-9]{2}:[0-9]{2}:[0-9]{2}" placeholder="00:00:00" step=1 disabled="disabled"/>
-		<input id="perfecty-push-send-notification-timeoffset" name="perfecty-push-send-notification-timeoffset" type="hidden" value=""/>
+			<label for="perfecty-push-send-notification-schedule-notification"><?php printf( esc_html__( 'Schedule notification', 'perfecty-push-notifications' ) ); ?> <i><?php printf( esc_html__( '(default: now)', 'perfecty-push-notifications' ) ); ?></i></label>
+			<br />
+			<input id="perfecty-push-send-notification-schedule-notification" name="perfecty-push-send-notification-schedule-notification" type="checkbox"/>
+			<input id="perfecty-push-send-notification-scheduled-date" name="perfecty-push-send-notification-scheduled-date" type="date" class="perfecty-push-notification-date" value="" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" placeholder="2021-05-26" disabled="disabled"/>
+			<input id="perfecty-push-send-notification-scheduled-time" name="perfecty-push-send-notification-scheduled-time" type="time" class="perfecty-push-notification-time" value="" pattern="[0-9]{2}:[0-9]{2}:[0-9]{2}" placeholder="00:00:00" step=1 disabled="disabled"/>
+			<input id="perfecty-push-send-notification-timeoffset" name="perfecty-push-send-notification-timeoffset" type="hidden" value=""/>
+			<input id="perfecty-push-send-notification-recurring" name="perfecty-push-send-notification-recurring" type="checkbox" value="yes" />
+			<label for="perfecty-push-send-notification-recurring"><?php printf( esc_html__( 'Recurring notification', 'perfecty-push-notifications' ) ); ?> <i><?php printf( esc_html__( '(Keeps recurring on the next day same time)', 'perfecty-push-notifications' ) ); ?></i></label>
 		</p>
 	</div>
 </div>

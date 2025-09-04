@@ -8,7 +8,7 @@ use Perfecty_Push_External_Uuid as Uuid;
 class Perfecty_Push_Lib_Db {
 
 	private static $allowed_users_fields         = 'id,uuid,wp_user_id,endpoint,key_auth,key_p256dh,remote_ip,created_at';
-	private static $allowed_notifications_fields = 'id,payload,total,succeeded,failed,last_cursor,batch_size,status,is_taken,created_at,finished_at,last_execution_at,scheduled_at';
+	private static $allowed_notifications_fields = 'id,payload,total,succeeded,failed,last_cursor,batch_size,status,is_taken,created_at,finished_at,last_execution_at,scheduled_at,recurring';
 	private static $allowed_logs_fields          = 'level,message,created_at';
 
 	public const NOTIFICATIONS_STATUS_SCHEDULED = 'scheduled';
@@ -52,42 +52,43 @@ class Perfecty_Push_Lib_Db {
 
 		// We execute the queries per table
 		$sql = "CREATE TABLE $user_table (
-          id int(11) NOT NULL AUTO_INCREMENT,
-          wp_user_id int(11) NULL,
-          uuid char(36) NOT NULL,
-          remote_ip varchar(46) DEFAULT '',
-          endpoint varchar(500) NOT NULL,
-          key_auth varchar(100) NOT NULL UNIQUE,
-          key_p256dh varchar(100) NOT NULL UNIQUE,
-          created_at datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
-          PRIMARY KEY  (id),
-          UNIQUE KEY users_uuid_uk (uuid)
-        ) $charset;";
+		  id int(11) NOT NULL AUTO_INCREMENT,
+		  wp_user_id int(11) NULL,
+		  uuid char(36) NOT NULL,
+		  remote_ip varchar(46) DEFAULT '',
+		  endpoint varchar(500) NOT NULL,
+		  key_auth varchar(100) NOT NULL UNIQUE,
+		  key_p256dh varchar(100) NOT NULL UNIQUE,
+		  created_at datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
+		  PRIMARY KEY  (id),
+		  UNIQUE KEY users_uuid_uk (uuid)
+		) $charset;";
 		dbDelta( $sql );
 
 		$sql = "CREATE TABLE $notifications_table (
-          id int(11) NOT NULL AUTO_INCREMENT,
-          payload varchar(2000) NOT NULL,
-          total int(11) DEFAULT 0 NOT NULL,
-          succeeded int(11) DEFAULT 0 NOT NULL,
-          failed int(11) DEFAULT 0 NOT NULL,
-          last_cursor int(11) DEFAULT 0 NOT NULL,
-          batch_size int(11) DEFAULT 0 NOT NULL,
-          status varchar(15) DEFAULT 'scheduled' NOT NULL,
-          is_taken tinyint(1) DEFAULT 0 NOT NULL,
-          created_at datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
-          last_execution_at datetime NULL,
-          scheduled_at datetime NULL,
-          finished_at datetime NULL,
-          PRIMARY KEY  (id)
-        ) $charset;";
+		  id int(11) NOT NULL AUTO_INCREMENT,
+		  payload varchar(2000) NOT NULL,
+		  total int(11) DEFAULT 0 NOT NULL,
+		  succeeded int(11) DEFAULT 0 NOT NULL,
+		  failed int(11) DEFAULT 0 NOT NULL,
+		  last_cursor int(11) DEFAULT 0 NOT NULL,
+		  batch_size int(11) DEFAULT 0 NOT NULL,
+		  status varchar(15) DEFAULT 'scheduled' NOT NULL,
+		  is_taken tinyint(1) DEFAULT 0 NOT NULL,
+		  created_at datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
+		  last_execution_at datetime NULL,
+		  scheduled_at datetime NULL,
+		  finished_at datetime NULL,
+  		  recurring boolean DEFAULT 0 NOT NULL,
+		  PRIMARY KEY  (id)
+		) $charset;";
 		dbDelta( $sql );
 
 		$sql = "CREATE TABLE $logs_table (
-          level varchar(10) DEFAULT 'debug',
-          message varchar(2000) NOT NULL,
-          created_at datetime DEFAULT CURRENT_TIMESTAMP NOT NULL
-        ) $charset;";
+		  level varchar(10) DEFAULT 'debug',
+		  message varchar(2000) NOT NULL,
+		  created_at datetime DEFAULT CURRENT_TIMESTAMP NOT NULL
+		) $charset;";
 		dbDelta( $sql );
 
 		if ( $db_version != PERFECTY_PUSH_DB_VERSION ) {
@@ -103,6 +104,11 @@ class Perfecty_Push_Lib_Db {
 			if ( $db_version == 5 ) {
 				// the counters have been adjusted, we migrate the old stats
 				$wpdb->query( "UPDATE $notifications_table SET failed = total - succeeded" );
+			}
+			if ( $db_version == 7 ) {
+				if ( $wpdb->get_var( "SHOW INDEX FROM $notifications_table WHERE Key_name='recurring'" ) === null ) {
+					$wpdb->query( "ALTER TABLE $notifications_table ADD recurring boolean DEFAULT 0 NOT NULL" );
+				}
 			}
 
 			update_option( 'perfecty_push_db_version', PERFECTY_PUSH_DB_VERSION );
@@ -360,7 +366,7 @@ class Perfecty_Push_Lib_Db {
 	 *
 	 * @return $inserted_id or false if error
 	 */
-	public static function create_notification( $payload, $status = self::NOTIFICATIONS_STATUS_SCHEDULED, $total = 0, $batch_size = Perfecty_Push_Lib_Push_Server::DEFAULT_BATCH_SIZE, $scheduled_at = null ) {
+	public static function create_notification( $payload, $status = self::NOTIFICATIONS_STATUS_SCHEDULED, $total = 0, $batch_size = Perfecty_Push_Lib_Push_Server::DEFAULT_BATCH_SIZE, $scheduled_at = null, $recurring = null ) {
 		global $wpdb;
 
 		$scheduled_at = $scheduled_at == null ? null : date( 'Y-m-d H:i:s', $scheduled_at );
@@ -372,6 +378,7 @@ class Perfecty_Push_Lib_Db {
 				'total'        => $total,
 				'batch_size'   => $batch_size,
 				'scheduled_at' => $scheduled_at,
+				'recurring'    => $recurring,
 			)
 		);
 

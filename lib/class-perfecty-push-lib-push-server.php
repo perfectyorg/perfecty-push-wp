@@ -98,7 +98,7 @@ class Perfecty_Push_Lib_Push_Server {
 	 * @return int | bool $notification_id if success, false otherwise
 	 * @throws Exception
 	 */
-	public static function schedule_broadcast_async( $payload, $scheduled_time = null ) {
+	public static function schedule_broadcast_async( $payload, $scheduled_time = null, $recurring = null ) {
 		Log::info( 'Scheduling a broadcast notification' );
 		Log::debug( print_r( $payload, true ) );
 
@@ -137,7 +137,7 @@ class Perfecty_Push_Lib_Push_Server {
 				$scheduled_time = $date->getTimestamp();
 			}
 			$total_users     = Perfecty_Push_Lib_Db::get_total_users();
-			$notification_id = Perfecty_Push_Lib_Db::create_notification( $payload, Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_SCHEDULED, $total_users, $batch_size, $scheduled_time );
+			$notification_id = Perfecty_Push_Lib_Db::create_notification( $payload, Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_SCHEDULED, $total_users, $batch_size, $scheduled_time, $recurring );
 			if ( ! $notification_id ) {
 				Log::error( 'Could not schedule the notification.' );
 				return false;
@@ -336,6 +336,20 @@ class Perfecty_Push_Lib_Push_Server {
 			$notification->last_execution_at = current_time( 'mysql', 1 );
 			$result                          = Perfecty_Push_Lib_Db::update_notification( $notification );
 
+			//Creates a notification for the next day if recurring is checked
+			if($notification->recurring){
+				$date           = new DateTime( $notification->scheduled_at );
+				$datePlusDay 	= $date->add(new DateInterval('P1D'));
+				$scheduled_time = $datePlusDay->getTimeStamp();
+
+				$total_users     = Perfecty_Push_Lib_Db::get_total_users();
+				$notification_id = Perfecty_Push_Lib_Db::create_notification( $notification->payload, Perfecty_Push_Lib_Db::NOTIFICATIONS_STATUS_SCHEDULED, $total_users, $notification->batch_size, $scheduled_time, $notification->recurring );
+
+				self::schedule_job( $notification_id, $scheduled_time );
+				do_action( 'perfecty_push_broadcast_scheduled', $notification->payload );
+			}
+
+			
 			Log::info( 'Notification cycle for id=' . $notification_id . ' sent. Cursor: ' . $notification->last_cursor . ', Succeeded: ' . $total_succeeded . ', Failed: ' . $total_failed );
 			if ( ! $result ) {
 				Log::error( 'Could not update the notification after sending one batch' );
