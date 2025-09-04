@@ -8,7 +8,7 @@ name: Tests
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
         # See: https://make.wordpress.org/core/handbook/references/php-compatibility-and-wordpress-versions/
