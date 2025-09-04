@@ -109,49 +109,6 @@ class Perfecty_Push {
 			define( 'PERFECTY_PUSH_VAPID_PRIVATE_KEY', $vapid_private_key );
 		}
 
-		/* Default control texts */
-		if ( ! defined( 'PERFECTY_PUSH_OPTIONS_DIALOG_TITLE' ) ) {
-			define(
-				'PERFECTY_PUSH_OPTIONS_DIALOG_TITLE',
-				esc_html__( 'Do you want to receive notifications?', 'perfecty-push-notifications' )
-			);
-		}
-		if ( ! defined( 'PERFECTY_PUSH_OPTIONS_DIALOG_CONTINUE' ) ) {
-			define(
-				'PERFECTY_PUSH_OPTIONS_DIALOG_CONTINUE',
-				esc_html__( 'Continue', 'perfecty-push-notifications' )
-			);
-		}
-		if ( ! defined( 'PERFECTY_PUSH_OPTIONS_DIALOG_CANCEL' ) ) {
-			define(
-				'PERFECTY_PUSH_OPTIONS_DIALOG_CANCEL',
-				esc_html__( 'Not now', 'perfecty-push-notifications' )
-			);
-		}
-		if ( ! defined( 'PERFECTY_PUSH_OPTIONS_SETTINGS_TITLE' ) ) {
-			define(
-				'PERFECTY_PUSH_OPTIONS_SETTINGS_TITLE',
-				esc_html__( 'Notifications preferences', 'perfecty-push-notifications' )
-			);
-		}
-		if ( ! defined( 'PERFECTY_PUSH_OPTIONS_SETTINGS_OPT_IN' ) ) {
-			define(
-				'PERFECTY_PUSH_OPTIONS_SETTINGS_OPT_IN',
-				esc_html__( 'I want to receive notifications', 'perfecty-push-notifications' )
-			);
-		}
-		if ( ! defined( 'PERFECTY_PUSH_OPTIONS_SETTINGS_UPDATE_ERROR' ) ) {
-			define(
-				'PERFECTY_PUSH_OPTIONS_SETTINGS_UPDATE_ERROR',
-				esc_html__( 'Could not change the preference, try again', 'perfecty-push-notifications' )
-			);
-		}
-		if ( ! defined( 'PERFECTY_PUSH_OPTIONS_SETTINGS_WELCOME_MESSAGE' ) ) {
-			define(
-				'PERFECTY_PUSH_OPTIONS_SETTINGS_WELCOME_MESSAGE',
-				esc_html__( 'Congratulations, you\'re now subscribed!', 'perfecty-push-notifications' )
-			);
-		}
 		if ( ! defined( 'PERFECTY_PUSH_UNREGISTER_CONFLICTS_EXPRESSION' ) ) {
 			define(
 				'PERFECTY_PUSH_UNREGISTER_CONFLICTS_EXPRESSION',
@@ -259,7 +216,7 @@ class Perfecty_Push {
 	private function set_locale() {
 		$plugin_i18n = new Perfecty_Push_i18n();
 
-		$this->loader->add_action( 'plugins_loaded', $plugin_i18n, 'load_plugin_textdomain' );
+		$this->loader->add_action( 'init', $plugin_i18n, 'load_plugin_textdomain' );
 	}
 
 	/**
