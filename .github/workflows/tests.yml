@@ -83,7 +83,7 @@ jobs:
 
   sync-trunk:
     name: Sync trunk with master
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: test
     if: github.ref == 'refs/heads/master'
 
