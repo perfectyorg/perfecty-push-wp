@@ -1,0 +1,36 @@
+on:
+  push:
+    branches:
+      - master
+
+name: Sync
+
+jobs:
+
+  sync-trunk:
+    name: Sync trunk with master
+    runs-on: ubuntu-22.04
+    if: github.ref == 'refs/heads/master'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 7.3
+          tools: composer
+        env:
+          fail-fast: true
+
+      - name: Sync with SVN
+        run: |
+          make svnsync
+
+      - name: Push trunk to WordPress Plugin directory
+        env:
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+        run: |
+          make svnpush
