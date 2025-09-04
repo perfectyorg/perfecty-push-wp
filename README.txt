@@ -3,8 +3,8 @@ Contributors: rwngallego, mociofiletto
 Donate link: https://paypal.me/RowinsonG
 Tags: Push Notifications, Web Push Notifications, Notifications, User engagement
 Requires at least: 5.0
-Tested up to: 6.7
-Stable tag: 1.6.3
+Tested up to: 6.8.2
+Stable tag: 1.6.4
 Requires PHP: 7.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -94,6 +94,10 @@ You can create an issue in our Github repo:
 8. Settings
 
 == Changelog ==
+
+= 1.6.4 =
+* Publish notification when future posts are published
+* Updated WordPress support to 6.8.2
 
 = 1.6.3 =
 * Tested up to WordPress 6.7 and PHP 7/8

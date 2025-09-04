@@ -636,6 +636,43 @@ class Perfecty_Push_Admin {
 	}
 
 	/**
+	 * Handles scheduled posts that are published by WP-Cron
+	 *
+	 * @param WP_Post $post The post being published
+	 * @since 1.6.4
+	 */
+	public function on_publish_future_post( $post ) {
+		$send_notification = ! empty( get_post_meta( $post->ID, '_perfecty_push_send_on_publish', true ) );
+
+		if ( $send_notification ) {
+			$notification_title = get_post_meta( $post->ID, '_perfecty_push_notification_custom_title', true );
+			$notification_body  = get_post_meta( $post->ID, '_perfecty_push_notification_custom_body', true );
+
+			$body               = trim( $notification_body ) ? $notification_body : html_entity_decode( get_the_title( $post ) );
+			$url_to_open        = get_the_permalink( $post );
+			$notification_title = trim( $notification_title ) ? $notification_title : '';
+
+			// We use this to check if the post has a thumbnail because has_post_thumbnail could return true even if no post thumbnail is set.
+			$featured_image_url = wp_get_attachment_url( get_post_thumbnail_id( $post->ID ) );
+			if ( ! empty( $featured_image_url ) ) {
+				$post_thumbnail = get_the_post_thumbnail_url( $post->ID );
+			} else {
+				$post_thumbnail = $this->get_first_image_url( $post );
+			}
+
+			$payload = Perfecty_Push_Lib_Payload::build( $body, $notification_title, $post_thumbnail, $url_to_open );
+			$result  = Perfecty_Push_Lib_Push_Server::schedule_broadcast_async( $payload );
+
+			if ( $result === false ) {
+				error_log( esc_html__( 'Could not schedule the broadcast async for scheduled post, check the logs', 'perfecty-push-notifications' ) );
+			} else {
+				// Reset the notification flag after sending the notification
+				update_post_meta( $post->ID, '_perfecty_push_send_on_publish', false );
+			}
+		}
+	}
+
+	/**
 	 * Show the admin notices
 	 *
 	 * Gets the transient 'perfecty_push_admin_notice' which is an array with the type as key and a message as value
