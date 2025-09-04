@@ -603,7 +603,7 @@ class Perfecty_Push_Admin {
 			$notification_body  = get_post_meta( $post->ID, '_perfecty_push_notification_custom_body', true );
 		}
 
-		if ( 'publish' == $new_status && $send_notification ) {
+		if ( 'publish' == $new_status && in_array( $old_status, ['new', 'draft', 'pending'] ) && $send_notification ) {
 			$body               = trim( $notification_body ) ? $notification_body : html_entity_decode( get_the_title( $post ) );
 			$url_to_open        = get_the_permalink( $post );
 			$notification_title = trim( $notification_title ) ? $notification_title : '';
