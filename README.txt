@@ -97,7 +97,7 @@ You can create an issue in our Github repo:
 
 = 1.6.4 =
 * Publish notification when future posts are published
-* Updated WordPress support to 6.8.1
+* Updated WordPress support to 6.8.2
 
 = 1.6.3 =
 * Tested up to WordPress 6.7 and PHP 7/8
