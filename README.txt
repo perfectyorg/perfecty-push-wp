@@ -9,6 +9,8 @@ Requires PHP: 7.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
+Web Push Notifications for WordPress, self-hosted and free.
+
 == Description ==
 Push Notifications that are self-hosted, you don't need API keys to integrate with external Push Notifications providers that will charge you later. It's Open Source and the information is stored in WordPress, so that you can send Push Notifications directly from your server for free!
 
